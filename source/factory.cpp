@@ -54,7 +54,7 @@ BEGIN_FACTORY_DEF ("Compartmental",
 				kVstAudioEffectClass,
 				stringPluginName,
 				Vst::kDistributable,
-				"Fx|Delay",
+                Vst::PlugType::kInstrument,
 				FULL_VERSION_STR,		// Plug-in version (to be changed)
 				kVstVersionString,
                 Compartmental::Vst::EvaluatorProcessor::createInstance)
