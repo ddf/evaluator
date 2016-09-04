@@ -17,6 +17,9 @@
 		7739F0DC1D7670760061B3F7 /* vstgui_uidescription_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7739F0DA1D7670760061B3F7 /* vstgui_uidescription_mac.mm */; };
 		7739F0F91D7673730061B3F7 /* vstguieditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7739F0F71D7673730061B3F7 /* vstguieditor.cpp */; };
 		7739F11E1D7678120061B3F7 /* editor.uidesc in Resources */ = {isa = PBXBuildFile; fileRef = 7739F11D1D7678120061B3F7 /* editor.uidesc */; };
+		7782BD0C1D7C884700B547F7 /* vslider_background.png in Resources */ = {isa = PBXBuildFile; fileRef = 7782BD0A1D7C884700B547F7 /* vslider_background.png */; };
+		7782BD0D1D7C884700B547F7 /* vslider_handle.png in Resources */ = {isa = PBXBuildFile; fileRef = 7782BD0B1D7C884700B547F7 /* vslider_handle.png */; };
+		7782BD131D7CCCBC00B547F7 /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 7782BD121D7CCCBC00B547F7 /* background.png */; };
 		8D01CCCE0486CAD60068D4B7 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 08EA7FFBFE8413EDC02AAC07 /* Carbon.framework */; };
 		F416981A09A9DDEA0033823E /* pluginview.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F416981709A9DDEA0033823E /* pluginview.cpp */; };
 		F416982309A9DE020033823E /* vstaudioeffect.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F416981B09A9DE020033823E /* vstaudioeffect.cpp */; };
@@ -100,6 +103,9 @@
 		7739F0F71D7673730061B3F7 /* vstguieditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = vstguieditor.cpp; path = ../../../../source/vst/vstguieditor.cpp; sourceTree = "<group>"; };
 		7739F0F81D7673730061B3F7 /* vstguieditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vstguieditor.h; path = ../../../../source/vst/vstguieditor.h; sourceTree = "<group>"; };
 		7739F11D1D7678120061B3F7 /* editor.uidesc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = editor.uidesc; sourceTree = "<group>"; };
+		7782BD0A1D7C884700B547F7 /* vslider_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = vslider_background.png; path = ../interface/vslider_background.png; sourceTree = "<group>"; };
+		7782BD0B1D7C884700B547F7 /* vslider_handle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = vslider_handle.png; path = ../interface/vslider_handle.png; sourceTree = "<group>"; };
+		7782BD121D7CCCBC00B547F7 /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = background.png; path = ../interface/background.png; sourceTree = "<group>"; };
 		8D01CCD10486CAD60068D4B7 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		8D01CCD20486CAD60068D4B7 /* evaluator.vst3 */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = evaluator.vst3; sourceTree = BUILT_PRODUCTS_DIR; };
 		F416981709A9DDEA0033823E /* pluginview.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; name = pluginview.cpp; path = ../../../../source/common/pluginview.cpp; sourceTree = SOURCE_ROOT; };
@@ -203,6 +209,9 @@
 		089C167CFE841241C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				7782BD121D7CCCBC00B547F7 /* background.png */,
+				7782BD0A1D7C884700B547F7 /* vslider_background.png */,
+				7782BD0B1D7C884700B547F7 /* vslider_handle.png */,
 				8D01CCD10486CAD60068D4B7 /* Info.plist */,
 				7739F11D1D7678120061B3F7 /* editor.uidesc */,
 			);
@@ -484,6 +493,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				7739F11E1D7678120061B3F7 /* editor.uidesc in Resources */,
+				7782BD131D7CCCBC00B547F7 /* background.png in Resources */,
+				7782BD0D1D7C884700B547F7 /* vslider_handle.png in Resources */,
+				7782BD0C1D7C884700B547F7 /* vslider_background.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

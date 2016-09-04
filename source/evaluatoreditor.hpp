@@ -51,7 +51,10 @@ namespace Compartmental {
             void messageTextChanged ();
             
         protected:
+            CBitmap*    background;
             CTextEdit* textEdit;
+            CSlider*   volumeSlider;
+            CSlider*   bitDepthSlider;
         };
         //------------------------------------------------------------------------
     } // namespace Vst

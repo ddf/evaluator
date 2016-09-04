@@ -63,7 +63,7 @@ tresult PLUGIN_API EvaluatorController::initialize (FUnknown* context)
         
         ParameterInfo bitInfo = {
             .id = kBitDepthId,
-            .title = STR16("Bit Wrap"),
+            .title = STR16("Bit Depth"),
             .units = STR16("Bits"),
             .stepCount = 30,
             .defaultNormalizedValue = 0.5,

@@ -1,5 +1,6 @@
 #include "evaluatoreditor.hpp"
 #include "evaluatorcontroller.h"
+#include "evaluatorids.h"
 
 #include "base/source/fstring.h"
 
@@ -11,13 +12,22 @@ namespace Compartmental {
         {
             // UI size
             kEditorWidth  = 500,
-            kEditorHeight = 120
+            kEditorHeight = 250
+        };
+        
+        enum
+        {
+            kExpressionTextTag = 'Expr',
+            kVolumeTag = 'Volm',
+            kBitDepthTag = 'BitD'
         };
         
         //------------------------------------------------------------------------
         EvaluatorEditor::EvaluatorEditor (void* controller)
         : VSTGUIEditor (controller)
         , textEdit (0)
+        , volumeSlider(0)
+        , bitDepthSlider(0)
         {
             setIdleRate (50); // 1000ms/50ms = 20Hz
             
@@ -56,7 +66,7 @@ namespace Compartmental {
         }
         
         //------------------------------------------------------------------------
-        tresult PLUGIN_API EvaluatorEditor::findParameter (int32 xPos, int32 yPos, ParamID& resultTag)
+        tresult PLUGIN_API EvaluatorEditor::findParameter (int32 xPos, int32 yPos, ParamID& resultId)
         {
             // look up the parameter (view) which is located at xPos/yPos.
             
@@ -94,20 +104,23 @@ namespace Compartmental {
             // Implementation 2:
             // An alternative solution with VSTGui can look like this. (This requires C++ RTTI)
             //
-            // if (frame)
-            // {
-            //  CControl* controlAtPos = dynamic_cast<CControl*>(frame->getViewAt (where, true);
-            //  if (controlAtPos)
-            //  {
-            //      switch (controlAtPos->getTag ())
-            //      {
-            //          case 'Gain':
-            //          case 'GaiT':
-            //              resultTag = resultTag;
-            //              return kResultOk;
-            //      }
-            //  }
-            // 
+            if (frame)
+            {
+                auto viewOptions = GetViewOptions(GetViewOptions::kMouseEnabled);
+                CControl* controlAtPos = dynamic_cast<CControl*>( frame->getViewAt (where,viewOptions) );
+                if (controlAtPos)
+                {
+                    switch (controlAtPos->getTag ())
+                    {
+                        case kVolumeTag:
+                        {
+                            resultId = kVolumeId;
+                        }
+                        return kResultOk;
+                    }
+                }
+            }
+            
             
             // Implementation 3:
             // The another "dirty" way is to hard code the coordinates for the views (see also AGainEditorView::open):
@@ -149,44 +162,73 @@ namespace Compartmental {
             frame = new CFrame (editorSize, this);
             frame->setBackgroundColor (kGreyCColor);
             
-            //background = new CBitmap ("background.png");
-            //frame->setBackground (background);
+            background = new CBitmap ("background.png");
+            frame->setBackground (background);
             
-            //---Test communication between Component and Controller------
+            // used by multiple sliders, so we new them up here
+            CBitmap* sliderHandle = new CBitmap ("vslider_handle.png");
+            CBitmap* sliderBackground = new CBitmap ("vslider_background.png");
+            
+            //--- Text input for the expression ------
             CRect size (0, 0, kEditorWidth - 20, 20);
             size.offset (10, 10);
-            textEdit = new CTextEdit (size, this, 'Text', "t*128", 0, k3DOut);
+            textEdit = new CTextEdit (size, this, kExpressionTextTag, "t*128", 0, k3DOut);
             textEdit->setBackColor(kWhiteCColor);
             textEdit->setFont(kSystemFont);
             textEdit->setFontColor(kBlackCColor);
             frame->addView (textEdit);
             
-            size (0, 0, 50, 20);
-            size.offset (10, 40);
-            CTextButton* textButton = new CTextButton (size, this, 'Send', "Send!");
-            frame->addView (textButton);
-            //-----------------------------------------------------------
+            //---Volume--------------------
+            {
+                //---Volume Label--------
+                size (0, 0, 50, 18);
+                size.offset (10, 40);
+                CTextLabel* label = new CTextLabel (size, "Volume", 0, kNoFrame);
+                label->setBackColor(kTransparentCColor);
+                label->setFont(kSystemFont);
+                label->setFontColor(kBlackCColor);
+                frame->addView (label);
+                
+                //---Volume slider-------
+                
+                size (0, 0, 25, 122);
+                size.offset (20, 60);
+                CPoint offset;
+                CPoint offsetHandle (0, 4);
+                volumeSlider = new CVerticalSlider (size, this, kVolumeTag,
+                                                      offsetHandle, size.getHeight(),
+                                                      sliderHandle, sliderBackground,
+                                                      offset, kBottom);
+                frame->addView (volumeSlider);
+            }
             
-            //---Gain--------------------
+            //---Bit Depth--------------
+            {
+                //---Bit Depth Label--------
+                size(0,0,55,18);
+                size.offset(70, 40);
+                CTextLabel* label = new CTextLabel(size, "Bit Depth", 0, kNoFrame);
+                label->setBackColor(kTransparentCColor);
+                label->setFont(kSystemFont);
+                label->setFontColor(kBlackCColor);
+                frame->addView(label);
+                
+                //---Bit Depth Slider--------
+                size(0,0,25,122);
+                size.offset(90, 60);
+                CPoint offset;
+                CPoint offsetHandle(0,4);
+                bitDepthSlider = new CVerticalSlider(size, this, kBitDepthTag,
+                                                     offsetHandle, size.getHeight(),
+                                                     sliderHandle, sliderBackground,
+                                                     offset, kBottom);
+                frame->addView(bitDepthSlider);
+            }
             
-            //---Gain Label--------
-//            size (0, 0, 30, 18);
-//            size.offset (10, 40);
-//            CTextLabel* label = new CTextLabel (size, "Gain", 0, kShadowText);
-//            frame->addView (label);
-//            
-//            //---Gain slider-------
-//            CBitmap* handle = new CBitmap ("slider_handle.png");
-//            CBitmap* backgroundSlider = new CBitmap ("slider_background.bmp");
-//            
-//            size (0, 0, 130, 18);
-//            size.offset (45, 40);
-//            CPoint offset;
-//            CPoint offsetHandle (0, 2);
-//            gainSlider = new CHorizontalSlider (size, this, 'Gain', offsetHandle, size.getWidth (), handle, backgroundSlider, offset, kLeft);
-//            frame->addView (gainSlider);
-//            handle->forget ();
-//            backgroundSlider->forget ();
+            
+            // release the references
+            sliderHandle->forget ();
+            sliderBackground->forget ();
             
             
             //---VuMeter--------------------
@@ -200,9 +242,9 @@ namespace Compartmental {
 //            onBitmap->forget ();
 //            offBitmap->forget ();
 //            
-//            // sync UI controls with controller parameter values
-//            ParamValue value = getController ()->getParamNormalized (kGainId);
-//            update (kGainId, value);
+            // sync UI controls with controller parameter values
+            update( kVolumeId, getController ()->getParamNormalized (kVolumeId) );
+            update( kBitDepthId, getController()->getParamNormalized(kBitDepthId) );
             
             messageTextChanged ();
             
@@ -217,10 +259,7 @@ namespace Compartmental {
             EvaluatorController* controller = dynamic_cast<EvaluatorController*> (getController ());
             if (controller)
             {
-                Steinberg::String text (controller->getDefaultMessageText ());
-                char8 asciiText[128];
-                text.copyTo8 (asciiText, 0, 127);
-                textEdit->setText (asciiText);
+                textEdit->setText (controller->getDefaultMessageText());
             }
         }
         
@@ -233,15 +272,15 @@ namespace Compartmental {
                 frame = 0;
             }
             
-//            if (background)
-//            {
-//                background->forget ();
-//                background = 0;
-//            }
+            if (background)
+            {
+                background->forget ();
+                background = 0;
+            }
             
             textEdit = 0;
-            //gainSlider = 0;
-            //gainTextEdit = 0;
+            volumeSlider = 0;
+            bitDepthSlider = 0;
             //vuMeter = 0;
         }
         
@@ -251,47 +290,20 @@ namespace Compartmental {
             switch (pControl->getTag ())
             {
                     //------------------
-                case 'Send':
+                case kVolumeTag:
                 {
-                    //---send a text message
-                    //char text[256] = {0};
-                    //textEdit->getText (text);
-                    controller->sendTextMessage (textEdit->getText());
+                    controller->setParamNormalized (kVolumeId, pControl->getValue ());
+                    controller->performEdit (kVolumeId, pControl->getValue ());
+                }
+                break;
                     
-                    //---send a binary message
-//                    IMessage* message = controller->allocateMessage ();
-//                    if (message)
-//                    {
-//                        FReleaser msgReleaser (message);
-//                        message->setMessageID ("BinaryMessage");
-//                        
-//                        uint32 size = 100;
-//                        char8 data[100];
-//                        memset (data, 0, size * sizeof (char));
-//                        // fill my data with dummy stuff
-//                        for (uint32 i = 0; i < size; i++)
-//                            data[i] = i;
-//                        message->getAttributes ()->setBinary ("MyData", data, size);
-//                        controller->sendMessage (message);
-//                    }
-                    
-                    static bool bgToggle = false;
-//                    if (bgToggle)
-//                        frame->setBackground (background);
-//                    else
-//                        frame->setBackground (0);
-                    
-                    frame->invalid ();
-                    bgToggle = !bgToggle;
-                }	break;
-                    
-                    //------------------
-//                case 'Gain':
-//                {
-//                    controller->setParamNormalized (kGainId, pControl->getValue ());
-//                    controller->performEdit (kGainId, pControl->getValue ());
-//                }	break;
-//                    
+                case kBitDepthTag:
+                {
+                    controller->setParamNormalized(kBitDepthId, pControl->getValue());
+                    controller->performEdit(kBitDepthId, pControl->getValue());
+                }
+                break;
+//
 //                    //------------------
 //                case 'GaiT':
 //                {
@@ -310,8 +322,7 @@ namespace Compartmental {
 //                    gainSlider->invalid ();
 //                }	break;
                     
-                    //------------------
-                case 'Text':
+                case kExpressionTextTag:
                 {
                     EvaluatorController* controller = dynamic_cast<EvaluatorController*> (getController ());
                     if (controller)
@@ -319,7 +330,8 @@ namespace Compartmental {
                         controller->setDefaultMessageText (textEdit->getText());
                         controller->sendTextMessage(textEdit->getText());
                     }
-                }	break;
+                }
+                break;
             }		
         }
         
@@ -345,6 +357,7 @@ namespace Compartmental {
         //------------------------------------------------------------------------
         int32_t EvaluatorEditor::controlModifierClicked (CControl* pControl, CButtonState buttonState)
         {
+// TODO will we need to add anything to context menus?
 //            switch (pControl->getTag ())
 //            {
 //                    //------------------
@@ -384,59 +397,70 @@ namespace Compartmental {
         //------------------------------------------------------------------------
         void EvaluatorEditor::controlBeginEdit (CControl* pControl)
         {
-//            switch (pControl->getTag ())
-//            {
-//                    //------------------
-//                case 'Gain':
-//                {
-//                    controller->beginEdit (kGainId);
-//                }	break;
-//            }
+            switch (pControl->getTag ())
+            {
+                case kVolumeTag:
+                {
+                    controller->beginEdit (kVolumeId);
+                }
+                break;
+                    
+                case kBitDepthTag:
+                {
+                    controller->beginEdit(kBitDepthId);
+                }
+                break;
+            }
         }
         
         //------------------------------------------------------------------------
         void EvaluatorEditor::controlEndEdit (CControl* pControl)
         {
-//            switch (pControl->getTag ())
-//            {
-//                    //------------------
-//                case 'Gain':
-//                {
-//                    controller->endEdit (kGainId);
-//                }	break;
-//            }
+            switch (pControl->getTag ())
+            {
+                case kVolumeTag:
+                {
+                    controller->endEdit (kVolumeId);
+                }
+                break;
+                    
+                case kBitDepthTag:
+                {
+                    controller->endEdit(kBitDepthId);
+                }
+                break;
+            }
         }
         
         //------------------------------------------------------------------------
         void EvaluatorEditor::update (ParamID tag, ParamValue value)
         {
-//            switch (tag)
-//            {
-//                    //------------------
-//                case kGainId:
-//                    if (gainSlider)
-//                    {
-//                        gainSlider->setValue ((float)value);
-//                        
-//                        if (gainTextEdit)
-//                        {
-//                            String128 string;
-//                            controller->getParamStringByValue (kGainId, value, string);
-//                            
-//                            String tmp (string);
-//                            char text[128];
-//                            tmp.copyTo8 (text, 0, 127);
-//                            
-//                            gainTextEdit->setText (text);
-//                        }
-//                    }
-//                    break;
-//                    
-//                    //------------------
-//                case kVuPPMId:
-//                    lastVuMeterValue = (float)value;
-//                    break;
-//            }
+            switch (tag)
+            {
+                case kVolumeId:
+                {
+                    if ( volumeSlider )
+                    {
+                        volumeSlider->setValue ((float)value);
+                    }
+                }
+                break;
+                    
+                case kBitDepthId:
+                {
+                    if ( bitDepthSlider )
+                    {
+                        bitDepthSlider->setValue((float)value);
+                    }
+                }
+                break;
+                    
+                    
+                    //------------------
+                //case kVuPPMId:
+                //    lastVuMeterValue = (float)value;
+                //    break;
+            }
         }
         
         //------------------------------------------------------------------------
