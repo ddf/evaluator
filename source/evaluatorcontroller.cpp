@@ -48,99 +48,100 @@
 
 using namespace Steinberg::Vst;
 
-namespace Compartmental {
-namespace Vst {
-
-//-----------------------------------------------------------------------------
-tresult PLUGIN_API EvaluatorController::initialize (FUnknown* context)
+namespace Compartmental
 {
-	tresult result = EditController::initialize (context);
-	if (result == kResultTrue)
-	{
-		parameters.addParameter (STR16 ("Bypass"), 0, 1, 0, ParameterInfo::kCanAutomate|ParameterInfo::kIsBypass, kBypassId);
+    namespace Vst
+    {
 
-		parameters.addParameter (STR16 ("Volume"), STR16 (""), 0, 1, ParameterInfo::kCanAutomate, kVolumeId);
-        
-        ParameterInfo bitInfo = {
-            .id = kBitDepthId,
-            .title = STR16("Bit Depth"),
-            .units = STR16("Bits"),
-            .stepCount = 30,
-            .defaultNormalizedValue = 0.5,
-            .flags = ParameterInfo::kCanAutomate
-        };
-        parameters.addParameter( new RangeParameter( bitInfo, 1, 31 ) );
-	}
-	return kResultTrue;
-}
-
-//-----------------------------------------------------------------------------
-IPlugView* PLUGIN_API EvaluatorController::createView (FIDString name)
-{
-	if (strcmp (name, ViewType::kEditor) == 0)
-	{
-        return new Compartmental::Vst::EvaluatorEditor(this);
-	}
-	return 0;
-}
-
-//------------------------------------------------------------------------
-tresult PLUGIN_API EvaluatorController::setComponentState (IBStream* state)
-{
-	// we receive the current state of the component (processor part)
-	// we read only the gain and bypass value...
-	if (state)
-	{
-		float savedVolume = 0.f;
-		if (state->read (&savedVolume, sizeof (float)) != kResultOk)
-		{
-			return kResultFalse;
-		}
-
-#if BYTEORDER == kBigEndian
-		SWAP_32 (savedVolume)
-#endif
-		setParamNormalized (kVolumeId, savedVolume);
-
-		// read the bypass
-		int32 bypassState;
-		if (state->read (&bypassState, sizeof (bypassState)) == kResultTrue)
-		{
-#if BYTEORDER == kBigEndian
-			SWAP_32 (bypassState)
-#endif
-			setParamNormalized (kBypassId, bypassState ? 1 : 0);
-		}
-        
-        float savedBitDepth = 0.5f;
-        if ( state->read(&savedBitDepth, sizeof(float)) == kResultTrue )
+        //-----------------------------------------------------------------------------
+        tresult PLUGIN_API EvaluatorController::initialize (FUnknown* context)
         {
-#if BYTEORDER == kBigEndian
-            SWAP_32 (savedBitDepth)
-#endif
-            setParamNormalized (kBitDepthId, savedBitDepth);
-        }
-        
-        memset(defaultMessageText, 0, sizeof(char)*128);
-        int8 byteOrder;
-        if ((state->read (&byteOrder, sizeof (int8))) == kResultTrue)
-        {
-            state->read (defaultMessageText, sizeof(char)*128);
-            
-            // if the byteorder doesn't match, byte swap the text array ...
-            if (byteOrder != BYTEORDER)
+            tresult result = EditController::initialize (context);
+            if (result == kResultTrue)
             {
-                for (int32 i = 0; i < 128; i++)
+                parameters.addParameter (STR16 ("Bypass"), 0, 1, 0, ParameterInfo::kCanAutomate|ParameterInfo::kIsBypass, kBypassId);
+
+                parameters.addParameter (STR16 ("Volume"), STR16 (""), 0, 1, ParameterInfo::kCanAutomate, kVolumeId);
+                
+                ParameterInfo bitInfo = {
+                    .id = kBitDepthId,
+                    .title = STR16("Bit Depth"),
+                    .units = STR16("Bits"),
+                    .stepCount = 30,
+                    .defaultNormalizedValue = 0.5,
+                    .flags = ParameterInfo::kCanAutomate
+                };
+                parameters.addParameter( new RangeParameter( bitInfo, 1, 31 ) );
+            }
+            return kResultTrue;
+        }
+
+        //-----------------------------------------------------------------------------
+        IPlugView* PLUGIN_API EvaluatorController::createView (FIDString name)
+        {
+            if (strcmp (name, ViewType::kEditor) == 0)
+            {
+                return new Compartmental::Vst::EvaluatorEditor(this);
+            }
+            return 0;
+        }
+
+        //------------------------------------------------------------------------
+        tresult PLUGIN_API EvaluatorController::setComponentState (IBStream* state)
+        {
+            // we receive the current state of the component (processor part)
+            // we read only the gain and bypass value...
+            if (state)
+            {
+                float savedVolume = 0.f;
+                if (state->read (&savedVolume, sizeof (float)) != kResultOk)
                 {
-                    SWAP_16 (defaultMessageText[i])
+                    return kResultFalse;
+                }
+
+                #if BYTEORDER == kBigEndian
+                SWAP_32 (savedVolume)
+                #endif
+                setParamNormalized (kVolumeId, savedVolume);
+
+                // read the bypass
+                int32 bypassState;
+                if (state->read (&bypassState, sizeof (bypassState)) == kResultTrue)
+                {
+                    #if BYTEORDER == kBigEndian
+                    SWAP_32 (bypassState)
+                    #endif
+                    setParamNormalized (kBypassId, bypassState ? 1 : 0);
+                }
+                
+                float savedBitDepth = 0.5f;
+                if ( state->read(&savedBitDepth, sizeof(float)) == kResultTrue )
+                {
+                    #if BYTEORDER == kBigEndian
+                    SWAP_32 (savedBitDepth)
+                    #endif
+                    setParamNormalized (kBitDepthId, savedBitDepth);
+                }
+                
+                memset(defaultMessageText, 0, sizeof(char)*128);
+                int8 byteOrder;
+                if ((state->read (&byteOrder, sizeof (int8))) == kResultTrue)
+                {
+                    state->read (defaultMessageText, sizeof(char)*128);
+                    
+                    // if the byteorder doesn't match, byte swap the text array ...
+                    if (byteOrder != BYTEORDER)
+                    {
+                        for (int32 i = 0; i < 128; i++)
+                        {
+                            SWAP_16 (defaultMessageText[i])
+                        }
+                    }
                 }
             }
+
+            return kResultOk;
         }
-	}
-
-	return kResultOk;
-}
-
-//------------------------------------------------------------------------
-} // namespace Vst
-} // namespace Steinberg
+    
+    } // namespace Vst
+} // namespace Compartmental
