@@ -50,6 +50,19 @@ namespace Compartmental
 {
     namespace Vst
     {
+        const EvaluatorProcessor::Preset EvaluatorProcessor::presets[] =
+        {
+            // name, expression, volume, bit depth
+            { "saw wave", "t*128", 0.1f, 0.45f },
+            { "square wave", "(r-1) * ((m/10)%2)", 0.1f, 0.45f },
+            { "sine wave", "$(t*128)", 0.1f, 0.45f },
+            { "amplitude modulation", "t*64 | $(t)", 0.1f, 0.45f },
+            { "frequency modulation", "t*64 + $(t*2)", 0.1f, 0.45f },
+            { "bouncing balls", "$(t*(1000 - m%500))", 0.1f, 0.45f },
+            { "overtone waterfall", "t*(128*(32-(m/50)%32)) | t*(128*((m/100)%64)) | t*128", 0.1f, 0.5f }
+        };
+        
+        const int32 EvaluatorProcessor::numPresets = sizeof(EvaluatorProcessor::presets)/sizeof(EvaluatorProcessor::Preset);
 
         //-----------------------------------------------------------------------------
         EvaluatorProcessor::EvaluatorProcessor ()
@@ -59,7 +72,7 @@ namespace Compartmental
         , mNoteOnPitch(-1)
         , mNoteOnVelocity(0)
         , mBypass (false)
-        , mBitDepth(0.5f)
+        , mBitDepth(0.4f)
         {
             setControllerClass (EvaluatorControllerUID);
         }
@@ -157,6 +170,19 @@ namespace Compartmental
                                 if (paramQueue->getPoint (numPoints - 1, sampleOffset, value) == kResultTrue)
                                 {
                                     mBitDepth = value;
+                                }
+                            }
+                            break;
+                                
+                            case kPresetId:
+                            {
+                                if ( paramQueue->getPoint(numPoints - 1, sampleOffset, value) == kResultTrue)
+                                {
+                                    int32 program = std::min<int32> (numPresets-1, (int32)(value * numPresets));
+                                    const Preset& preset = presets[program];
+                                    receiveText(preset.expression);
+                                    mVolume = preset.volume;
+                                    mBitDepth = preset.bitDepth;
                                 }
                             }
                             break;
@@ -302,7 +328,7 @@ namespace Compartmental
             SWAP_32 (toSaveVolume)
             SWAP_32 (toSaveBypass)
             SWAP_32 (toSaveBitDepth)
-        #   endif
+            #endif
 
             state->write (&toSaveVolume, sizeof (float));
             state->write (&toSaveBypass, sizeof (int32));

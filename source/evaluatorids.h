@@ -45,6 +45,7 @@ enum {
 	kVolumeId = 100,
 	kBypassId = 101,
     kBitDepthId = 102,
+    kPresetId = 103
 };
 
 // unique class ids

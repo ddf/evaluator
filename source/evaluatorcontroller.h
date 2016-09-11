@@ -48,9 +48,12 @@ using namespace Steinberg::Vst;
 
 namespace Compartmental {
 namespace Vst {
+    
+    class EvaluatorEditor;
 
 //-----------------------------------------------------------------------------
-class EvaluatorController : public EditController
+// EditControllerEx1 gives us IUnitInfo, which is necessary for the program list to show in the host gui.
+class EvaluatorController : public EditControllerEx1
 {
 public:
 	//------------------------------------------------------------------------
@@ -66,15 +69,29 @@ public:
 	IPlugView* PLUGIN_API createView (FIDString name) override;
 
 	tresult PLUGIN_API setComponentState (IBStream* state) override;
+    tresult PLUGIN_API setParamNormalized (ParamID tag, ParamValue value) override;
     
-    void setDefaultMessageText (const char* text)
+    int32 PLUGIN_API getProgramListCount () override;
+    tresult PLUGIN_API getProgramListInfo (int32 listIndex, ProgramListInfo& info /*out*/) override;
+    tresult PLUGIN_API getProgramName (ProgramListID listId, int32 programIndex, String128 name /*out*/) override;
+    
+    void editorDestroyed (EditorView* editor) override {} // nothing to do here
+    void editorAttached (EditorView* editor) override;
+    void editorRemoved (EditorView* editor) override;
+    
+    void setDefaultExpression (const char* text)
     {
-        strncpy(defaultMessageText, text, 127);
+        strncpy(defaultExpression, text, 127);
     }
-    const char* getDefaultMessageText() { return defaultMessageText; }
+    const char* getDefaultExpression() { return defaultExpression; }
     
 protected:
-    char defaultMessageText[128];
+    
+    void addDependentView (EvaluatorEditor* view);
+    void removeDependentView (EvaluatorEditor* view);
+    
+    char defaultExpression[128];
+    TArray <EvaluatorEditor*> viewsArray;
 };
 
 //------------------------------------------------------------------------

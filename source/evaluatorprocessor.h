@@ -67,6 +67,17 @@ public:
     tresult receiveText (const char* text);
 
 	static FUnknown* createInstance (void*) { return (IAudioProcessor*)new EvaluatorProcessor (); }
+    
+    struct Preset
+    {
+        const char* name;
+        const char* expression;
+        const float volume;
+        const float bitDepth;
+    };
+    
+    static const Preset presets[];
+    static const int32  numPresets;
 
 protected:
     uint64 mTick;

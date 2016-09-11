@@ -37,6 +37,7 @@
 
 #include "evaluatorcontroller.h"
 #include "evaluatorids.h"
+#include "evaluatorprocessor.h"
 #include "pluginterfaces/base/ustring.h"
 #include "pluginterfaces/base/ibstream.h"
 #include "vstparameters.h"
@@ -56,9 +57,29 @@ namespace Compartmental
         //-----------------------------------------------------------------------------
         tresult PLUGIN_API EvaluatorController::initialize (FUnknown* context)
         {
-            tresult result = EditController::initialize (context);
+            tresult result = EditControllerEx1::initialize (context);
             if (result == kResultTrue)
             {
+                UnitInfo uinfo;
+                uinfo.id = kRootUnitId;
+                uinfo.parentUnitId = kNoParentUnitId;
+                uinfo.programListId = kPresetId;
+                UString name (uinfo.name, 128);
+                name.fromAscii("Root");
+                addUnit (new Unit (uinfo));
+                
+                StringListParameter* presetParam = new StringListParameter(
+                    STR16("Presets"),
+                    kPresetId,
+                    0, // units
+                    ParameterInfo::kCanAutomate | ParameterInfo::kIsProgramChange | ParameterInfo::kIsList
+                );
+                for (int32 i = 0; i < EvaluatorProcessor::numPresets; i++)
+                {
+                    presetParam->appendString(UString128(EvaluatorProcessor::presets[i].name));
+                }
+                parameters.addParameter(presetParam);
+                
                 parameters.addParameter (STR16 ("Bypass"), 0, 1, 0, ParameterInfo::kCanAutomate|ParameterInfo::kIsBypass, kBypassId);
 
                 parameters.addParameter (STR16 ("Volume"), STR16 (""), 0, 1, ParameterInfo::kCanAutomate, kVolumeId);
@@ -90,7 +111,6 @@ namespace Compartmental
         tresult PLUGIN_API EvaluatorController::setComponentState (IBStream* state)
         {
             // we receive the current state of the component (processor part)
-            // we read only the gain and bypass value...
             if (state)
             {
                 float savedVolume = 0.f;
@@ -123,24 +143,136 @@ namespace Compartmental
                     setParamNormalized (kBitDepthId, savedBitDepth);
                 }
                 
-                memset(defaultMessageText, 0, sizeof(char)*128);
+                memset(defaultExpression, 0, sizeof(char)*128);
                 int8 byteOrder;
                 if ((state->read (&byteOrder, sizeof (int8))) == kResultTrue)
                 {
-                    state->read (defaultMessageText, sizeof(char)*128);
+                    state->read (defaultExpression, sizeof(char)*128);
                     
                     // if the byteorder doesn't match, byte swap the text array ...
                     if (byteOrder != BYTEORDER)
                     {
                         for (int32 i = 0; i < 128; i++)
                         {
-                            SWAP_16 (defaultMessageText[i])
+                            SWAP_16 (defaultExpression[i])
                         }
                     }
                 }
             }
 
             return kResultOk;
+        }
+        
+        tresult PLUGIN_API EvaluatorController::setParamNormalized (ParamID tag, ParamValue value)
+        {
+            tresult res = EditControllerEx1::setParamNormalized (tag, value);
+            if (res == kResultOk) // preset change
+            {
+                if ( tag == kPresetId )
+                {
+                    int32 program = (int32)parameters.getParameter (tag)->toPlain (value);
+                    const EvaluatorProcessor::Preset& preset = EvaluatorProcessor::presets[program];
+                    setDefaultExpression(preset.expression);
+                    sendTextMessage(preset.expression);
+                    for (int32 i = 0; i < viewsArray.total (); i++)
+                    {
+                        if (viewsArray.at (i))
+                        {
+                            viewsArray.at (i)->messageTextChanged();
+                        }
+                    }
+                    setParamNormalized(kVolumeId, preset.volume);
+                    setParamNormalized(kBitDepthId, preset.bitDepth);
+                    componentHandler->restartComponent (kParamValuesChanged);
+                }
+                else
+                {
+                    for (int32 i = 0; i < viewsArray.total (); i++)
+                    {
+                        if (viewsArray.at (i))
+                        {
+                            viewsArray.at (i)->update (tag, value);
+                        }
+                    }
+                }
+            }
+            return res;
+        }
+        
+        //-----------------------------------------------------------------------------
+        int32 PLUGIN_API EvaluatorController::getProgramListCount ()
+        {
+            return 1;
+        }
+        
+        //-----------------------------------------------------------------------------
+        tresult PLUGIN_API EvaluatorController::getProgramListInfo (int32 listIndex, ProgramListInfo& info /*out*/)
+        {
+            Parameter* param = parameters.getParameter (kPresetId);
+            if (param && listIndex == 0)
+            {
+                info.id = kPresetId;
+                info.programCount = (int32)param->toPlain (1) + 1;
+                UString name (info.name, 128);
+                name.fromAscii("Presets");
+                return kResultTrue;
+            }
+            return kResultFalse;
+        }
+        
+        //-----------------------------------------------------------------------------
+        tresult PLUGIN_API EvaluatorController::getProgramName (ProgramListID listId, int32 programIndex, String128 name /*out*/)
+        {
+            if (listId == kPresetId)
+            {
+                Parameter* param = parameters.getParameter (kPresetId);
+                if (param)
+                {
+                    ParamValue normalized = param->toNormalized (programIndex);
+                    param->toString (normalized, name);
+                    return kResultTrue;
+                }
+            }
+            return kResultFalse;
+        }
+        
+        //------------------------------------------------------------------------
+        void EvaluatorController::addDependentView (EvaluatorEditor* view)
+        {
+            viewsArray.add (view);
+        }
+        
+        //------------------------------------------------------------------------
+        void EvaluatorController::removeDependentView (EvaluatorEditor* view)
+        {
+            for (int32 i = 0; i < viewsArray.total (); i++)
+            {
+                if (viewsArray.at (i) == view)
+                {
+                    viewsArray.removeAt (i);
+                    break;
+                }
+            }
+        }
+        
+        //------------------------------------------------------------------------
+        void EvaluatorController::editorAttached (EditorView* editor)
+        {
+            EvaluatorEditor* view = dynamic_cast<EvaluatorEditor*> (editor);
+            if (view)
+            {
+                addDependentView (view);
+            }
+        }
+        
+        //------------------------------------------------------------------------
+        void EvaluatorController::editorRemoved (EditorView* editor)
+        {
+            EvaluatorEditor* view = dynamic_cast<EvaluatorEditor*> (editor);
+            if (view)
+            {
+                removeDependentView (view);
+            }
         }
     
     } // namespace Vst

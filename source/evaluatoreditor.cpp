@@ -259,7 +259,7 @@ namespace Compartmental {
             EvaluatorController* controller = dynamic_cast<EvaluatorController*> (getController ());
             if (controller)
             {
-                textEdit->setText (controller->getDefaultMessageText());
+                textEdit->setText (controller->getDefaultExpression());
             }
         }
         
@@ -327,7 +327,7 @@ namespace Compartmental {
                     EvaluatorController* controller = dynamic_cast<EvaluatorController*> (getController ());
                     if (controller)
                     {                        
-                        controller->setDefaultMessageText (textEdit->getText());
+                        controller->setDefaultExpression(textEdit->getText());
                         controller->sendTextMessage(textEdit->getText());
                     }
                 }
