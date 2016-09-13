@@ -51,6 +51,12 @@ private:
         return (unsigned int)(s*hr + hr);
     }
     
+    unsigned int Freq(unsigned int v)
+    {
+        double f = round(3 * pow(2.0, (double)v/12.0));
+        return (unsigned int)f;
+    }
+    
     // Parse a number or an expression in parenthesis
     unsigned int ParseAtom(EVAL_CHAR*& expr)
     {
@@ -82,6 +88,13 @@ private:
             expr++;
         }
         
+        bool freq = false;
+        if (*expr == 'f')
+        {
+            freq = true;
+            expr++;
+        }
+        
         // Check if there is parenthesis
         if(*expr == '(')
         {
@@ -101,6 +114,10 @@ private:
             if ( sine )
             {
                 v = Sin(v);
+            }
+            if ( freq )
+            {
+                v = Freq(v);
             }
             
             return v;
@@ -143,6 +160,10 @@ private:
         if ( sine )
         {
             v = Sin(v);
+        }
+        if ( freq )
+        {
+            v = Freq(v);
         }
         
         return v;
