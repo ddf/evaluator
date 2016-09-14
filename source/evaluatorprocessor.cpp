@@ -53,14 +53,22 @@ namespace Compartmental
         const EvaluatorProcessor::Preset EvaluatorProcessor::presets[] =
         {
             // name, expression, volume, bit depth
-            { "saw wave", "t*128", 0.1f, 0.45f },
-            { "square wave", "(r-1) * ((m/10)%2)", 0.1f, 0.45f },
-            { "sine wave", "$(t*128)", 0.1f, 0.45f },
-            { "amplitude modulation", "t*64 | $(t)", 0.1f, 0.45f },
-            { "frequency modulation", "t*64 + $(t*2)", 0.1f, 0.45f },
-            { "bouncing balls", "$(t*(1000 - m%500))", 0.1f, 0.45f },
-            { "overtone waterfall", "t*(128*(32-(m/50)%32)) | t*(128*((m/100)%64)) | t*128", 0.1f, 0.5f },
-            { "computer music" , "$(t*f(n + 7*((m/125)%3) - 3*((m/125)%5) + 2*((m/125)%7)))", 0.3f, 0.35f }
+            { "saw wave", "t*128", 0.1f, 15.0f/kBitDepthMax },
+            { "square wave", "(r-1) * ((m/10)%2)", 0.1f, 15.0f/kBitDepthMax },
+            { "sine wave", "$(t*128)", 0.1f, 15.0f/kBitDepthMax },
+            { "amplitude modulation", "t*64 | $(t)", 0.1f, 15.0f/kBitDepthMax },
+            { "frequency modulation", "t*64 + $(t*2)", 0.1f, 15.0f/kBitDepthMax },
+            { "bouncing balls", "$(t*(1000 - m%500))", 0.1f, 15.0f/kBitDepthMax },
+            { "little ditty", "(t*128 + $(t)) | t>>(t%(8*r))/r | t>>128", 0.1f, 15.0f/kBitDepthMax },
+            { "aggressive texture", "(t*64 + $(t^$(m/2000))*$(m/2000)) | t*32", 0.1f, 15.0f/kBitDepthMax },
+            { "overtone waterfall", "t*(128*(32-(m/50)%32)) | t*(128*((m/100)%64)) | t*128", 0.1f, 17.0f/kBitDepthMax },
+            { "computer music" , "$(t*f(n + 7*((m/125)%3) - 3*((m/125)%5) + 2*((m/125)%7)))", 0.1f, 11.0f/kBitDepthMax },
+            { "blurp", "(t<<t/(1024*8) | t>>t/16 & t>>t/32) / (t%(t/512+1) + 1) * 32", 0.1f, 15.0f/kBitDepthMax },
+            { "garbage trash", "(r/2 - (256*(m/16%16)) + (t*(m/16%16)%(512*(m/16%16)+1))) * (m/16)", 0.1f, 15.0f/kBitDepthMax },
+            { "nonsense can", "(1 + $(m)%32) ^ (t*128 & t*64 & t*32) | (p/16)<<p%4 | $(p/128)>>p%4", 0.1f, 15.0f/kBitDepthMax },
+            { "ellipse", "(m/250+1)*$(t*128) | (m/500+1)*$((t+r/2*128))", 0.1f, 12.0f/kBitDepthMax },
+            { "moving average", "p + ( ((t+1)*256 ^ (t+1)*64 & (t+1)*32) - p)/(t+1)", 0.1f, 15.0f/kBitDepthMax },
+            { "oink oink ribbit", "(t*128 | t*17>>2) | ((t-4500)*64 | (t-4500)*5>>3) | p<<12", 0.3f, 18.0f/kBitDepthMax }
         };
         
         const int32 EvaluatorProcessor::numPresets = sizeof(EvaluatorProcessor::presets)/sizeof(EvaluatorProcessor::Preset);
@@ -210,6 +218,7 @@ namespace Compartmental
                                 mNoteOnVelocity = event.noteOn.velocity;
                                 mTick = 0;
                                 mEvaluator->SetVar('n', mNoteOnPitch);
+                                mEvaluator->SetVar('p', 0);
                             }
                             break;
                                 
@@ -238,11 +247,14 @@ namespace Compartmental
                 const float amp = mNoteOnPitch >= 0 ? mVolume*mNoteOnVelocity : 0;
                 const uint64 mdenom = (uint64)(processSetup.sampleRate/1000);
                 const bool generate = amp > 0;
+                const uint32 p = mEvaluator->GetVar('p');
                 
                 for (int32 channel = 0; channel < numChannels; channel++)
                 {
                     float* inputChannel = data.inputs[0].channelBuffers32[channel];
                     float* outputChannel = data.outputs[0].channelBuffers32[channel];
+                    
+                    if ( channel > 0 ) mEvaluator->SetVar('p', p);
                     
                     for (int32 sample = 0; sample < data.numSamples; sample++)
                     {
@@ -254,6 +266,7 @@ namespace Compartmental
                             mEvaluator->SetVar('m', tempTick/mdenom);
                             mEvaluator->SetVar('r', range);
                             unsigned int result = mEvaluator->Eval(mExpression);
+                            mEvaluator->SetVar('p', result);
                             evalSample = amp * (((float)(result%range)) - h) / h;
                         }
                         outputChannel[sample] = inputChannel[sample] + evalSample;
