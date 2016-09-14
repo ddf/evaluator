@@ -92,7 +92,7 @@ namespace Compartmental
                     .defaultNormalizedValue = 0.5,
                     .flags = ParameterInfo::kCanAutomate
                 };
-                parameters.addParameter( new RangeParameter( bitInfo, 1, 31 ) );
+                parameters.addParameter( new RangeParameter( bitInfo, kBitDepthMin, kBitDepthMax ) );
             }
             return kResultTrue;
         }

@@ -229,7 +229,11 @@ namespace Compartmental
                 getBusArrangement (kOutput, 0, arr);
                 int32 numChannels = SpeakerArr::getChannelCount (arr);
 
-                const int32 range = 1<<(int32)(mBitDepth*30 + 1);
+                // the stepCount and shift calculations match how RangeParameter does it.
+                // ensures that we use same value as is displayed in the UI
+                const int32 stepCount = kBitDepthMax-kBitDepthMin;
+                const int32 shift = std::min<int32> (stepCount, (int32)(mBitDepth * (stepCount + 1))) + kBitDepthMin;
+                const int32 range = 1<<shift;
                 const float h = range / 2;
                 const float amp = mNoteOnPitch >= 0 ? mVolume*mNoteOnVelocity : 0;
                 const uint64 mdenom = (uint64)(processSetup.sampleRate/1000);
