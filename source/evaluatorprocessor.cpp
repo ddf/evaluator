@@ -59,7 +59,8 @@ namespace Compartmental
             { "amplitude modulation", "t*64 | $(t)", 0.1f, 0.45f },
             { "frequency modulation", "t*64 + $(t*2)", 0.1f, 0.45f },
             { "bouncing balls", "$(t*(1000 - m%500))", 0.1f, 0.45f },
-            { "overtone waterfall", "t*(128*(32-(m/50)%32)) | t*(128*((m/100)%64)) | t*128", 0.1f, 0.5f }
+            { "overtone waterfall", "t*(128*(32-(m/50)%32)) | t*(128*((m/100)%64)) | t*128", 0.1f, 0.5f },
+            { "computer music" , "$(t*f(n + 7*((m/125)%3) - 3*((m/125)%5) + 2*((m/125)%7)))", 0.3f, 0.35f }
         };
         
         const int32 EvaluatorProcessor::numPresets = sizeof(EvaluatorProcessor::presets)/sizeof(EvaluatorProcessor::Preset);
