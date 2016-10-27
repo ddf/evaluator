@@ -56,6 +56,7 @@ namespace Compartmental
             { "saw wave", "t*128", 0.1f, 15.0f/kBitDepthMax },
             { "square wave", "(r-1) * ((m/10)%2)", 0.1f, 15.0f/kBitDepthMax },
             { "sine wave", "$(t*128)", 0.1f, 15.0f/kBitDepthMax },
+            { "triangle wave", "(t*fn)*((t*fn/r)%2) + (r-t*fn-1)*(1 - (t*fn/r)%2)", 0.1f, 13.0f/kBitDepthMax },
             { "amplitude modulation", "t*64 | $(t)", 0.1f, 15.0f/kBitDepthMax },
             { "frequency modulation", "t*64 + $(t*2)", 0.1f, 15.0f/kBitDepthMax },
             { "bouncing balls", "$(t*(1000 - m%500))", 0.1f, 15.0f/kBitDepthMax },
@@ -68,7 +69,8 @@ namespace Compartmental
             { "nonsense can", "(1 + $(m)%32) ^ (t*128 & t*64 & t*32) | (p/16)<<p%4 | $(p/128)>>p%4", 0.1f, 15.0f/kBitDepthMax },
             { "ellipse", "(m/250+1)*$(t*128) | (m/500+1)*$((t+r/2*128))", 0.1f, 12.0f/kBitDepthMax },
             { "moving average", "p + ( ((t+1)*256 ^ (t+1)*64 & (t+1)*32) - p)/(t+1)", 0.1f, 15.0f/kBitDepthMax },
-            { "oink oink ribbit", "(t*128 | t*17>>2) | ((t-4500)*64 | (t-4500)*5>>3) | p<<12", 0.3f, 18.0f/kBitDepthMax }
+            { "oink oink ribbit", "(t*128 | t*17>>2) | ((t-4500)*64 | (t-4500)*5>>3) | p<<12", 0.3f, 18.0f/kBitDepthMax },
+            { "rhythmic glitch sine", "$(t*fn) | t*n/10>>4 ^ p>>(m/250%12)", 0.15f, 13.0f/kBitDepthMax }
         };
         
         const int32 EvaluatorProcessor::numPresets = sizeof(EvaluatorProcessor::presets)/sizeof(EvaluatorProcessor::Preset);
