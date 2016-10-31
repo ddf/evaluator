@@ -53,12 +53,12 @@ namespace Compartmental
         const EvaluatorProcessor::Preset EvaluatorProcessor::presets[] =
         {
             // name, expression, volume, bit depth
-            { "saw wave", "t*128", 0.1f, 15.0f/kBitDepthMax },
-            { "square wave", "(r-1) * ((m/10)%2)", 0.1f, 15.0f/kBitDepthMax },
-            { "sine wave", "$(t*128)", 0.1f, 15.0f/kBitDepthMax },
+            { "saw wave", "t*fn", 0.1f, 15.0f/kBitDepthMax },
+            { "square wave", "#(t*fn)", 0.1f, 15.0f/kBitDepthMax },
+            { "sine wave", "$(t*fn)", 0.1f, 15.0f/kBitDepthMax },
             { "triangle wave", "(t*fn)*((t*fn/r)%2) + (r-t*fn-1)*(1 - (t*fn/r)%2)", 0.1f, 13.0f/kBitDepthMax },
-            { "amplitude modulation", "t*64 | $(t)", 0.1f, 15.0f/kBitDepthMax },
-            { "frequency modulation", "t*64 + $(t*2)", 0.1f, 15.0f/kBitDepthMax },
+            { "amplitude modulation", "t*fn | $(t)", 0.1f, 15.0f/kBitDepthMax },
+            { "frequency modulation", "t*fn + $(t*2)", 0.1f, 15.0f/kBitDepthMax },
             { "bouncing balls", "$(t*(1000 - m%500))", 0.1f, 15.0f/kBitDepthMax },
             { "little ditty", "(t*128 + $(t)) | t>>(t%(8*r))/r | t>>128", 0.1f, 15.0f/kBitDepthMax },
             { "aggressive texture", "(t*64 + $(t^$(m/2000))*$(m/2000)) | t*32", 0.1f, 15.0f/kBitDepthMax },

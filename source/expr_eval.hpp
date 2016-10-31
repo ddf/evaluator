@@ -51,6 +51,12 @@ private:
         return (unsigned int)(s*hr + hr);
     }
     
+    unsigned int Square(unsigned int v)
+    {
+        const unsigned int r = _vars['r'];
+        return v%r < r/2 ? 0 : r-1;
+    }
+    
     unsigned int Freq(unsigned int v)
     {
         double f = round(3 * pow(2.0, (double)v/12.0));
@@ -88,6 +94,14 @@ private:
             expr++;
         }
         
+        bool square = false;
+        
+        if ( *expr == '#' )
+        {
+            square = true;
+            expr++;
+        }
+        
         bool freq = false;
         if (*expr == 'f')
         {
@@ -114,6 +128,10 @@ private:
             if ( sine )
             {
                 v = Sin(v);
+            }
+            if ( square )
+            {
+                v = Square(v);
             }
             if ( freq )
             {
@@ -160,6 +178,10 @@ private:
         if ( sine )
         {
             v = Sin(v);
+        }
+        if ( square )
+        {
+            v = Square(v);
         }
         if ( freq )
         {
