@@ -84,6 +84,7 @@ namespace Compartmental
         , mNoteOnVelocity(0)
         , mBypass (false)
         , mBitDepth(0.4f)
+        , mTick(0)
         {
             setControllerClass (EvaluatorControllerUID);
         }
@@ -202,6 +203,9 @@ namespace Compartmental
                 }
             }
             
+            // grab this now, mTick might change from note events
+            const uint64 startTick = mTick;
+            
             //---2) Read input events-------------
             IEventList* eventList = data.inputEvents;
             if (eventList)
@@ -227,6 +231,7 @@ namespace Compartmental
                             case Event::kNoteOffEvent:
                             {
                                 mNoteOnPitch = -1;
+                                mTick = 0;
                             }
                             break;
                         }
@@ -274,8 +279,27 @@ namespace Compartmental
                         outputChannel[sample] = inputChannel[sample] + evalSample;
                     }
                 }
-                mTick += data.numSamples;
-            }	
+                if ( mNoteOnPitch >= 0 )
+                {
+                    mTick += data.numSamples;
+                }
+            }
+            
+            //---3) Write outputs parameter changes-----------
+            IParameterChanges* outParamChanges = data.outputParameterChanges;
+            // a new value of VuMeter will be send to the host
+            // (the host will send it back in sync to our controller for updating our editor)
+            if (outParamChanges && mTick != startTick)
+            {
+                int32 index = 0;
+                IParamValueQueue* paramQueue = outParamChanges->addParameterData (kEvalTId, index);
+                if (paramQueue)
+                {
+                    int32 index2 = 0;
+                    paramQueue->addPoint (0, (double)mTick/kMaxInt64u, index2);
+                }
+            }
+            
             return kResultTrue;
         }
 

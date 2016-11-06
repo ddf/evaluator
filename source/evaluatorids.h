@@ -42,6 +42,10 @@ namespace Vst {
 
 // parameter tags
 enum {
+    // readonly parameters to give UI feedback on expression state
+    kEvalTId = 0,
+    
+    // automation parameters
 	kVolumeId = 100,
 	kBypassId = 101,
     kBitDepthId = 102,

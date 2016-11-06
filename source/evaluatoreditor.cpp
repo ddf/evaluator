@@ -25,6 +25,7 @@ namespace Compartmental {
         //------------------------------------------------------------------------
         EvaluatorEditor::EvaluatorEditor (void* controller)
         : VSTGUIEditor (controller)
+        , timeLabel(0)
         , textEdit (0)
         , volumeSlider(0)
         , bitDepthSlider(0)
@@ -169,9 +170,21 @@ namespace Compartmental {
             CBitmap* sliderHandle = new CBitmap ("vslider_handle.png");
             CBitmap* sliderBackground = new CBitmap ("vslider_background.png");
             
+            float layoutY = 10;
+            
+            //-- labels for expression variables
+            CRect size(0, 0, 100, 18);
+            size.offset(10, 0);
+            timeLabel = new CTextLabel(size, "t=0", 0, kNoFrame);
+            timeLabel->setBackColor(kTransparentCColor);
+            timeLabel->setFont(kSystemFont);
+            timeLabel->setFontColor(kBlackCColor);
+            timeLabel->setHoriAlign(kLeftText);
+            frame->addView(timeLabel);
+            
             //--- Text input for the expression ------
-            CRect size (0, 0, kEditorWidth - 20, 20);
-            size.offset (10, 10);
+            size (0, 0, kEditorWidth - 20, 20);
+            size.offset (10, layoutY + 10);
             textEdit = new CTextEdit (size, this, kExpressionTextTag, "t*128", 0, k3DOut);
             textEdit->setBackColor(kWhiteCColor);
             textEdit->setFont(kSystemFont);
@@ -182,7 +195,7 @@ namespace Compartmental {
             {
                 //---Volume Label--------
                 size (0, 0, 50, 18);
-                size.offset (10, 40);
+                size.offset (10, layoutY + 40);
                 CTextLabel* label = new CTextLabel (size, "Volume", 0, kNoFrame);
                 label->setBackColor(kTransparentCColor);
                 label->setFont(kSystemFont);
@@ -192,7 +205,7 @@ namespace Compartmental {
                 //---Volume slider-------
                 
                 size (0, 0, 25, 122);
-                size.offset (20, 60);
+                size.offset (20, layoutY + 60);
                 CPoint offset;
                 CPoint offsetHandle (0, 4);
                 volumeSlider = new CVerticalSlider (size, this, kVolumeTag,
@@ -206,7 +219,7 @@ namespace Compartmental {
             {
                 //---Bit Depth Label--------
                 size(0,0,55,18);
-                size.offset(70, 40);
+                size.offset(70, layoutY + 40);
                 CTextLabel* label = new CTextLabel(size, "Bit Depth", 0, kNoFrame);
                 label->setBackColor(kTransparentCColor);
                 label->setFont(kSystemFont);
@@ -215,7 +228,7 @@ namespace Compartmental {
                 
                 //---Bit Depth Slider--------
                 size(0,0,25,122);
-                size.offset(90, 60);
+                size.offset(90, layoutY + 60);
                 CPoint offset;
                 CPoint offsetHandle(0,4);
                 bitDepthSlider = new CVerticalSlider(size, this, kBitDepthTag,
@@ -278,6 +291,7 @@ namespace Compartmental {
                 background = 0;
             }
             
+            timeLabel = 0;
             textEdit = 0;
             volumeSlider = 0;
             bitDepthSlider = 0;
@@ -455,6 +469,17 @@ namespace Compartmental {
                 }
                 break;
                     
+                    
+                case kEvalTId:
+                {
+                    if ( timeLabel )
+                    {
+                        uint64 time = (uint64)(value*kMaxInt64u);
+                        char text[128];
+                        sprintf(text, "t=%llu",time);
+                        timeLabel->setText(text);
+                    }
+                }
                     
                     //------------------
                 //case kVuPPMId:

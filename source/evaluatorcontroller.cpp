@@ -93,6 +93,8 @@ namespace Compartmental
                     .flags = ParameterInfo::kCanAutomate
                 };
                 parameters.addParameter( new RangeParameter( bitInfo, kBitDepthMin, kBitDepthMax ) );
+                
+                parameters.addParameter(STR16("EvalT"), STR16("t"), 0, 0, ParameterInfo::kIsReadOnly, kEvalTId);
             }
             return kResultTrue;
         }
