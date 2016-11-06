@@ -53,6 +53,7 @@ namespace Compartmental {
         protected:
             CBitmap*    background;
             CTextLabel* timeLabel;
+            CTextLabel* millisLabel;
             CTextEdit* textEdit;
             CSlider*   volumeSlider;
             CSlider*   bitDepthSlider;

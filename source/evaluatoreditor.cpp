@@ -26,6 +26,7 @@ namespace Compartmental {
         EvaluatorEditor::EvaluatorEditor (void* controller)
         : VSTGUIEditor (controller)
         , timeLabel(0)
+        , millisLabel(0)
         , textEdit (0)
         , volumeSlider(0)
         , bitDepthSlider(0)
@@ -182,6 +183,14 @@ namespace Compartmental {
             timeLabel->setHoriAlign(kLeftText);
             frame->addView(timeLabel);
             
+            size.offset(size.getWidth()+10, 0);
+            millisLabel = new CTextLabel(size, "m=0", 0, kNoFrame);
+            millisLabel->setBackColor(kTransparentCColor);
+            millisLabel->setFont(kSystemFont);
+            millisLabel->setFontColor(kBlackCColor);
+            millisLabel->setHoriAlign(kLeftText);
+            frame->addView(millisLabel);
+            
             //--- Text input for the expression ------
             size (0, 0, kEditorWidth - 20, 20);
             size.offset (10, layoutY + 10);
@@ -292,6 +301,7 @@ namespace Compartmental {
             }
             
             timeLabel = 0;
+            millisLabel = 0;
             textEdit = 0;
             volumeSlider = 0;
             bitDepthSlider = 0;
@@ -480,6 +490,19 @@ namespace Compartmental {
                         timeLabel->setText(text);
                     }
                 }
+                break;
+                    
+                case kEvalMId:
+                {
+                    if ( millisLabel )
+                    {
+                        int32 millis = (int32)(value*kMaxInt32);
+                        char text[128];
+                        sprintf(text, "m=%d",millis);
+                        millisLabel->setText(text);
+                    }
+                }
+                break;
                     
                     //------------------
                 //case kVuPPMId:

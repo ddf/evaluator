@@ -205,6 +205,7 @@ namespace Compartmental
             
             // grab this now, mTick might change from note events
             const uint64 startTick = mTick;
+            const int startM = mEvaluator->GetVar('m');
             
             //---2) Read input events-------------
             IEventList* eventList = data.inputEvents;
@@ -289,14 +290,28 @@ namespace Compartmental
             IParameterChanges* outParamChanges = data.outputParameterChanges;
             // a new value of VuMeter will be send to the host
             // (the host will send it back in sync to our controller for updating our editor)
-            if (outParamChanges && mTick != startTick)
+            if (outParamChanges )
             {
-                int32 index = 0;
-                IParamValueQueue* paramQueue = outParamChanges->addParameterData (kEvalTId, index);
-                if (paramQueue)
+                if ( mTick != startTick )
                 {
-                    int32 index2 = 0;
-                    paramQueue->addPoint (0, (double)mTick/kMaxInt64u, index2);
+                    int32 index = 0;
+                    IParamValueQueue* paramQueue = outParamChanges->addParameterData (kEvalTId, index);
+                    if (paramQueue)
+                    {
+                        int32 index2 = 0;
+                        paramQueue->addPoint (0, (double)mTick/kMaxInt64u, index2);
+                    }
+                }
+                
+                if ( mEvaluator->GetVar('m') != startM )
+                {
+                    int32 index = 0;
+                    auto paramQueue = outParamChanges->addParameterData(kEvalMId, index);
+                    if ( paramQueue )
+                    {
+                        int32 index2 = 0;
+                        paramQueue->addPoint(0, (float)mEvaluator->GetVar('m')/kMaxInt32, index2);
+                    }
                 }
             }
             
