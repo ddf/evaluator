@@ -33,6 +33,7 @@ enum EXPR_EVAL_ERR {
 };
 
 typedef char EVAL_CHAR;
+typedef uint64 EvalValue;
 
 class ExprEval {
 private:
@@ -40,31 +41,31 @@ private:
     EVAL_CHAR* _err_pos;
     unsigned int _paren_count;
     
-    std::map<char, unsigned int> _vars;
+    std::map<EVAL_CHAR, EvalValue> _vars;
     
-    unsigned int Sin(unsigned int v)
+    EvalValue Sin(EvalValue v)
     {
-        unsigned int r = _vars['r'];
-        unsigned int hr = r/2;
+        EvalValue r = _vars['r'];
+        EvalValue hr = r/2;
         r += 1;
-        double s = sin(2 * M_PI * ((float)(v%r)/r));
-        return (unsigned int)(s*hr + hr);
+        double s = sin(2 * M_PI * ((double)(v%r)/r));
+        return EvalValue(s*hr + hr);
     }
     
-    unsigned int Square(unsigned int v)
+    EvalValue Square(EvalValue v)
     {
-        const unsigned int r = _vars['r'];
+        const EvalValue r = _vars['r'];
         return v%r < r/2 ? 0 : r-1;
     }
     
-    unsigned int Freq(unsigned int v)
+    EvalValue Freq(EvalValue v)
     {
         double f = round(3 * pow(2.0, (double)v/12.0));
-        return (unsigned int)f;
+        return (EvalValue)f;
     }
     
     // Parse a number or an expression in parenthesis
-    unsigned int ParseAtom(EVAL_CHAR*& expr)
+    EvalValue ParseAtom(EVAL_CHAR*& expr)
     {
         // Skip spaces
         while( isspace( *expr ) )
@@ -114,7 +115,7 @@ private:
         {
             expr++;
             _paren_count++;
-            unsigned int res = ParseOR(expr);
+            EvalValue res = ParseOR(expr);
             if(*expr != ')')
             {
                 // Unmatched opening parenthesis
@@ -124,7 +125,7 @@ private:
             }
             expr++;
             _paren_count--;
-            unsigned int v = negative ? -res : res;
+            EvalValue v = negative ? -res : res;
             if ( sine )
             {
                 v = Sin(v);
@@ -142,9 +143,9 @@ private:
         }
         
         // It should be a number; convert it to unsigned int
-        char* end_ptr;
-        unsigned int res = 0;
-        char c = *expr;
+        EVAL_CHAR* end_ptr;
+        EvalValue res = 0;
+        EVAL_CHAR c = *expr;
         if ( isalpha(c) )
         {
             auto iter = _vars.find(c);
@@ -162,7 +163,7 @@ private:
         }
         else
         {
-            res = (unsigned int)strtoul(expr, &end_ptr, 10);
+            res = (EvalValue)strtoull(expr, &end_ptr, 10);
         }
         
         if(end_ptr == expr)
@@ -174,7 +175,7 @@ private:
         }
         // Advance the pointer and return the result
         expr = end_ptr;
-        unsigned int v = negative ? -res : res;
+        EvalValue v = negative ? -res : res;
         if ( sine )
         {
             v = Sin(v);
@@ -192,9 +193,9 @@ private:
     }
     
     // Parse multiplication and division
-    unsigned int ParseFactors(EVAL_CHAR*& expr)
+    EvalValue ParseFactors(EVAL_CHAR*& expr)
     {
-        unsigned int num1 = ParseAtom(expr);
+        EvalValue num1 = ParseAtom(expr);
         for(;;)
         {
             // Skip spaces
@@ -211,7 +212,7 @@ private:
                 return num1;
             }
             expr++;
-            unsigned int num2 = ParseAtom(expr);
+            EvalValue num2 = ParseAtom(expr);
             // Perform the saved operation
             if(op == '/')
             {
@@ -242,9 +243,9 @@ private:
     }
     
     // Parse addition and subtraction
-    unsigned int ParseSummands(EVAL_CHAR*& expr)
+    EvalValue ParseSummands(EVAL_CHAR*& expr)
     {
-        unsigned int num1 = ParseFactors(expr);
+        EvalValue num1 = ParseFactors(expr);
         for(;;)
         {
             // Skip spaces
@@ -258,7 +259,7 @@ private:
                 return num1;
             }
             expr++;
-            unsigned int num2 = ParseFactors(expr);
+            EvalValue num2 = ParseFactors(expr);
             switch( op )
             {
                 case '-': num1 -= num2; break;
@@ -268,9 +269,9 @@ private:
     }
     
     // Parse bitshifting << and >>
-    unsigned int ParseBitshift(EVAL_CHAR*& expr)
+    EvalValue ParseBitshift(EVAL_CHAR*& expr)
     {
-        unsigned int num1 = ParseSummands(expr);
+        EvalValue num1 = ParseSummands(expr);
         for(;;)
         {
             while( isspace(*expr) )
@@ -291,7 +292,7 @@ private:
                 return 0;
             }
             expr++;
-            unsigned int num2 = ParseSummands(expr);
+            EvalValue num2 = ParseSummands(expr);
             switch( op )
             {
                 case '<': num1 <<= num2; break;
@@ -300,9 +301,9 @@ private:
         }
     }
     
-    unsigned int ParseAND(EVAL_CHAR*& expr)
+    EvalValue ParseAND(EVAL_CHAR*& expr)
     {
-        unsigned int num1 = ParseBitshift(expr);
+        EvalValue num1 = ParseBitshift(expr);
         for(;;)
         {
             while (isspace(*expr) )
@@ -315,14 +316,14 @@ private:
                 return num1;
             }
             expr++;
-            unsigned int num2 = ParseBitshift(expr);
+            EvalValue num2 = ParseBitshift(expr);
             num1 &= num2;
         }
     }
     
-    unsigned int ParseXOR(EVAL_CHAR*& expr)
+    EvalValue ParseXOR(EVAL_CHAR*& expr)
     {
-        unsigned int num1 = ParseAND(expr);
+        EvalValue num1 = ParseAND(expr);
         for(;;)
         {
             while (isspace(*expr) )
@@ -335,14 +336,14 @@ private:
                 return num1;
             }
             expr++;
-            unsigned int num2 = ParseAND(expr);
+            EvalValue num2 = ParseAND(expr);
             num1 ^= num2;
         }
     }
     
-    unsigned int ParseOR(EVAL_CHAR*& expr)
+    EvalValue ParseOR(EVAL_CHAR*& expr)
     {
-        unsigned int num1 = ParseXOR(expr);
+        EvalValue num1 = ParseXOR(expr);
         for(;;)
         {
             while (isspace(*expr) )
@@ -355,27 +356,27 @@ private:
                 return num1;
             }
             expr++;
-            unsigned int num2 = ParseXOR(expr);
+            EvalValue num2 = ParseXOR(expr);
             num1 |= num2;
         }
     }
     
 public:
-    void SetVar( char var, unsigned int val )
+    void SetVar( EVAL_CHAR var, EvalValue val )
     {
         _vars[var] = val;
     }
     
-    unsigned int GetVar( char var )
+    EvalValue GetVar( EVAL_CHAR var )
     {
         return _vars[var];
     }
     
-    unsigned int Eval(EVAL_CHAR* expr)
+    EvalValue Eval(EVAL_CHAR* expr)
     {
         _paren_count = 0;
         _err = EEE_NO_ERROR;
-        unsigned int res = ParseOR(expr);
+        EvalValue res = ParseOR(expr);
         // Now, expr should point to '\0', and _paren_count should be zero
         if(_paren_count != 0 || *expr == ')')
         {

@@ -55,7 +55,7 @@ enum {
 };
     
     static const int kBitDepthMin(1);
-    static const int kBitDepthMax(31);
+    static const int kBitDepthMax(30);
 
 // unique class ids
 static const FUID EvaluatorProcessorUID (0x0CDBB669, 0x85D548A9, 0xBFD83719, 0x09D24BB3);

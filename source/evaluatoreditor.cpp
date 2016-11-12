@@ -517,9 +517,9 @@ namespace Compartmental {
                 {
                     if ( millisLabel )
                     {
-                        int32 millis = (int32)(value*kMaxInt32);
+                        uint64 millis = (uint64)(value*kMaxInt64u);
                         char text[128];
-                        sprintf(text, "m=%d",millis);
+                        sprintf(text, "m=%llu",millis);
                         millisLabel->setText(text);
                     }
                 }
@@ -529,9 +529,9 @@ namespace Compartmental {
                 {
                     if ( rangeLabel )
                     {
-                        int32 range = (int32)(value*kMaxInt32);
+                        uint64 range = (uint64)(value*kMaxInt64u);
                         char text[128];
-                        sprintf(text, "r=%d", range);
+                        sprintf(text, "r=%llu", range);
                         rangeLabel->setText(text);
                     }
                 }

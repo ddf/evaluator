@@ -216,9 +216,9 @@ namespace Compartmental
             }
             
             // grab this now, mTick might change from note events
-            const uint64 startTick = mTick;
-            const int startM = mEvaluator->GetVar('m');
-            const int startR = mEvaluator->GetVar('r');
+            const EvalValue startTick = mTick;
+            const EvalValue startM = mEvaluator->GetVar('m');
+            const EvalValue startR = mEvaluator->GetVar('r');
             
             //---2) Read input events-------------
             IEventList* eventList = data.inputEvents;
@@ -263,32 +263,32 @@ namespace Compartmental
                 // ensures that we use same value as is displayed in the UI
                 const int32 stepCount = kBitDepthMax-kBitDepthMin;
                 const int32 shift = std::min<int32> (stepCount, (int32)(mBitDepth * (stepCount + 1))) + kBitDepthMin;
-                const int32 range = 1<<shift;
+                const EvalValue range = 1<<shift;
                 const float amp = mNoteOnPitch >= 0 ? mVolume*mNoteOnVelocity : 0;
                 const uint64 mdenom = (uint64)(processSetup.sampleRate/1000);
                 const bool generate = amp > 0;
-                const uint32 p = mEvaluator->GetVar('p');
+                const EvalValue p = mEvaluator->GetVar('p');
                 
                 mEvaluator->SetVar('r', range);
                 
-                for (int32 channel = 0; channel < numChannels; channel++)
+                for (uint32 channel = 0; channel < numChannels; channel++)
                 {
                     float* inputChannel = data.inputs[0].channelBuffers32[channel];
                     float* outputChannel = data.outputs[0].channelBuffers32[channel];
                     
                     if ( channel > 0 ) mEvaluator->SetVar('p', p);
                     
-                    for (int32 sample = 0; sample < data.numSamples; sample++)
+                    for (uint32 sample = 0; sample < data.numSamples; sample++)
                     {
                         float evalSample = 0;
                         if ( generate )
                         {
-                            uint64 tempTick = mTick + sample;
+                            EvalValue tempTick = mTick + sample;
                             mEvaluator->SetVar('t', tempTick);
                             mEvaluator->SetVar('m', tempTick/mdenom);
-                            unsigned int result = mEvaluator->Eval(mExpression);
+                            EvalValue result = mEvaluator->Eval(mExpression);
                             mEvaluator->SetVar('p', result);
-                            evalSample = amp * (float)(-1.0 + 2.0*(double)(result%range)/(range-1) );
+                            evalSample = amp * (float)(-1.0 + 2.0*((double)(result%range)/(range-1)) );
                         }
                         outputChannel[sample] = inputChannel[sample] + evalSample;
                     }
@@ -312,12 +312,12 @@ namespace Compartmental
                 
                 if ( mEvaluator->GetVar('m') != startM )
                 {
-                    addOutParam(outParamChanges, kEvalMId, (double)mEvaluator->GetVar('m')/kMaxInt32);
+                    addOutParam(outParamChanges, kEvalMId, (double)mEvaluator->GetVar('m')/kMaxInt64u);
                 }
                 
                 if ( mEvaluator->GetVar('r') != startR )
                 {
-                    addOutParam(outParamChanges, kEvalRId, (double)mEvaluator->GetVar('r')/kMaxInt32);
+                    addOutParam(outParamChanges, kEvalRId, (double)mEvaluator->GetVar('r')/kMaxInt64u);
                 }
             }
             
