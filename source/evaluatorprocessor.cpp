@@ -74,6 +74,18 @@ namespace Compartmental
         };
         
         const int32 EvaluatorProcessor::numPresets = sizeof(EvaluatorProcessor::presets)/sizeof(EvaluatorProcessor::Preset);
+        
+        // helper for adding output parameters for display in the gui
+        static void addOutParam(IParameterChanges* outParams, ParamID id, double value)
+        {
+            int32 index = 0;
+            IParamValueQueue* paramQueue = outParams->addParameterData (id, index);
+            if (paramQueue)
+            {
+                int32 index2 = 0;
+                paramQueue->addPoint (0, value, index2);
+            }
+        }
 
         //-----------------------------------------------------------------------------
         EvaluatorProcessor::EvaluatorProcessor ()
@@ -206,6 +218,7 @@ namespace Compartmental
             // grab this now, mTick might change from note events
             const uint64 startTick = mTick;
             const int startM = mEvaluator->GetVar('m');
+            const int startR = mEvaluator->GetVar('r');
             
             //---2) Read input events-------------
             IEventList* eventList = data.inputEvents;
@@ -251,11 +264,12 @@ namespace Compartmental
                 const int32 stepCount = kBitDepthMax-kBitDepthMin;
                 const int32 shift = std::min<int32> (stepCount, (int32)(mBitDepth * (stepCount + 1))) + kBitDepthMin;
                 const int32 range = 1<<shift;
-                const float h = range / 2;
                 const float amp = mNoteOnPitch >= 0 ? mVolume*mNoteOnVelocity : 0;
                 const uint64 mdenom = (uint64)(processSetup.sampleRate/1000);
                 const bool generate = amp > 0;
                 const uint32 p = mEvaluator->GetVar('p');
+                
+                mEvaluator->SetVar('r', range);
                 
                 for (int32 channel = 0; channel < numChannels; channel++)
                 {
@@ -272,10 +286,9 @@ namespace Compartmental
                             uint64 tempTick = mTick + sample;
                             mEvaluator->SetVar('t', tempTick);
                             mEvaluator->SetVar('m', tempTick/mdenom);
-                            mEvaluator->SetVar('r', range);
                             unsigned int result = mEvaluator->Eval(mExpression);
                             mEvaluator->SetVar('p', result);
-                            evalSample = amp * (((float)(result%range)) - h) / h;
+                            evalSample = amp * (float)(-1.0 + 2.0*(double)(result%range)/(range-1) );
                         }
                         outputChannel[sample] = inputChannel[sample] + evalSample;
                     }
@@ -290,28 +303,21 @@ namespace Compartmental
             IParameterChanges* outParamChanges = data.outputParameterChanges;
             // a new value of VuMeter will be send to the host
             // (the host will send it back in sync to our controller for updating our editor)
-            if (outParamChanges )
+            if ( outParamChanges )
             {
                 if ( mTick != startTick )
                 {
-                    int32 index = 0;
-                    IParamValueQueue* paramQueue = outParamChanges->addParameterData (kEvalTId, index);
-                    if (paramQueue)
-                    {
-                        int32 index2 = 0;
-                        paramQueue->addPoint (0, (double)mTick/kMaxInt64u, index2);
-                    }
+                    addOutParam(outParamChanges, kEvalTId, (double)mTick/kMaxInt64u);
                 }
                 
                 if ( mEvaluator->GetVar('m') != startM )
                 {
-                    int32 index = 0;
-                    auto paramQueue = outParamChanges->addParameterData(kEvalMId, index);
-                    if ( paramQueue )
-                    {
-                        int32 index2 = 0;
-                        paramQueue->addPoint(0, (float)mEvaluator->GetVar('m')/kMaxInt32, index2);
-                    }
+                    addOutParam(outParamChanges, kEvalMId, (double)mEvaluator->GetVar('m')/kMaxInt32);
+                }
+                
+                if ( mEvaluator->GetVar('r') != startR )
+                {
+                    addOutParam(outParamChanges, kEvalRId, (double)mEvaluator->GetVar('r')/kMaxInt32);
                 }
             }
             

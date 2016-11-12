@@ -27,8 +27,10 @@ namespace Compartmental {
         : VSTGUIEditor (controller)
         , timeLabel(0)
         , millisLabel(0)
+        , rangeLabel(0)
         , textEdit (0)
         , volumeSlider(0)
+        , bitDepthLabel(0)
         , bitDepthSlider(0)
         {
             setIdleRate (50); // 1000ms/50ms = 20Hz
@@ -191,6 +193,14 @@ namespace Compartmental {
             millisLabel->setHoriAlign(kLeftText);
             frame->addView(millisLabel);
             
+            size.offset(size.getWidth()+10, 0);
+            rangeLabel = new CTextLabel(size, "r=0", 0, kNoFrame);
+            rangeLabel->setBackColor(kTransparentCColor);
+            rangeLabel->setFont(kSystemFont);
+            rangeLabel->setFontColor(kBlackCColor);
+            rangeLabel->setHoriAlign(kLeftText);
+            frame->addView(rangeLabel);
+            
             //--- Text input for the expression ------
             size (0, 0, kEditorWidth - 20, 20);
             size.offset (10, layoutY + 10);
@@ -229,11 +239,11 @@ namespace Compartmental {
                 //---Bit Depth Label--------
                 size(0,0,55,18);
                 size.offset(70, layoutY + 40);
-                CTextLabel* label = new CTextLabel(size, "Bit Depth", 0, kNoFrame);
-                label->setBackColor(kTransparentCColor);
-                label->setFont(kSystemFont);
-                label->setFontColor(kBlackCColor);
-                frame->addView(label);
+                bitDepthLabel = new CTextLabel(size, "Bit Depth", 0, kNoFrame);
+                bitDepthLabel->setBackColor(kTransparentCColor);
+                bitDepthLabel->setFont(kSystemFont);
+                bitDepthLabel->setFontColor(kBlackCColor);
+                frame->addView(bitDepthLabel);
                 
                 //---Bit Depth Slider--------
                 size(0,0,25,122);
@@ -302,8 +312,10 @@ namespace Compartmental {
             
             timeLabel = 0;
             millisLabel = 0;
+            rangeLabel = 0;
             textEdit = 0;
             volumeSlider = 0;
+            bitDepthLabel = 0;
             bitDepthSlider = 0;
             //vuMeter = 0;
         }
@@ -476,6 +488,15 @@ namespace Compartmental {
                     {
                         bitDepthSlider->setValue((float)value);
                     }
+                    
+                    if ( bitDepthLabel )
+                    {
+                        const int32 stepCount = kBitDepthMax-kBitDepthMin;
+                        const int32 shift = std::min<int32> (stepCount, (int32)(value * (stepCount + 1))) + kBitDepthMin;
+                        char text[128];
+                        sprintf(text, "%d Bit", shift);
+                        bitDepthLabel->setText(text);
+                    }
                 }
                 break;
                     
@@ -500,6 +521,18 @@ namespace Compartmental {
                         char text[128];
                         sprintf(text, "m=%d",millis);
                         millisLabel->setText(text);
+                    }
+                }
+                break;
+                    
+                case kEvalRId:
+                {
+                    if ( rangeLabel )
+                    {
+                        int32 range = (int32)(value*kMaxInt32);
+                        char text[128];
+                        sprintf(text, "r=%d", range);
+                        rangeLabel->setText(text);
                     }
                 }
                 break;

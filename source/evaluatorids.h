@@ -45,6 +45,7 @@ enum {
     // readonly parameters to give UI feedback on expression state
     kEvalTId = 0,
     kEvalMId = 1,
+    kEvalRId = 2,
     
     // automation parameters
 	kVolumeId = 100,
