@@ -55,6 +55,7 @@ namespace Compartmental {
             CTextLabel* timeLabel;
             CTextLabel* millisLabel;
             CTextLabel* rangeLabel;
+            CTextLabel* noteLabel;
             CTextEdit* textEdit;
             CSlider*   volumeSlider;
             CTextLabel* bitDepthLabel;

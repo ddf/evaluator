@@ -97,6 +97,7 @@ namespace Compartmental
                 parameters.addParameter(STR16("EvalT"), STR16("t"), 0, 0, ParameterInfo::kIsReadOnly, kEvalTId);
                 parameters.addParameter(STR16("EvalM"), STR16("m"), 0, 0, ParameterInfo::kIsReadOnly, kEvalMId);
                 parameters.addParameter(STR16("EvalR"), STR16("r"), 0, 0, ParameterInfo::kIsReadOnly, kEvalRId);
+                parameters.addParameter(STR16("EvalN"), STR16("n"), 0, 0, ParameterInfo::kIsReadOnly, kEvalNId);
             }
             return kResultTrue;
         }

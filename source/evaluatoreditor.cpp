@@ -28,6 +28,7 @@ namespace Compartmental {
         , timeLabel(0)
         , millisLabel(0)
         , rangeLabel(0)
+        , noteLabel(0)
         , textEdit (0)
         , volumeSlider(0)
         , bitDepthLabel(0)
@@ -201,6 +202,14 @@ namespace Compartmental {
             rangeLabel->setHoriAlign(kLeftText);
             frame->addView(rangeLabel);
             
+            size.offset(size.getWidth()+10, 0);
+            noteLabel = new CTextLabel(size, "n=0", 0, kNoFrame);
+            noteLabel->setBackColor(kTransparentCColor);
+            noteLabel->setFont(kSystemFont);
+            noteLabel->setFontColor(kBlackCColor);
+            noteLabel->setHoriAlign(kLeftText);
+            frame->addView(noteLabel);
+            
             //--- Text input for the expression ------
             size (0, 0, kEditorWidth - 20, 20);
             size.offset (10, layoutY + 10);
@@ -313,6 +322,7 @@ namespace Compartmental {
             timeLabel = 0;
             millisLabel = 0;
             rangeLabel = 0;
+            noteLabel = 0;
             textEdit = 0;
             volumeSlider = 0;
             bitDepthLabel = 0;
@@ -533,6 +543,18 @@ namespace Compartmental {
                         char text[128];
                         sprintf(text, "r=%llu", range);
                         rangeLabel->setText(text);
+                    }
+                }
+                break;
+                    
+                case kEvalNId:
+                {
+                    if ( noteLabel )
+                    {
+                        int32 note = (int32)(value*kMaxInt32)-1;
+                        char text[128];
+                        sprintf(text, "n=%d", note);
+                        noteLabel->setText(text);
                     }
                 }
                 break;
