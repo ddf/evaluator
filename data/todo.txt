@@ -1,0 +1,28 @@
+implement ‘compiled’ version of expressions for better performance
+
+a basic oscilloscope view for the gui?
+
+feedback in the gui to identify syntax errors in the expression
+
+support for multiple voices??
+
+some number of sub-expressions?
+- may not need this if expression can include subs as below.
+
+volume as a knob
+
+bit depth as number box with up/down arrows
+
+different modes for when to reset t: 
+- with every note on (as it does currently)
+- follow project time (ie when note on is received set t to current project time in samples, increment from there)
+
+figure out symbol to use for ‘triangle’ operator, maybe ‘V’?
+
+support branching with ternary operator?
+- eg: t%10 < 5 ? 0 : r
+- if used outside of ternary t%10 < 5 should eval something useful. 0 and 1 are most obvi, but 0 and r-1 might be more useful.
+
+support assigning new value to expression var from within expression? 
+- eg: b={t*fn} | b*2, would be same as t*fn | t*fn*2
+- or: @b{t*fn}, which is nice because @ immediately alerts parser that a var set is coming up, but doesn’t necessarily imply that it will also resolve to the value of b when the expression is evaluated.
