@@ -1,4 +1,9 @@
-implement ‘compiled’ version of expressions for better performance
+create thorough test suite for the compiled expression and fix bugs
+* need to handle unary operators correctly (-, $, f, #) 
+  so that they evaluate in the correct order no matter what order they appear in 
+  when there are no parenthesis. 
+  eg: $#2 should equal $(#2) and currently does not because op execution order is incorrect.
+  eg: #$2 should evaluate correctly and currently generates a “wrong character” error because of the order of parsing.
 
 a basic oscilloscope view for the gui?
 

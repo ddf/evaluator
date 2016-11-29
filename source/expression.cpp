@@ -21,7 +21,7 @@ namespace Compartmental
             if ( !_ops.empty() )
             {
                 std::stack<EvalValue> stack;
-                for( auto op : _ops )
+                for( auto& op : _ops )
                 {
                     switch( op.operands() )
                     {
@@ -243,41 +243,21 @@ namespace Compartmental
                 expr++;
             }
             
-            // Handle the sign before parenthesis (or before number)
-            bool negative = false;
+            std::stack<Op> unaryOps;
             
-            if(*expr == '-')
+            EVAL_CHAR op = *expr;
+            while( op == '-' || op == '+' || op == '$' || op == '#' || op == 'f' )
             {
-                negative = true;
+                switch(op)
+                {
+                    case '-': unaryOps.push( Op(NEG) ); break;
+                    case '+': break; // no op
+                    case '$': unaryOps.push( Op(SIN,this) ); break;
+                    case '#': unaryOps.push( Op(SQR, this) ); break;
+                    case 'f': unaryOps.push( Op(FREQ) ); break;
+                }
                 expr++;
-            }
-            
-            if(*expr == '+')
-            {
-                expr++;
-            }
-            
-            bool sine = false;
-            
-            if(*expr == '$')
-            {
-                sine = true;
-                expr++;
-            }
-            
-            bool square = false;
-            
-            if ( *expr == '#' )
-            {
-                square = true;
-                expr++;
-            }
-            
-            bool freq = false;
-            if (*expr == 'f')
-            {
-                freq = true;
-                expr++;
+                op = *expr;
             }
             
             // Check if there is parenthesis
@@ -295,21 +275,11 @@ namespace Compartmental
                 }
                 expr++;
                 _paren_count--;
-                if ( negative )
+                
+                while( !unaryOps.empty() )
                 {
-                    _ops.push_back( Op(NEG) );
-                }
-                if ( sine )
-                {
-                    _ops.push_back( Op(SIN, this) );
-                }
-                if ( square )
-                {
-                    _ops.push_back( Op(SQR, this) );
-                }
-                if ( freq )
-                {
-                    _ops.push_back( Op(FREQ) );
+                    _ops.push_back(unaryOps.top());
+                    unaryOps.pop();
                 }
                 
                 return 0;
@@ -347,21 +317,11 @@ namespace Compartmental
             }
             // Advance the pointer and return the result
             expr = end_ptr;
-            if ( negative )
+            
+            while( !unaryOps.empty() )
             {
-                _ops.push_back( Op(NEG) );
-            }
-            if ( sine )
-            {
-                _ops.push_back( Op(SIN, this) );
-            }
-            if ( square )
-            {
-                _ops.push_back( Op(SQR, this) );
-            }
-            if ( freq )
-            {
-                _ops.push_back( Op(FREQ) );
+                _ops.push_back(unaryOps.top());
+                unaryOps.pop();
             }
             
             return 0;

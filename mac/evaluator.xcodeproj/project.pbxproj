@@ -799,6 +799,7 @@
 				776862C01DE8DB7900F115CB /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
