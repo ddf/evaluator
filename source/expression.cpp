@@ -389,21 +389,23 @@ namespace Compartmental
         
         EvalValue Expression::Op::eval(EvalValue a, EvalValue b, EXPR_EVAL_ERR& err) const
         {
+            EvalValue v = 0;
             switch(code)
             {
-                case MUL: return a*b;
-                case DIV: return b==0 ? err=EEE_DIVIDE_BY_ZERO : a/b;
-                case MOD: return b==0 ? err=EEE_DIVIDE_BY_ZERO : a%b;
-                case ADD: return a+b;
-                case SUB: return a-b;
-                case BSL: return a<<b;
-                case BSR: return a>>b;
-                case AND: return a&b;
-                case OR: return a|b;
-                case XOR: return a^b;
+                case MUL: v = a*b; break;
+                case DIV: v = b==0 ? err=EEE_DIVIDE_BY_ZERO : a/b; break;
+                case MOD: v = b==0 ? err=EEE_DIVIDE_BY_ZERO : a%b; break;
+                case ADD: v = a+b; break;
+                case SUB: v = a-b; break;
+                case BSL: v = a<<b; break;
+                case BSR: v = a>>b; break;
+                case AND: v = a&b; break;
+                case OR: v = a|b; break;
+                case XOR: v = a^b;
                     
-                default: return 0;
+                default: break;
             }
+            return v;
         }
     }
 }
