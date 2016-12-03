@@ -56,6 +56,7 @@ namespace Compartmental
             }
             
             EXPR_EVAL_ERR Compile(EVAL_CHAR* expr);
+            unsigned long GetInstructionCount() const { return _ops.size(); }
             
             EvalValue Eval();
             
