@@ -36,7 +36,7 @@
 //-----------------------------------------------------------------------------
 
 #include "evaluatorprocessor.h"
-#include "expr_eval.hpp"
+#include "expression.hpp"
 
 #include "evaluatorids.h"
 #include "pluginterfaces/base/ustring.h"
@@ -143,11 +143,8 @@ namespace Compartmental
 
             if (state)
             {
-                mEvaluator = new ExprEval();
-                //strcpy(mExpression, "(t<<t/(1024*8) | t>>t/16 & t>>t/32) / (t%(t/512+1) + 1) * 32");
-                //strcpy(mExpression, "(t*64 + $(t^$(m/2000))*$(m/2000)) | t*32");
-                //strcpy(mExpression, "t*(m%2)");
-                //strcpy(mExpression, "$(t*128)");
+                mEvaluator = new Expression();
+                mEvaluator->Compile(mExpression);
             }
             else
             {
@@ -292,7 +289,7 @@ namespace Compartmental
                             EvalValue tempTick = mTick + sample;
                             mEvaluator->SetVar('t', tempTick);
                             mEvaluator->SetVar('m', tempTick/mdenom);
-                            EvalValue result = mEvaluator->Eval(mExpression);
+                            EvalValue result = mEvaluator->Eval();
                             mEvaluator->SetVar('p', result);
                             evalSample = amp * (float)(-1.0 + 2.0*((double)(result%range)/(range-1)) );
                         }
@@ -374,6 +371,11 @@ namespace Compartmental
                         SWAP_16 (mExpression[i])
                     }
                 }
+                
+                if ( mEvaluator )
+                {
+                    mEvaluator->Compile(mExpression);
+                }
             }
 
             #if BYTEORDER == kBigEndian
@@ -430,6 +432,11 @@ namespace Compartmental
             fprintf (stderr, "\n");
             
             strncpy(mExpression, text, 127);
+            
+            if ( mEvaluator )
+            {
+                mEvaluator->Compile(mExpression);
+            }
             
             return kResultOk;
         }

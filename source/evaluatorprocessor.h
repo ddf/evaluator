@@ -45,7 +45,7 @@ using namespace Steinberg::Vst;
 namespace Compartmental {
 namespace Vst {
     
-class ExprEval;
+class Expression;
 
 //-----------------------------------------------------------------------------
 class EvaluatorProcessor : public AudioEffect
@@ -81,7 +81,7 @@ public:
 
 protected:
     uint64 mTick;
-    ExprEval* mEvaluator;
+    Expression* mEvaluator;
     char mExpression[128];
     
     int32 mNoteOnPitch;
