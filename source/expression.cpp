@@ -6,10 +6,13 @@
 //
 //
 
+//#define STDSTACK
+
 #include "expression.hpp"
 #include <stdlib.h>
 #include <math.h>
 #include <stack>
+
 
 namespace Compartmental
 {
@@ -18,39 +21,65 @@ namespace Compartmental
         EvalValue Expression::Eval()
         {
             EvalValue res = 0;
-            if ( !_ops.empty() )
+            const auto count = GetInstructionCount();
+            if ( count > 0 )
             {
+#ifdef STDSTACK
                 std::stack<EvalValue> stack;
-                for( auto& op : _ops )
+#else
+                EvalValue stack[128];
+                int top = -1;
+#endif
+                for(int i = 0; i < count; ++i)
                 {
+                    auto& op = _ops[i];
                     switch( op.operands() )
                     {
                         case 0:
                         {
+#ifdef STDSTACK
                             stack.push( op.eval() );
+#else
+                            stack[++top] = op.eval();
+#endif
                         }
                         break;
                             
                         case 1:
                         {
+#ifdef STDSTACK
                             EvalValue a = stack.top();
                             stack.pop();
                             stack.push( op.eval(a) );
+#else
+                            EvalValue a = stack[top--];
+                            stack[++top] = op.eval(a);
+#endif
                         }
                         break;
                             
                         case 2:
                         {
+#ifdef STDSTACK
                             EvalValue b = stack.top();
                             stack.pop();
                             EvalValue a = stack.top();
                             stack.pop();
                             stack.push( op.eval(a,b, _err) );
+#else
+                            EvalValue b = stack[top--];
+                            EvalValue a = stack[top--];
+                            stack[++top] = op.eval(a,b,_err);
+#endif
                         }
                         break;
                     }
                 }
+#ifdef STDSTACK
                 res = stack.top();
+#else
+                res = stack[top];
+#endif
             }
             return res;
         }
@@ -60,7 +89,7 @@ namespace Compartmental
             _paren_count = 0;
             _err = EEE_NO_ERROR;
             
-            _ops.clear();
+            clear();
             
             ParseOR(expr);
             
@@ -97,7 +126,7 @@ namespace Compartmental
                 }
                 expr++;
                 if ( ParseXOR(expr) ) return 1;
-                _ops.push_back( Op(OR) );
+                add( Op(OR) );
             }
         }
         
@@ -117,7 +146,7 @@ namespace Compartmental
                 }
                 expr++;
                 if ( ParseAND(expr) ) return 1;
-                _ops.push_back( Op(XOR) );
+                add( Op(XOR) );
             }
         }
         
@@ -137,7 +166,7 @@ namespace Compartmental
                 }
                 expr++;
                 if ( ParseBitshift(expr) ) return 1;
-                _ops.push_back( Op(AND) );
+                add( Op(AND) );
             }
         }
         
@@ -167,8 +196,8 @@ namespace Compartmental
                 if ( ParseSummands(expr) ) return 1;
                 switch( op )
                 {
-                    case '<': _ops.push_back( Op(BSL) ); break;
-                    case '>': _ops.push_back( Op(BSR) ); break;
+                    case '<': add( Op(BSL) ); break;
+                    case '>': add( Op(BSR) ); break;
                 }
             }
         }
@@ -192,8 +221,8 @@ namespace Compartmental
                 if ( ParseFactors(expr) ) return 1;
                 switch( op )
                 {
-                    case '-': _ops.push_back( Op(SUB) ); break;
-                    case '+': _ops.push_back( Op(ADD) ); break;
+                    case '-': add( Op(SUB) ); break;
+                    case '+': add( Op(ADD) ); break;
                 }
             }
         }
@@ -222,15 +251,15 @@ namespace Compartmental
                 // Perform the saved operation
                 if(op == '/')
                 {
-                    _ops.push_back( Op(DIV) );
+                    add( Op(DIV) );
                 }
                 else if ( op == '%' )
                 {
-                    _ops.push_back( Op(MOD) );
+                    add( Op(MOD) );
                 }
                 else
                 {
-                    _ops.push_back( Op(MUL) );
+                    add( Op(MUL) );
                 }
             }
         }
@@ -278,7 +307,7 @@ namespace Compartmental
                 
                 while( !unaryOps.empty() )
                 {
-                    _ops.push_back(unaryOps.top());
+                    add(unaryOps.top());
                     unaryOps.pop();
                 }
                 
@@ -290,22 +319,22 @@ namespace Compartmental
             EVAL_CHAR c = *expr;
             if ( isalpha(c) )
             {
-                auto iter = _vars.find(c);
-                // error, but a non-fatal on, so we don't return
-                if ( iter == _vars.end() )
-                {
-                    _err = EEE_UNKNOWN_VAR;
-                    _err_pos = expr;
-                }
+//                auto iter = _vars.find(c);
+//                // error, but a non-fatal on, so we don't return
+//                if ( iter == _vars.end() )
+//                {
+//                    _err = EEE_UNKNOWN_VAR;
+//                    _err_pos = expr;
+//                }
                 
-                _ops.push_back( Op(this, c) );
+                add( Op(this, c) );
                 
                 end_ptr = expr+1;
             }
             else
             {
                 EvalValue res = (EvalValue)strtoull(expr, &end_ptr, 10);
-                _ops.push_back( Op(res) );
+                add( Op(res) );
             }
             
             if(end_ptr == expr)
@@ -320,7 +349,7 @@ namespace Compartmental
             
             while( !unaryOps.empty() )
             {
-                _ops.push_back(unaryOps.top());
+                add(unaryOps.top());
                 unaryOps.pop();
             }
             

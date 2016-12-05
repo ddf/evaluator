@@ -9,8 +9,8 @@
 #ifndef expression_hpp
 #define expression_hpp
 
-#include <map>
-#include <list>
+#include <unordered_map>
+#include <vector>
 #include "ftypes.h"
 
 namespace Compartmental
@@ -28,24 +28,20 @@ namespace Compartmental
         
         typedef char EVAL_CHAR;
         typedef Steinberg::uint64 EvalValue;
-        typedef std::map<EVAL_CHAR, EvalValue> EvalVars;
         
         class Expression
         {
         public:
+            Expression() {}
+            
             void SetVar( EVAL_CHAR var, EvalValue val )
             {
-                _vars[var] = val;
+                _vars[(int)var+128] = val;
             }
             
             EvalValue GetVar( EVAL_CHAR var ) const
             {
-                auto iter = _vars.find(var);
-                if ( iter == _vars.end() )
-                {
-                    return 0;
-                }
-                return iter->second;
+                return _vars[(int)var+128];
             }
             
             EXPR_EVAL_ERR GetErr() const { return _err; }
@@ -88,7 +84,7 @@ namespace Compartmental
             EVAL_CHAR* _err_pos;
             unsigned int _paren_count;
             
-            EvalVars _vars;
+            EvalValue _vars[256];
             
             enum OpCode
             {
@@ -113,6 +109,7 @@ namespace Compartmental
             class Op
             {
             public:
+                Op() : code(NUM), expr(0), val(0) {}
                 Op(OpCode _code) : code(_code), expr(0) {}
                 Op(OpCode _code, const Expression * const _expr) : code(_code), expr(_expr) {}
                 Op(EvalValue _val) : code(NUM), expr(0), val(_val) {}
@@ -127,16 +124,26 @@ namespace Compartmental
                 EvalValue eval(EvalValue a, EvalValue b, EXPR_EVAL_ERR& err) const;
                 
             private:
-                const OpCode code;
-                const Expression * const expr;
-                const union
+                OpCode code;
+                const Expression * expr;
+                union
                 {
                     EvalValue val;
                     EVAL_CHAR var;
                 };
             };
             
-            std::list<Op> _ops;
+            void add(const Op& op)
+            {
+                _ops.push_back(op);
+            }
+            
+            void clear()
+            {
+                _ops.clear();
+            }
+            
+            std::vector<Op> _ops;
         };
     }
 }
