@@ -32,7 +32,10 @@ namespace Compartmental
         class Expression
         {
         public:
-            Expression() {}
+            Expression()
+            {
+                memset(_vars, 0, sizeof(_vars));
+            }
             
             void SetVar( EVAL_CHAR var, EvalValue val )
             {
