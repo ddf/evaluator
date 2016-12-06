@@ -55,6 +55,18 @@ static EvalValue f(EvalValue a)
     return (EvalValue)f;
 }
 
+// ddf (12/5/16)
+// if b is greater than the width of the int being shifted
+// and is present in the lamba as a numeric constant
+// the optimizer will recognize this fact and optimize out the operation.
+// however, when shift right runs in the Expression code,
+// it is operating on variables that the optimizer does not know the value of,
+// so the operation will actually execute and behavior is that b is wrapped to the width of type being shifted.
+static EvalValue sr(EvalValue a, EvalValue b)
+{
+    return a>>(b%64);
+}
+
 struct Test
 {
     const char * expr;
@@ -82,7 +94,7 @@ Test tests[] = {
     { "$fn", EVAL($(f(n))), EEE_NO_ERROR },
     { "$(fn)", EVAL($(f(n))), EEE_NO_ERROR },
     { "(t*fn)*((t*fn/r)%2) + (r-t*fn-1)*(1 - (t*fn/r)%2)", EVAL((t*f(n))*((t*f(n)/r)%2) + (r-t*f(n)-1)*(1 - (t*f(n)/r)%2)), EEE_NO_ERROR },
-    { "(t*128 + $(t)) | t>>(t%(8*r))/r | t>>128", EVAL((t*128 + $(t)) | t>>(t%(8*r))/r | t>>128), EEE_NO_ERROR },
+    { "(t*128 + $(t)) | t>>(t%(8*r))/r | t>>128", EVAL((t*128 + $(t)) | t>>(t%(8*r))/r | sr(t,128)), EEE_NO_ERROR },
     { "(t*64 + $(t^$(m/2000))*$(m/2000)) | t*32", EVAL((t*64 + $(t^$(m/2000))*$(m/2000)) | t*32), EEE_NO_ERROR },
     { "t*(128*(32-(m/50)%32)) | t*(128*((m/100)%64)) | t*128", EVAL(t*(128*(32-(m/50)%32)) | t*(128*((m/100)%64)) | t*128), EEE_NO_ERROR },
     { "$(t*f(n + 7*((m/125)%3) - 3*((m/125)%5) + 2*((m/125)%7)))", EVAL($(t*f(n + 7*((m/125)%3) - 3*((m/125)%5) + 2*((m/125)%7)))), EEE_NO_ERROR },
