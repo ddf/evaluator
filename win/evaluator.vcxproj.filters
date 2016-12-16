@@ -228,6 +228,7 @@
     <ClInclude Include="..\..\..\..\source\vst\vstguieditor.h">
       <Filter>Source Files\public.sdk\vst</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="evaluator.def">
@@ -238,5 +239,10 @@
     <ResourceCompile Include="evaluator.rc">
       <Filter>Source Files\resources</Filter>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\interface\background.png" />
+    <Image Include="..\interface\vslider_background.png" />
+    <Image Include="..\interface\vslider_handle.png" />
   </ItemGroup>
 </Project>

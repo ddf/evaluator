@@ -4,6 +4,17 @@
 
 #include "base/source/fstring.h"
 
+#if WINDOWS
+#include "../win/resource.h"
+#define BACKGROUND IDB_PNG1
+#define SLIDER_BACK IDB_PNG2
+#define SLIDER_KNOB IDB_PNG3
+#else
+#define BACKGROUND "background.png"
+#define SLIDER_BACK "vslider_background.png"
+#define SLIDER_KNOB "vslider_background.png"
+#endif
+
 namespace Compartmental {
     namespace Vst {
         
@@ -168,12 +179,12 @@ namespace Compartmental {
             frame = new CFrame (editorSize, this);
             frame->setBackgroundColor (kGreyCColor);
             
-            background = new CBitmap ("background.png");
+            background = new CBitmap (BACKGROUND);
             frame->setBackground (background);
             
             // used by multiple sliders, so we new them up here
-            CBitmap* sliderHandle = new CBitmap ("vslider_handle.png");
-            CBitmap* sliderBackground = new CBitmap ("vslider_background.png");
+            CBitmap* sliderHandle = new CBitmap (SLIDER_KNOB);
+            CBitmap* sliderBackground = new CBitmap (SLIDER_BACK);
             
             float layoutY = 10;
             

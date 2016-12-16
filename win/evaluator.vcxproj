@@ -283,6 +283,7 @@
     <ClInclude Include="..\..\..\..\..\pluginterfaces\vst\vstpresetkeys.h" />
     <ClInclude Include="..\..\..\..\..\pluginterfaces\vst\vsttypes.h" />
     <ClInclude Include="..\..\..\..\..\pluginterfaces\gui\iplugview.h" />
+    <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\base\win\base.vcxproj">
@@ -294,6 +295,11 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="evaluator.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\interface\background.png" />
+    <Image Include="..\interface\vslider_background.png" />
+    <Image Include="..\interface\vslider_handle.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

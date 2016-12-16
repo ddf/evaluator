@@ -37,3 +37,4 @@ xcuserdata/
 *.user
 win/.vs
 win/Win32
+*.aps
