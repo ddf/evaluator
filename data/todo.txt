@@ -1,4 +1,4 @@
-create thorough test suite for the compiled expression and fix bugs
+show instruction count in the gui
 
 a basic oscilloscope view for the gui?
 
@@ -26,3 +26,5 @@ support branching with ternary operator?
 support assigning new value to expression var from within expression? 
 - eg: b={t*fn} | b*2, would be same as t*fn | t*fn*2
 - or: @b{t*fn}, which is nice because @ immediately alerts parser that a var set is coming up, but doesn’t necessarily imply that it will also resolve to the value of b when the expression is evaluated.
+
+figure out a way to identify undefined variables when compiling? this may not be worth supporting.

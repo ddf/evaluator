@@ -3,6 +3,7 @@
 #include "public.sdk/source/vst/vstguieditor.h"
 #include "pluginterfaces/vst/ivstplugview.h"
 #include "pluginterfaces/vst/ivstcontextmenu.h"
+#include "expression.hpp"
 
 using namespace Steinberg;
 using namespace Steinberg::Vst;
@@ -57,9 +58,13 @@ namespace Compartmental {
             CTextLabel* rangeLabel;
             CTextLabel* noteLabel;
             CTextEdit* textEdit;
+            CTextLabel* textResult;
             CSlider*   volumeSlider;
             CTextLabel* bitDepthLabel;
             CSlider*   bitDepthSlider;
+            
+            // used to validate the expression before transmitting the string to the controller.
+            Expression expression;
         };
         //------------------------------------------------------------------------
     } // namespace Vst

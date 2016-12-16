@@ -30,6 +30,7 @@ namespace Compartmental {
         , rangeLabel(0)
         , noteLabel(0)
         , textEdit (0)
+        , textResult(0)
         , volumeSlider(0)
         , bitDepthLabel(0)
         , bitDepthSlider(0)
@@ -219,11 +220,19 @@ namespace Compartmental {
             textEdit->setFontColor(kBlackCColor);
             frame->addView (textEdit);
             
+            size.offset(0, 20);
+            textResult = new CTextLabel(size, "", 0, kNoFrame);
+            textResult->setHoriAlign(kLeftText);
+            textResult->setBackColor(kTransparentCColor);
+            textResult->setFont(kSystemFont);
+            textResult->setFontColor(kBlackCColor);
+            frame->addView(textResult);
+            
             //---Volume--------------------
             {
                 //---Volume Label--------
                 size (0, 0, 50, 18);
-                size.offset (10, layoutY + 40);
+                size.offset (10, layoutY + 45);
                 CTextLabel* label = new CTextLabel (size, "Volume", 0, kNoFrame);
                 label->setBackColor(kTransparentCColor);
                 label->setFont(kSystemFont);
@@ -233,7 +242,7 @@ namespace Compartmental {
                 //---Volume slider-------
                 
                 size (0, 0, 25, 122);
-                size.offset (20, layoutY + 60);
+                size.offset (20, layoutY + 65);
                 CPoint offset;
                 CPoint offsetHandle (0, 4);
                 volumeSlider = new CVerticalSlider (size, this, kVolumeTag,
@@ -247,7 +256,7 @@ namespace Compartmental {
             {
                 //---Bit Depth Label--------
                 size(0,0,55,18);
-                size.offset(70, layoutY + 40);
+                size.offset(70, layoutY + 45);
                 bitDepthLabel = new CTextLabel(size, "Bit Depth", 0, kNoFrame);
                 bitDepthLabel->setBackColor(kTransparentCColor);
                 bitDepthLabel->setFont(kSystemFont);
@@ -256,7 +265,7 @@ namespace Compartmental {
                 
                 //---Bit Depth Slider--------
                 size(0,0,25,122);
-                size.offset(90, layoutY + 60);
+                size.offset(90, layoutY + 65);
                 CPoint offset;
                 CPoint offsetHandle(0,4);
                 bitDepthSlider = new CVerticalSlider(size, this, kBitDepthTag,
@@ -300,7 +309,22 @@ namespace Compartmental {
             EvaluatorController* controller = dynamic_cast<EvaluatorController*> (getController ());
             if (controller)
             {
-                textEdit->setText (controller->getDefaultExpression());
+                const char * text = controller->getDefaultExpression();
+                textEdit->setText (text);
+                char buffer[128];
+                strncpy(buffer, text, 128);
+                EXPR_EVAL_ERR err = expression.Compile(buffer);
+                if ( err == EEE_NO_ERROR )
+                {
+                    snprintf(buffer, 128, "Instruction Count: %d", expression.GetInstructionCount());
+                    textResult->setText(buffer);
+                }
+                else
+                {
+                    char error[256];
+                    snprintf(error, 256, "%s at: %s", Expression::ErrorStr(err), expression.GetErrPos());
+                    textResult->setText(error);
+                }
             }
         }
         
@@ -324,6 +348,7 @@ namespace Compartmental {
             rangeLabel = 0;
             noteLabel = 0;
             textEdit = 0;
+            textResult = 0;
             volumeSlider = 0;
             bitDepthLabel = 0;
             bitDepthSlider = 0;
@@ -370,6 +395,23 @@ namespace Compartmental {
                     
                 case kExpressionTextTag:
                 {
+                    // FIXME: we hit this code but for some reason the GUI doesn't update
+                    const char* text = textEdit->getText();
+                    char buffer[128];
+                    strncpy(buffer, text, 128);
+                    EXPR_EVAL_ERR err = expression.Compile(buffer);
+                    if ( err == EEE_NO_ERROR )
+                    {
+                        snprintf(buffer, 128, "Instruction Count: %d", expression.GetInstructionCount());
+                        textResult->setText(buffer);
+                    }
+                    else
+                    {
+                        char error[256];
+                        snprintf(error, 256, "%s at: %s", Expression::ErrorStr(err), expression.GetErrPos());
+                        textResult->setText(error);
+                    }
+                    
                     EvaluatorController* controller = dynamic_cast<EvaluatorController*> (getController ());
                     if (controller)
                     {                        
