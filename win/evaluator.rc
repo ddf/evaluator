@@ -78,11 +78,11 @@ END
 // PNG
 //
 
-IDB_PNG1                PNG                     "S:\\dev\\VST3 SDK\\public.sdk\\samples\\vst\\evaluator\\interface\\background.png"
+IDB_PNG1                PNG                     "S:\\dev\\VST3_SDK\\public.sdk\\samples\\vst\\evaluator\\interface\\background.png"
 
-IDB_PNG2                PNG                     "S:\\dev\\VST3 SDK\\public.sdk\\samples\\vst\\evaluator\\interface\\vslider_background.png"
+IDB_PNG2                PNG                     "S:\\dev\\VST3_SDK\\public.sdk\\samples\\vst\\evaluator\\interface\\vslider_background.png"
 
-IDB_PNG3                PNG                     "S:\\dev\\VST3 SDK\\public.sdk\\samples\\vst\\evaluator\\interface\\vslider_handle.png"
+IDB_PNG3                PNG                     "S:\\dev\\VST3_SDK\\public.sdk\\samples\\vst\\evaluator\\interface\\vslider_handle.png"
 
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
