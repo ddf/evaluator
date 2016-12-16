@@ -12,7 +12,7 @@
 #else
 #define BACKGROUND "background.png"
 #define SLIDER_BACK "vslider_background.png"
-#define SLIDER_KNOB "vslider_background.png"
+#define SLIDER_KNOB "vslider_handle.png"
 #endif
 
 namespace Compartmental {
