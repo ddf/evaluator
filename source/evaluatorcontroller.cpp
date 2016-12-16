@@ -40,7 +40,7 @@
 #include "evaluatorprocessor.h"
 #include "pluginterfaces/base/ustring.h"
 #include "pluginterfaces/base/ibstream.h"
-#include "vstparameters.h"
+#include "public.sdk/source/vst/vstparameters.h"
 #include "evaluatoreditor.hpp"
 
 #if TARGET_OS_IPHONE
@@ -84,13 +84,16 @@ namespace Compartmental
 
                 parameters.addParameter (STR16 ("Volume"), STR16 (""), 0, 1, ParameterInfo::kCanAutomate, kVolumeId);
                 
+				// ddf (12/16/16)
+				// would love to have designated initializers here for clarity, but VS does not support them
                 ParameterInfo bitInfo = {
-                    .id = kBitDepthId,
-                    .title = STR16("Bit Depth"),
-                    .units = STR16("Bits"),
-                    .stepCount = 30,
-                    .defaultNormalizedValue = 0.5,
-                    .flags = ParameterInfo::kCanAutomate
+                    kBitDepthId,
+                    STR16("Bit Depth"),
+					STR16("BD"),
+                    STR16("Bits"),
+                    30,
+                    0.5,
+                    ParameterInfo::kCanAutomate
                 };
                 parameters.addParameter( new RangeParameter( bitInfo, kBitDepthMin, kBitDepthMax ) );
                 

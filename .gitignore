@@ -30,3 +30,10 @@
 
 # xcode project files
 xcuserdata/
+
+# VS Garbage
+*.sdf
+*.opendb
+*.user
+win/.vs
+win/Win32

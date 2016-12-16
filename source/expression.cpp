@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stack>
+#include <ctype.h>
 
 
 namespace Compartmental
@@ -30,7 +31,7 @@ namespace Compartmental
                 EvalValue stack[128];
                 int top = -1;
 #endif
-                for(int i = 0; i < count; ++i)
+                for(unsigned long i = 0; i < count; ++i)
                 {
                     auto& op = _ops[i];
                     switch( op.operands() )
@@ -423,8 +424,8 @@ namespace Compartmental
             switch(code)
             {
                 case MUL: v = a*b; break;
-                case DIV: if ( b ) { v = a/b; } else { err == EEE_DIVIDE_BY_ZERO; } break;
-                case MOD: if ( b ) { v = a%b; } else { err == EEE_DIVIDE_BY_ZERO; } break;
+                case DIV: if ( b ) { v = a/b; } else { err = EEE_DIVIDE_BY_ZERO; } break;
+                case MOD: if ( b ) { v = a%b; } else { err = EEE_DIVIDE_BY_ZERO; } break;
                 case ADD: v = a+b; break;
                 case SUB: v = a-b; break;
                 case BSL: v = a<<b; break;

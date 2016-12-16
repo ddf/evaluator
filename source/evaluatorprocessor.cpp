@@ -274,14 +274,14 @@ namespace Compartmental
                 
                 mEvaluator->SetVar('r', range);
                 
-                for (uint32 channel = 0; channel < numChannels; channel++)
+                for (int32 channel = 0; channel < numChannels; channel++)
                 {
                     float* inputChannel = data.inputs[0].channelBuffers32[channel];
                     float* outputChannel = data.outputs[0].channelBuffers32[channel];
                     
                     if ( channel > 0 ) mEvaluator->SetVar('p', p);
                     
-                    for (uint32 sample = 0; sample < data.numSamples; sample++)
+                    for (int32 sample = 0; sample < data.numSamples; sample++)
                     {
                         float evalSample = 0;
                         if ( generate )
