@@ -16,8 +16,11 @@
 #define SLIDER_KNOB "vslider_handle.png"
 #endif
 
-static CFontDesc gLabelFont(kSystemFont->getName(), 11, kBoldFace);
+static CFontDesc gLabelFont("Courier", 11, kBoldFace);
+static CFontDesc gDataFont("Courier", 11);
+
 static const CFontRef kLabelFont = &gLabelFont;
+static const CFontRef kDataFont = &gDataFont;
 
 namespace Compartmental {
     namespace Vst {
@@ -200,7 +203,7 @@ namespace Compartmental {
             size.offset(10, 0);
             timeLabel = new CTextLabel(size, "t=0", 0, kNoFrame);
             timeLabel->setBackColor(kTransparentCColor);
-            timeLabel->setFont(kSystemFont);
+            timeLabel->setFont(kDataFont);
             timeLabel->setFontColor(textColor);
             timeLabel->setHoriAlign(kLeftText);
             frame->addView(timeLabel);
@@ -208,7 +211,7 @@ namespace Compartmental {
             size.offset(size.getWidth()+10, 0);
             millisLabel = new CTextLabel(size, "m=0", 0, kNoFrame);
             millisLabel->setBackColor(kTransparentCColor);
-            millisLabel->setFont(kSystemFont);
+            millisLabel->setFont(kDataFont);
             millisLabel->setFontColor(textColor);
             millisLabel->setHoriAlign(kLeftText);
             frame->addView(millisLabel);
@@ -216,7 +219,7 @@ namespace Compartmental {
             size.offset(size.getWidth()+10, 0);
             rangeLabel = new CTextLabel(size, "r=0", 0, kNoFrame);
             rangeLabel->setBackColor(kTransparentCColor);
-            rangeLabel->setFont(kSystemFont);
+            rangeLabel->setFont(kDataFont);
             rangeLabel->setFontColor(textColor);
             rangeLabel->setHoriAlign(kLeftText);
             frame->addView(rangeLabel);
@@ -224,7 +227,7 @@ namespace Compartmental {
             size.offset(size.getWidth()+10, 0);
             noteLabel = new CTextLabel(size, "n=0", 0, kNoFrame);
             noteLabel->setBackColor(kTransparentCColor);
-            noteLabel->setFont(kSystemFont);
+            noteLabel->setFont(kDataFont);
             noteLabel->setFontColor(textColor);
             noteLabel->setHoriAlign(kLeftText);
             frame->addView(noteLabel);
@@ -234,7 +237,7 @@ namespace Compartmental {
             size.offset (10, layoutY + 10);
             textEdit = new CTextEdit (size, this, kExpressionTextTag, "t*128", 0, k3DOut);
             textEdit->setBackColor(MakeCColor(10,10,10));
-            textEdit->setFont(kSystemFont);
+            textEdit->setFont(kDataFont);
             textEdit->setFontColor(greenColor);
             frame->addView (textEdit);
             
@@ -242,7 +245,7 @@ namespace Compartmental {
             textResult = new CTextLabel(size, "", 0, kNoFrame);
             textResult->setHoriAlign(kLeftText);
             textResult->setBackColor(kTransparentCColor);
-            textResult->setFont(kSystemFont);
+            textResult->setFont(kLabelFont);
             textResult->setFontColor(textColor);
             frame->addView(textResult);
             
@@ -278,7 +281,7 @@ namespace Compartmental {
                 size.offset(70, layoutY + 45);
                 bitDepthLabel = new CTextLabel(size, "Bit Depth", 0, kNoFrame);
                 bitDepthLabel->setBackColor(kTransparentCColor);
-                bitDepthLabel->setFont(kSystemFont);
+                bitDepthLabel->setFont(kLabelFont);
                 bitDepthLabel->setFontColor(textColor);
                 frame->addView(bitDepthLabel);
                 
