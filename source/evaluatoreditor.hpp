@@ -59,7 +59,7 @@ namespace Compartmental {
             CTextLabel* noteLabel;
             CTextEdit* textEdit;
             CTextLabel* textResult;
-            CSlider*   volumeSlider;
+			CKnob*		volumeKnob;
             CTextLabel* bitDepthLabel;
             CSlider*   bitDepthSlider;
             

@@ -1,15 +1,9 @@
-show instruction count in the gui
-
-a basic oscilloscope view for the gui?
-
-feedback in the gui to identify syntax errors in the expression
+﻿a basic oscilloscope view for the gui?
 
 support for multiple voices??
 
 some number of sub-expressions?
 - may not need this if expression can include subs as below.
-
-volume as a knob
 
 bit depth as number box with up/down arrows
 
