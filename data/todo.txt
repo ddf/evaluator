@@ -22,3 +22,5 @@ support assigning new value to expression var from within expression?
 - or: @b{t*fn}, which is nice because @ immediately alerts parser that a var set is coming up, but doesn’t necessarily imply that it will also resolve to the value of b when the expression is evaluated.
 
 figure out a way to identify undefined variables when compiling? this may not be worth supporting.
+
+maybe someday figure out how to embed this font for use in the interface: http://webdraft.hu/fonts/classic-console/
