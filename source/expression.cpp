@@ -429,7 +429,7 @@ namespace Compartmental
                 case ADD: v = a+b; break;
                 case SUB: v = a-b; break;
                 case BSL: v = a<<b; break;
-                case BSR: v = a>>b; break;
+                case BSR: v = a>>(b%64); break;
                 case AND: v = a&b; break;
                 case OR: v = a|b; break;
                 case XOR: v = a^b;
