@@ -16,7 +16,7 @@
 #define SLIDER_KNOB "vslider_handle.png"
 #endif
 
-static CFontDesc gLabelFont("Courier", 11, kBoldFace);
+static CFontDesc gLabelFont(kSystemFont->getName(), 11, kBoldFace);
 static CFontDesc gDataFont("Courier", 11);
 
 static const CFontRef kLabelFont = &gLabelFont;
@@ -196,41 +196,8 @@ namespace Compartmental {
             CBitmap* sliderHandle = new CBitmap (SLIDER_KNOB);
             CBitmap* sliderBackground = new CBitmap (SLIDER_BACK);
             
-            float layoutY = 10;
-            
-            //-- labels for expression variables
-            CRect size(0, 0, 100, 18);
-            size.offset(10, 0);
-            timeLabel = new CTextLabel(size, "t=0", 0, kNoFrame);
-            timeLabel->setBackColor(kTransparentCColor);
-            timeLabel->setFont(kDataFont);
-            timeLabel->setFontColor(textColor);
-            timeLabel->setHoriAlign(kLeftText);
-            frame->addView(timeLabel);
-            
-            size.offset(size.getWidth()+10, 0);
-            millisLabel = new CTextLabel(size, "m=0", 0, kNoFrame);
-            millisLabel->setBackColor(kTransparentCColor);
-            millisLabel->setFont(kDataFont);
-            millisLabel->setFontColor(textColor);
-            millisLabel->setHoriAlign(kLeftText);
-            frame->addView(millisLabel);
-            
-            size.offset(size.getWidth()+10, 0);
-            rangeLabel = new CTextLabel(size, "r=0", 0, kNoFrame);
-            rangeLabel->setBackColor(kTransparentCColor);
-            rangeLabel->setFont(kDataFont);
-            rangeLabel->setFontColor(textColor);
-            rangeLabel->setHoriAlign(kLeftText);
-            frame->addView(rangeLabel);
-            
-            size.offset(size.getWidth()+10, 0);
-            noteLabel = new CTextLabel(size, "n=0", 0, kNoFrame);
-            noteLabel->setBackColor(kTransparentCColor);
-            noteLabel->setFont(kDataFont);
-            noteLabel->setFontColor(textColor);
-            noteLabel->setHoriAlign(kLeftText);
-            frame->addView(noteLabel);
+            CRect size;
+            float layoutY = 0;
             
             //--- Text input for the expression ------
             size (0, 0, kEditorWidth - 20, 20);
@@ -248,6 +215,48 @@ namespace Compartmental {
             textResult->setFont(kLabelFont);
             textResult->setFontColor(textColor);
             frame->addView(textResult);
+            
+            //-- "window" displaying internal state of the expression
+            {
+                size.offset(0, 20);
+                size.setWidth(140);
+                size.setHeight(150);
+                
+                CRowColumnView* window = new CRowColumnView(size);
+                window->setAutosizingEnabled(true);
+                window->setMargin(CRect(5,5,5,5));
+                
+                size(0,0,100,15);
+                timeLabel = new CTextLabel(size, "t=0", 0, kNoFrame);
+                timeLabel->setBackColor(kTransparentCColor);
+                timeLabel->setFont(kDataFont);
+                timeLabel->setFontColor(greenColor);
+                timeLabel->setHoriAlign(kLeftText);
+                window->addView(timeLabel);
+                
+                millisLabel = new CTextLabel(size, "m=0", 0, kNoFrame);
+                millisLabel->setBackColor(kTransparentCColor);
+                millisLabel->setFont(kDataFont);
+                millisLabel->setFontColor(greenColor);
+                millisLabel->setHoriAlign(kLeftText);
+                window->addView(millisLabel);
+                
+                rangeLabel = new CTextLabel(size, "r=0", 0, kNoFrame);
+                rangeLabel->setBackColor(kTransparentCColor);
+                rangeLabel->setFont(kDataFont);
+                rangeLabel->setFontColor(greenColor);
+                rangeLabel->setHoriAlign(kLeftText);
+                window->addView(rangeLabel);
+                
+                noteLabel = new CTextLabel(size, "n=0", 0, kNoFrame);
+                noteLabel->setBackColor(kTransparentCColor);
+                noteLabel->setFont(kDataFont);
+                noteLabel->setFontColor(greenColor);
+                noteLabel->setHoriAlign(kLeftText);
+                window->addView(noteLabel);
+                
+                frame->addView(window);
+            }
             
             //---Volume--------------------
             {                
@@ -278,7 +287,7 @@ namespace Compartmental {
             {
                 //---Bit Depth Label--------
                 size(0,0,55,18);
-                size.offset(70, layoutY + 45);
+                size.offset(kEditorWidth - size.getWidth(), layoutY + 45);
                 bitDepthLabel = new CTextLabel(size, "Bit Depth", 0, kNoFrame);
                 bitDepthLabel->setBackColor(kTransparentCColor);
                 bitDepthLabel->setFont(kLabelFont);
@@ -287,7 +296,7 @@ namespace Compartmental {
                 
                 //---Bit Depth Slider--------
                 size(0,0,25,122);
-                size.offset(90, layoutY + 65);
+                size.offset(kEditorWidth - size.getWidth(), layoutY + 65);
                 CPoint offset;
                 CPoint offsetHandle(0,4);
                 bitDepthSlider = new CVerticalSlider(size, this, kBitDepthTag,
