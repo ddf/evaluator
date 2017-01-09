@@ -37,7 +37,9 @@ namespace Compartmental {
         {
             kExpressionTextTag = 'Expr',
             kVolumeTag = 'Volm',
-            kBitDepthTag = 'BitD'
+            kBitDepthTag = 'BitD',
+            kBitIncrementTag = 'BitA',
+            kBitDecrementTag = 'BitB'
         };
         
         //------------------------------------------------------------------------
@@ -51,7 +53,6 @@ namespace Compartmental {
         , textResult(0)
         , volumeKnob(0)
         , bitDepthLabel(0)
-        , bitDepthSlider(0)
         {
             setIdleRate (50); // 1000ms/50ms = 20Hz
             
@@ -285,25 +286,42 @@ namespace Compartmental {
             
             //---Bit Depth--------------
             {
-                //---Bit Depth Label--------
-                size(0,0,55,18);
-                size.offset(kEditorWidth - size.getWidth(), layoutY + 45);
-                bitDepthLabel = new CTextLabel(size, "Bit Depth", 0, kNoFrame);
-                bitDepthLabel->setBackColor(kTransparentCColor);
-                bitDepthLabel->setFont(kLabelFont);
-                bitDepthLabel->setFontColor(textColor);
-                frame->addView(bitDepthLabel);
+                //--Bit Depth Number Box Background
+                const int bh = 16;
+                size(0,0,20+sliderHandle->getWidth(), bh*2);
+                size.offset(kEditorWidth - size.getWidth() - 10, layoutY + 50);
+                CViewContainer* numberBox = new CViewContainer(size);
                 
-                //---Bit Depth Slider--------
-                size(0,0,25,122);
-                size.offset(kEditorWidth - size.getWidth(), layoutY + 65);
-                CPoint offset;
-                CPoint offsetHandle(0,4);
-                bitDepthSlider = new CVerticalSlider(size, this, kBitDepthTag,
-                                                     offsetHandle, size.getHeight(),
-                                                     sliderHandle, sliderBackground,
-                                                     offset, kBottom);
-                frame->addView(bitDepthSlider);
+                //---Bit Depth Number Box Value--------
+                const int textHH = 9;
+                size(0,numberBox->getHeight()/2 - textHH,20,numberBox->getHeight()/2 + textHH);
+                bitDepthLabel = new CTextLabel(size, "", 0, kNoFrame);
+                bitDepthLabel->setBackColor(kBlackCColor);
+                bitDepthLabel->setFont(kDataFont);
+                bitDepthLabel->setFontColor(greenColor);
+                bitDepthLabel->setHoriAlign(kRightText);
+                numberBox->addView(bitDepthLabel);
+                
+                //---Number Box Buttons
+                size(size.getWidth(), 0, numberBox->getWidth(), bh);
+                CKickButton* button = new CKickButton(size, this, kBitIncrementTag, size.getHeight(), sliderHandle);
+                numberBox->addView(button);
+                
+                size.offset(0,size.getHeight());
+                button = new CKickButton(size, this, kBitDecrementTag, size.getHeight(), sliderHandle);
+                numberBox->addView(button);
+                
+                frame->addView(numberBox);
+                
+                //--Bit Depth Number Box Label
+                size(0,0,numberBox->getWidth(),18);
+                size.offset(kEditorWidth - numberBox->getWidth() - 10, numberBox->getViewSize().getBottomLeft().y);
+                CTextLabel* label = new CTextLabel(size, "BITS", 0, kNoFrame);
+                label->setBackColor(kTransparentCColor);
+                label->setFont(kLabelFont);
+                label->setFontColor(textColor);
+                label->setHoriAlign(kCenterText);
+                frame->addView(label);
             }
             
             
@@ -382,7 +400,6 @@ namespace Compartmental {
             textResult = 0;
             volumeKnob = 0;
             bitDepthLabel = 0;
-            bitDepthSlider = 0;
             //vuMeter = 0;
         }
         
@@ -403,6 +420,34 @@ namespace Compartmental {
                 {
                     controller->setParamNormalized(kBitDepthId, pControl->getValue());
                     controller->performEdit(kBitDepthId, pControl->getValue());
+                }
+                break;
+                    
+                case kBitIncrementTag:
+                {
+                    if ( pControl->getValue() == 0 )
+                    {
+                        float val = controller->getParamNormalized(kBitDepthId);
+                        val += 1.0f/30.0f;
+                        if ( val < 0 ) val = 0;
+                        else if ( val > 1 ) val = 1;
+                        controller->setParamNormalized(kBitDepthId, val);
+                        controller->performEdit(kBitDepthId, val);
+                    }
+                }
+                break;
+                    
+                case kBitDecrementTag:
+                {
+                    if ( pControl->getValue() == 0 )
+                    {
+                        float val = controller->getParamNormalized(kBitDepthId);
+                        val -= 1.0f/30.0f;
+                        if ( val < 0 ) val = 0;
+                        else if ( val > 1 ) val = 1;
+                        controller->setParamNormalized(kBitDepthId, val);
+                        controller->performEdit(kBitDepthId, val);
+                    }
                 }
                 break;
 //
@@ -571,17 +616,12 @@ namespace Compartmental {
                     
                 case kBitDepthId:
                 {
-                    if ( bitDepthSlider )
-                    {
-                        bitDepthSlider->setValue((float)value);
-                    }
-                    
                     if ( bitDepthLabel )
                     {
                         const int32 stepCount = kBitDepthMax-kBitDepthMin;
                         const int32 shift = std::min<int32> (stepCount, (int32)(value * (stepCount + 1))) + kBitDepthMin;
                         char text[128];
-                        sprintf(text, "%d Bit", shift);
+                        sprintf(text, "%d", shift);
                         bitDepthLabel->setText(text);
                     }
                 }

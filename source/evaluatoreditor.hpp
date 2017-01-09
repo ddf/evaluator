@@ -61,7 +61,6 @@ namespace Compartmental {
             CTextLabel* textResult;
 			CKnob*		volumeKnob;
             CTextLabel* bitDepthLabel;
-            CSlider*   bitDepthSlider;
             
             // used to validate the expression before transmitting the string to the controller.
             Expression expression;
