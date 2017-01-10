@@ -17,6 +17,9 @@
 		7739F0DC1D7670760061B3F7 /* vstgui_uidescription_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7739F0DA1D7670760061B3F7 /* vstgui_uidescription_mac.mm */; };
 		7739F0F91D7673730061B3F7 /* vstguieditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7739F0F71D7673730061B3F7 /* vstguieditor.cpp */; };
 		7739F11E1D7678120061B3F7 /* editor.uidesc in Resources */ = {isa = PBXBuildFile; fileRef = 7739F11D1D7678120061B3F7 /* editor.uidesc */; };
+		773FF2471E24869B0068595B /* numberbox_arrow_up.png in Resources */ = {isa = PBXBuildFile; fileRef = 773FF2451E24869A0068595B /* numberbox_arrow_up.png */; };
+		773FF2481E24869B0068595B /* numberbox_arrow_down.png in Resources */ = {isa = PBXBuildFile; fileRef = 773FF2461E24869B0068595B /* numberbox_arrow_down.png */; };
+		773FF24A1E2490320068595B /* numberbox_background.png in Resources */ = {isa = PBXBuildFile; fileRef = 773FF2491E2490320068595B /* numberbox_background.png */; };
 		776862B11DE8B6FA00F115CB /* expression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 776862AF1DE8B6FA00F115CB /* expression.cpp */; };
 		776862BD1DE8DB7900F115CB /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 776862BC1DE8DB7900F115CB /* main.cpp */; };
 		776862C11DE8DB9E00F115CB /* expression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 776862AF1DE8B6FA00F115CB /* expression.cpp */; };
@@ -119,6 +122,9 @@
 		7739F0F71D7673730061B3F7 /* vstguieditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = vstguieditor.cpp; path = ../../../../source/vst/vstguieditor.cpp; sourceTree = "<group>"; };
 		7739F0F81D7673730061B3F7 /* vstguieditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = vstguieditor.h; path = ../../../../source/vst/vstguieditor.h; sourceTree = "<group>"; };
 		7739F11D1D7678120061B3F7 /* editor.uidesc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = editor.uidesc; sourceTree = "<group>"; };
+		773FF2451E24869A0068595B /* numberbox_arrow_up.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = numberbox_arrow_up.png; path = ../interface/numberbox_arrow_up.png; sourceTree = "<group>"; };
+		773FF2461E24869B0068595B /* numberbox_arrow_down.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = numberbox_arrow_down.png; path = ../interface/numberbox_arrow_down.png; sourceTree = "<group>"; };
+		773FF2491E2490320068595B /* numberbox_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = numberbox_background.png; path = ../interface/numberbox_background.png; sourceTree = "<group>"; };
 		776862AF1DE8B6FA00F115CB /* expression.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = expression.cpp; path = ../source/expression.cpp; sourceTree = "<group>"; };
 		776862B01DE8B6FA00F115CB /* expression.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = expression.hpp; path = ../source/expression.hpp; sourceTree = "<group>"; };
 		776862BA1DE8DB7900F115CB /* expression_test */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = expression_test; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -237,6 +243,9 @@
 		089C167CFE841241C02AAC07 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				773FF2491E2490320068595B /* numberbox_background.png */,
+				773FF2451E24869A0068595B /* numberbox_arrow_up.png */,
+				773FF2461E24869B0068595B /* numberbox_arrow_down.png */,
 				7782BD121D7CCCBC00B547F7 /* background.png */,
 				7782BD0A1D7C884700B547F7 /* vslider_background.png */,
 				7782BD0B1D7C884700B547F7 /* vslider_handle.png */,
@@ -554,9 +563,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				773FF2471E24869B0068595B /* numberbox_arrow_up.png in Resources */,
 				7739F11E1D7678120061B3F7 /* editor.uidesc in Resources */,
+				773FF24A1E2490320068595B /* numberbox_background.png in Resources */,
 				7782BD131D7CCCBC00B547F7 /* background.png in Resources */,
 				7782BD0D1D7C884700B547F7 /* vslider_handle.png in Resources */,
+				773FF2481E24869B0068595B /* numberbox_arrow_down.png in Resources */,
 				7782BD0C1D7C884700B547F7 /* vslider_background.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

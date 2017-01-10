@@ -9,11 +9,16 @@
 #define BACKGROUND IDB_PNG1
 #define SLIDER_BACK IDB_PNG2
 #define SLIDER_KNOB IDB_PNG3
-
+#define NUMBERBOX_ARROW_UP IDB_PNG4
+#define NUMBERBOX_ARROW_DOWN IDB_PNG5
+#define NUMBERBOX_BACK IDB_PNG6
 #else
 #define BACKGROUND "background.png"
 #define SLIDER_BACK "vslider_background.png"
 #define SLIDER_KNOB "vslider_handle.png"
+#define NUMBERBOX_ARROW_UP "numberbox_arrow_up.png"
+#define NUMBERBOX_ARROW_DOWN "numberbox_arrow_down.png"
+#define NUMBERBOX_BACK "numberbox_background.png"
 #endif
 
 static CFontDesc gLabelFont(kSystemFont->getName(), 11, kBoldFace);
@@ -196,6 +201,8 @@ namespace Compartmental {
             // used by multiple sliders, so we new them up here
             CBitmap* sliderHandle = new CBitmap (SLIDER_KNOB);
             CBitmap* sliderBackground = new CBitmap (SLIDER_BACK);
+            CBitmap* numberBoxArrowUp = new CBitmap(NUMBERBOX_ARROW_UP);
+            CBitmap* numberBoxArrowDown = new CBitmap(NUMBERBOX_ARROW_DOWN);
             
             CRect size;
             float layoutY = 0;
@@ -287,14 +294,15 @@ namespace Compartmental {
             //---Bit Depth--------------
             {
                 //--Bit Depth Number Box Background
-                const int bh = 16;
-                size(0,0,20+sliderHandle->getWidth(), bh*2);
+                CBitmap* numberBack = new CBitmap(NUMBERBOX_BACK);
+                size(0,0,numberBack->getWidth(), numberBack->getHeight());
                 size.offset(kEditorWidth - size.getWidth() - 10, layoutY + 50);
                 CViewContainer* numberBox = new CViewContainer(size);
+                numberBox->setBackground(numberBack);
                 
                 //---Bit Depth Number Box Value--------
                 const int textHH = 9;
-                size(0,numberBox->getHeight()/2 - textHH,20,numberBox->getHeight()/2 + textHH);
+                size(2, numberBox->getHeight()/2 - textHH, 20, numberBox->getHeight()/2 + textHH);
                 bitDepthLabel = new CTextLabel(size, "", 0, kNoFrame);
                 bitDepthLabel->setBackColor(kBlackCColor);
                 bitDepthLabel->setFont(kDataFont);
@@ -303,12 +311,13 @@ namespace Compartmental {
                 numberBox->addView(bitDepthLabel);
                 
                 //---Number Box Buttons
-                size(size.getWidth(), 0, numberBox->getWidth(), bh);
-                CKickButton* button = new CKickButton(size, this, kBitIncrementTag, size.getHeight(), sliderHandle);
+                const int ah = numberBoxArrowUp->getHeight()/2;
+                size(size.getTopRight().x, numberBox->getHeight()/2 - ah, numberBox->getWidth()-2, numberBox->getHeight()/2);
+                CKickButton* button = new CKickButton(size, this, kBitIncrementTag, ah, numberBoxArrowUp);
                 numberBox->addView(button);
                 
                 size.offset(0,size.getHeight());
-                button = new CKickButton(size, this, kBitDecrementTag, size.getHeight(), sliderHandle);
+                button = new CKickButton(size, this, kBitDecrementTag, ah, numberBoxArrowDown);
                 numberBox->addView(button);
                 
                 frame->addView(numberBox);
@@ -328,6 +337,8 @@ namespace Compartmental {
             // release the references
             sliderHandle->forget ();
             sliderBackground->forget ();
+            numberBoxArrowUp->forget();
+            numberBoxArrowDown->forget();
             
             
             //---VuMeter--------------------
@@ -570,6 +581,8 @@ namespace Compartmental {
                 break;
                     
                 case kBitDepthTag:
+                case kBitIncrementTag:
+                case kBitDecrementTag:
                 {
                     controller->beginEdit(kBitDepthId);
                 }
@@ -589,6 +602,8 @@ namespace Compartmental {
                 break;
                     
                 case kBitDepthTag:
+                case kBitIncrementTag:
+                case kBitDecrementTag:
                 {
                     controller->endEdit(kBitDepthId);
                 }
@@ -626,7 +641,6 @@ namespace Compartmental {
                     }
                 }
                 break;
-                    
                     
                 case kEvalTId:
                 {
