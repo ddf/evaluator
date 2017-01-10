@@ -93,6 +93,7 @@ namespace Compartmental
                     STR16("Bits"),
                     30,
                     0.5,
+                    0,
                     ParameterInfo::kCanAutomate
                 };
                 parameters.addParameter( new RangeParameter( bitInfo, kBitDepthMin, kBitDepthMax ) );
