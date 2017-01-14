@@ -298,6 +298,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\interface\background.png" />
+    <Image Include="..\interface\numberbox_arrow_down.png" />
+    <Image Include="..\interface\numberbox_arrow_up.png" />
+    <Image Include="..\interface\numberbox_background.png" />
     <Image Include="..\interface\vslider_background.png" />
     <Image Include="..\interface\vslider_handle.png" />
   </ItemGroup>

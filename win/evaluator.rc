@@ -84,6 +84,12 @@ IDB_PNG2                PNG                     "S:\\dev\\VST3_SDK\\public.sdk\\
 
 IDB_PNG3                PNG                     "S:\\dev\\VST3_SDK\\public.sdk\\samples\\vst\\evaluator\\interface\\vslider_handle.png"
 
+IDB_PNG4                PNG                     "S:\\dev\\VST3_SDK\\public.sdk\\samples\\vst\\evaluator\\interface\\numberbox_arrow_up.png"
+
+IDB_PNG5                PNG                     "S:\\dev\\VST3_SDK\\public.sdk\\samples\\vst\\evaluator\\interface\\numberbox_arrow_down.png"
+
+IDB_PNG6                PNG                     "S:\\dev\\VST3_SDK\\public.sdk\\samples\\vst\\evaluator\\interface\\numberbox_background.png"
+
 #endif    // English (United States) resources
 /////////////////////////////////////////////////////////////////////////////
 

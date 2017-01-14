@@ -5,8 +5,6 @@ support for multiple voices??
 some number of sub-expressions?
 - may not need this if expression can include subs as below.
 
-bit depth as number box with up/down arrows
-
 different modes for when to reset t: 
 - with every note on (as it does currently)
 - follow project time (ie when note on is received set t to current project time in samples, increment from there)
