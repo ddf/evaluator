@@ -22,3 +22,11 @@ support assigning new value to expression var from within expression?
 figure out a way to identify undefined variables when compiling? this may not be worth supporting.
 
 maybe someday figure out how to embed this font for use in the interface: http://webdraft.hu/fonts/classic-console/
+
+figure out how to set the cursor color in the mac textedit so it can be visible against the black background
+
+figure out why the text in the windows textedit increases in size when clicked on for editing
+
+fix handling of midi note on/off to provide proper mono instrument behavior
+
+add p to the variable window
