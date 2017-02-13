@@ -97,8 +97,7 @@ namespace Compartmental
         : mVolume(0.1f)
         , mEvaluator(0)
         , mExpression("")
-        , mNoteOnPitch(-1)
-        , mNoteOnVelocity(0)
+        , mNotes(kMaxNotes)
         , mBypass (false)
         , mBitDepth(0.4f)
         , mTick(0)
@@ -154,6 +153,9 @@ namespace Compartmental
                     mEvaluator = 0;
                 }
             }
+
+			mNotes.clear();
+
             return AudioEffect::setActive (state);
         }
 
@@ -237,18 +239,39 @@ namespace Compartmental
                         {
                             case Event::kNoteOnEvent:
                             {
-                                mNoteOnPitch = event.noteOn.pitch;
-                                mNoteOnVelocity = event.noteOn.velocity;
-                                mTick = 0;
-                                mEvaluator->SetVar('n', mNoteOnPitch);
-                                mEvaluator->SetVar('p', 0);
+								if (mNotes.size() < kMaxNotes)
+								{
+									if (mNotes.empty())
+									{
+										mEvaluator->SetVar('p', 0);
+										mTick = 0;
+									}
+									mNotes.push_back(event);
+									mEvaluator->SetVar('n',event.noteOn.pitch);
+								}
                             }
                             break;
                                 
                             case Event::kNoteOffEvent:
                             {
-                                mNoteOnPitch = -1;
-                                mTick = 0;
+								for (auto iter = mNotes.crbegin(); iter != mNotes.crend(); ++iter)
+								{
+									// remove the most recent note on with the same pitch
+									if (event.noteOff.pitch == iter->noteOn.pitch)
+									{
+										mNotes.erase((iter+1).base());
+										break;
+									}
+								}
+
+								if (mNotes.empty())
+								{
+									mTick = 0;
+								}
+								else
+								{
+									mEvaluator->SetVar('n', mNotes.back().noteOn.pitch);
+								}
                             }
                             break;
                         }
@@ -267,7 +290,7 @@ namespace Compartmental
                 const int32 stepCount = kBitDepthMax-kBitDepthMin;
                 const int32 shift = std::min<int32> (stepCount, (int32)(mBitDepth * (stepCount + 1))) + kBitDepthMin;
                 const EvalValue range = 1<<shift;
-                const float amp = mNoteOnPitch >= 0 ? mVolume*mNoteOnVelocity : 0;
+                const float amp = !mNotes.empty() ? mVolume*mNotes.back().noteOn.velocity : 0;
                 const uint64 mdenom = (uint64)(processSetup.sampleRate/1000);
                 const bool generate = amp > 0;
                 const EvalValue p = mEvaluator->GetVar('p');
@@ -296,7 +319,8 @@ namespace Compartmental
                         outputChannel[sample] = inputChannel[sample] + evalSample;
                     }
                 }
-                if ( mNoteOnPitch >= 0 )
+
+                if ( !mNotes.empty() )
                 {
                     mTick += data.numSamples;
                 }
@@ -325,7 +349,7 @@ namespace Compartmental
                 
                 if ( mEvaluator->GetVar('n') != startN )
                 {
-                    addOutParam(outParamChanges, kEvalNId, (double)(mNoteOnPitch+1)/kMaxInt32);
+                    addOutParam(outParamChanges, kEvalNId, (double)(mEvaluator->GetVar('n')+1)/kMaxInt32);
                 }
             }
             

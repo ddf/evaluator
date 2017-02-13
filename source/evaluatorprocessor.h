@@ -38,6 +38,8 @@
 #pragma once
 
 #include "public.sdk/source/vst/vstaudioeffect.h"
+#include "pluginterfaces/vst/ivstevents.h"
+#include <vector>
 
 using namespace Steinberg;
 using namespace Steinberg::Vst;
@@ -84,8 +86,10 @@ protected:
     Expression* mEvaluator;
     char mExpression[128];
     
-    int32 mNoteOnPitch;
-    float mNoteOnVelocity;
+	// we track up to 16 active midi notes
+	// if we receive a note on and this list is full, we ignore it.
+	enum { kMaxNotes = 16 };
+	std::vector<Event>  mNotes;
     
 	ParamValue mVolume;
     ParamValue mBitDepth;
