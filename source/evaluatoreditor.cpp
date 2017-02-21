@@ -212,7 +212,7 @@ namespace Compartmental {
             size (0, 0, kEditorWidth - 20, 20);
             size.offset (10, layoutY + 10);
             textEdit = new CTextEdit (size, this, kExpressionTextTag, "t*128", 0, k3DOut);
-            textEdit->setBackColor(MakeCColor(10,10,10));
+            textEdit->setBackColor(MakeCColor(90,90,90));
             textEdit->setFont(kDataFont);
             textEdit->setFontColor(greenColor);
             frame->addView (textEdit);
