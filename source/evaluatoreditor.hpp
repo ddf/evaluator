@@ -57,6 +57,7 @@ namespace Compartmental {
             CTextLabel* millisLabel;
             CTextLabel* rangeLabel;
             CTextLabel* noteLabel;
+            CTextLabel* prevLabel;
             CTextEdit* textEdit;
             CTextLabel* textResult;
 			CKnob*		volumeKnob;

@@ -54,6 +54,7 @@ namespace Compartmental {
         , millisLabel(0)
         , rangeLabel(0)
         , noteLabel(0)
+        , prevLabel(0)
         , textEdit (0)
         , textResult(0)
         , volumeKnob(0)
@@ -262,6 +263,13 @@ namespace Compartmental {
                 noteLabel->setFontColor(greenColor);
                 noteLabel->setHoriAlign(kLeftText);
                 window->addView(noteLabel);
+                
+                prevLabel = new CTextLabel(size, "p=0", 0, kNoFrame);
+                prevLabel->setBackColor(kTransparentCColor);
+                prevLabel->setFont(kDataFont);
+                prevLabel->setFontColor(greenColor);
+                prevLabel->setHoriAlign(kLeftText);
+                window->addView(prevLabel);
                 
                 frame->addView(window);
             }
@@ -686,6 +694,18 @@ namespace Compartmental {
                         char text[128];
                         sprintf(text, "n=%d", note);
                         noteLabel->setText(text);
+                    }
+                }
+                break;
+                    
+                case kEvalPId:
+                {
+                    if ( prevLabel )
+                    {
+                        uint64 prev = (uint64)(value*kMaxInt64u);
+                        char text[128];
+                        sprintf(text, "p=%llu", prev);
+                        prevLabel->setText(text);
                     }
                 }
                 break;

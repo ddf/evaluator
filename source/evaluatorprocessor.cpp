@@ -224,6 +224,7 @@ namespace Compartmental
             const EvalValue startM = mEvaluator->GetVar('m');
             const EvalValue startR = mEvaluator->GetVar('r');
             const int32 startN = mEvaluator->GetVar('n');
+            const EvalValue startP = mEvaluator->GetVar('p');
             
             //---2) Read input events-------------
             IEventList* eventList = data.inputEvents;
@@ -350,6 +351,11 @@ namespace Compartmental
                 if ( mEvaluator->GetVar('n') != startN )
                 {
                     addOutParam(outParamChanges, kEvalNId, (double)(mEvaluator->GetVar('n')+1)/kMaxInt32);
+                }
+                
+                if ( mEvaluator->GetVar('p') != startP )
+                {
+                    addOutParam(outParamChanges, kEvalPId, (double)mEvaluator->GetVar('p')/kMaxInt64u);
                 }
             }
             

@@ -47,6 +47,7 @@ enum {
     kEvalMId = 1,
     kEvalRId = 2,
     kEvalNId = 3,
+    kEvalPId = 4,
     
     // automation parameters
 	kVolumeId = 100,

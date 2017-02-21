@@ -1,4 +1,4 @@
-﻿a basic oscilloscope view for the gui?
+a basic oscilloscope view for the gui?
 
 support for multiple voices??
 
@@ -26,7 +26,3 @@ maybe someday figure out how to embed this font for use in the interface: http:/
 figure out how to set the cursor color in the mac textedit so it can be visible against the black background
 
 figure out why the text in the windows textedit increases in size when clicked on for editing
-
-fix handling of midi note on/off to provide proper mono instrument behavior
-
-add p to the variable window
