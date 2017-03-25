@@ -96,6 +96,7 @@ namespace Compartmental
                 FREQ,
                 SQR,
                 SIN,
+                TRI,
                 NEG,
                 MUL,
                 DIV,

@@ -276,7 +276,7 @@ namespace Compartmental
             std::stack<Op> unaryOps;
             
             EVAL_CHAR op = *expr;
-            while( op == '-' || op == '+' || op == '$' || op == '#' || op == 'f' )
+            while( op == '-' || op == '+' || op == '$' || op == '#' || op == 'f' || op == 'T' )
             {
                 switch(op)
                 {
@@ -285,6 +285,7 @@ namespace Compartmental
                     case '$': unaryOps.push( Op(SIN,this) ); break;
                     case '#': unaryOps.push( Op(SQR, this) ); break;
                     case 'f': unaryOps.push( Op(FREQ) ); break;
+                    case 'T': unaryOps.push( Op(TRI, this) ); break;
                 }
                 expr++;
                 op = *expr;
@@ -369,6 +370,7 @@ namespace Compartmental
                 case SIN:
                 case SQR:
                 case FREQ:
+                case TRI:
                     return 1;
                     
                 default:
@@ -411,6 +413,13 @@ namespace Compartmental
                 {
                     double f = round(3 * pow(2.0, (double)a/12.0));
                     return (EvalValue)f;
+                }
+                    
+                case TRI:
+                {
+                    EvalValue r = expr->GetVar('r');
+                    a *= 2;
+                    return a*((a/r)%2) + (r-a-1)*(1 - (a/r)%2);
                 }
                     
                 default: return 0;
