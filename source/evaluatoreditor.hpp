@@ -55,6 +55,7 @@ namespace Compartmental {
             CBitmap*    background;
             CTextLabel* timeLabel;
             CTextLabel* millisLabel;
+            CTextLabel* quartLabel;
             CTextLabel* rangeLabel;
             CTextLabel* noteLabel;
             CTextLabel* prevLabel;

@@ -250,6 +250,13 @@ namespace Compartmental {
                 millisLabel->setHoriAlign(kLeftText);
                 window->addView(millisLabel);
                 
+                quartLabel = new CTextLabel(size, "q=0", 0, kNoFrame);
+                quartLabel->setBackColor(kTransparentCColor);
+                quartLabel->setFont(kDataFont);
+                quartLabel->setFontColor(greenColor);
+                quartLabel->setHoriAlign(kLeftText);
+                window->addView(quartLabel);
+                
                 rangeLabel = new CTextLabel(size, "r=0", 0, kNoFrame);
                 rangeLabel->setBackColor(kTransparentCColor);
                 rangeLabel->setFont(kDataFont);
@@ -413,6 +420,7 @@ namespace Compartmental {
             
             timeLabel = 0;
             millisLabel = 0;
+            quartLabel = 0;
             rangeLabel = 0;
             noteLabel = 0;
             textEdit = 0;
@@ -706,6 +714,18 @@ namespace Compartmental {
                         char text[128];
                         sprintf(text, "p=%llu", prev);
                         prevLabel->setText(text);
+                    }
+                }
+                break;
+                    
+                case kEvalQId:
+                {
+                    if ( quartLabel )
+                    {
+                        uint64 val = (uint64)(value*kMaxInt64u);
+                        char text[128];
+                        sprintf(text, "q=%llu", val);
+                        quartLabel->setText(text);
                     }
                 }
                 break;

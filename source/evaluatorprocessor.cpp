@@ -225,6 +225,7 @@ namespace Compartmental
             const EvalValue startR = mEvaluator->GetVar('r');
             const int32 startN = mEvaluator->GetVar('n');
             const EvalValue startP = mEvaluator->GetVar('p');
+            const EvalValue startQ = mEvaluator->GetVar('q');
             
             //---2) Read input events-------------
             IEventList* eventList = data.inputEvents;
@@ -295,6 +296,7 @@ namespace Compartmental
                 const uint64 mdenom = (uint64)(processSetup.sampleRate/1000);
                 const bool generate = amp > 0;
                 const EvalValue p = mEvaluator->GetVar('p');
+                const uint64 qdenom = (uint64)(processSetup.sampleRate/(data.processContext->tempo/60.0))/128;
                 
                 mEvaluator->SetVar('r', range);
                 
@@ -313,6 +315,7 @@ namespace Compartmental
                             EvalValue tempTick = mTick + sample;
                             mEvaluator->SetVar('t', tempTick);
                             mEvaluator->SetVar('m', tempTick/mdenom);
+                            mEvaluator->SetVar('q', tempTick/qdenom);
                             EvalValue result = mEvaluator->Eval();
                             mEvaluator->SetVar('p', result);
                             evalSample = amp * (float)(-1.0 + 2.0*((double)(result%range)/(range-1)) );
@@ -356,6 +359,11 @@ namespace Compartmental
                 if ( mEvaluator->GetVar('p') != startP )
                 {
                     addOutParam(outParamChanges, kEvalPId, (double)mEvaluator->GetVar('p')/kMaxInt64u);
+                }
+                
+                if ( mEvaluator->GetVar('q') != startQ )
+                {
+                    addOutParam(outParamChanges, kEvalQId, (double)mEvaluator->GetVar('q')/kMaxInt64u);
                 }
             }
             
