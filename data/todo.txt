@@ -1,4 +1,8 @@
-﻿a basic oscilloscope view for the gui?
+﻿convert to wdl-ol
+
+bug: the text box doesn't update when selecting a User Preset in Windows Reaper, have to switch UI modes to get it to show up
+
+a basic oscilloscope view for the gui?
 
 some number of sub-expressions?
 + in the gui would look something like
@@ -7,6 +11,8 @@ B = [       ]
 C = [       ]
 Each text field for each letter would compile to a user-defined function that behaves the same as built-in function operators like #, $, and so forth.
 Could use 'i' as a special variable to hold the input value, but might also want a setting for each one to indicate whether it requires an argument.
+Actually, easier to implement user variables with fixed values defined by small expressions. This is because we can simply substitute into the
+main expression box before compiling it. To do functions it would be necessary to add support for that to the Expression class (which would be a fun challenge).
 
 different modes for when to reset t: 
 - with every note on (as it does currently)
@@ -17,7 +23,7 @@ ability to run t at a user-defined rate (for instance if they want to always run
 custom text-entry field because of inconsistencies in text-entry field between platforms and improve behavior, eg:
 - clicking the field in Windows causes the font size to increase a lot, but it should remain the same
 - clicking the field in Windows selects the entire string, but should simply place the carat for editing
-+ custom text-entry means possibly easier to have some sort of syntax-coloring
++ custom text-entry means possibly easier to have some sort of syntax-coloring, or indicating exactly where a syntax error is
 
 support branching with ternary operator?
 - eg: t%10 < 5 ? 0 : r
