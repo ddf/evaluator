@@ -276,7 +276,7 @@ namespace Compartmental
             std::stack<Op> unaryOps;
             
             EVAL_CHAR op = *expr;
-            while( op == '-' || op == '+' || op == '$' || op == '#' || op == 'f' || op == 'T' )
+            while( op == '-' || op == '+' || op == '$' || op == '#' || op == 'F' || op == 'T' )
             {
                 switch(op)
                 {
@@ -284,7 +284,7 @@ namespace Compartmental
                     case '+': break; // no op
                     case '$': unaryOps.push( Op(SIN,this) ); break;
                     case '#': unaryOps.push( Op(SQR, this) ); break;
-                    case 'f': unaryOps.push( Op(FREQ, this) ); break;
+                    case 'F': unaryOps.push( Op(FREQ, this) ); break;
                     case 'T': unaryOps.push( Op(TRI, this) ); break;
                 }
                 expr++;

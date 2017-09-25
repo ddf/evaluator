@@ -58,24 +58,24 @@ namespace Compartmental
         const EvaluatorProcessor::Preset EvaluatorProcessor::presets[] =
         {
             // name, expression, volume, bit depth
-            { "saw wave", "t*fn", 0.1f, bd(15.0f) },
-            { "square wave", "#(t*fn)", 0.1f, bd(15.0f) },
-            { "sine wave", "$(t*fn)", 0.1f, bd(15.0f) },
-            { "triangle wave", "(t*fn)*((t*fn/r)%2) + (r-t*fn-1)*(1 - (t*fn/r)%2)", 0.1f, bd(13.0f) },
-            { "amplitude modulation", "t*fn | $(t)", 0.1f, bd(15.0f) },
-            { "frequency modulation", "t*fn + $(t*2)", 0.1f, bd(15.0f) },
+            { "saw wave", "t*Fn", 0.1f, bd(15.0f) },
+            { "square wave", "#(t*Fn)", 0.1f, bd(15.0f) },
+            { "sine wave", "$(t*Fn)", 0.1f, bd(15.0f) },
+            { "triangle wave", "(t*Fn)*((t*Fn/r)%2) + (r-t*Fn-1)*(1 - (t*Fn/r)%2)", 0.1f, bd(13.0f) },
+            { "amplitude modulation", "t*Fn | $(t)", 0.1f, bd(15.0f) },
+            { "frequency modulation", "t*Fn + $(t*2)", 0.1f, bd(15.0f) },
             { "bouncing balls", "$(t*(1000 - m%500))", 0.1f, bd(15.0f) },
             { "little ditty", "(t*128 + $(t)) | t>>(t%(8*r))/r | t>>128", 0.1f, bd(15.0f) },
             { "aggressive texture", "(t*64 + $(t^$(m/2000))*$(m/2000)) | t*32", 0.1f, bd(15.0f) },
             { "overtone waterfall", "t*(128*(32-(m/50)%32)) | t*(128*((m/100)%64)) | t*128", 0.1f, bd(17.0f) },
-            { "computer music" , "$(t*f(n + 7*((m/125)%3) - 3*((m/125)%5) + 2*((m/125)%7)))", 0.1f, bd(11.0f) },
+            { "computer music" , "$(t*F(n + 7*((m/125)%3) - 3*((m/125)%5) + 2*((m/125)%7)))", 0.1f, bd(11.0f) },
             { "blurp", "(t<<t/(1024*8) | t>>t/16 & t>>t/32) / (t%(t/512+1) + 1) * 32", 0.1f, bd(15.0f) },
             { "garbage trash", "(r/2 - (256*(m/16%16)) + (t*(m/16%16)%(512*(m/16%16)+1))) * (m/16)", 0.1f, bd(15.0f) },
             { "nonsense can", "(1 + $(m)%32) ^ (t*128 & t*64 & t*32) | (p/16)<<p%4 | $(p/128)>>p%4", 0.1f, bd(15.0f) },
             { "ellipse", "(m/250+1)*$(t*128) | (m/500+1)*$((t+r/2*128))", 0.1f, bd(12.0f) },
             { "moving average", "p + ( ((t+1)*256 ^ (t+1)*64 & (t+1)*32) - p)/(t+1)", 0.1f, bd(15.0f) },
             { "oink oink ribbit", "(t*128 | t*17>>2) | ((t-4500)*64 | (t-4500)*5>>3) | p<<12", 0.3f, bd(18.0f) },
-            { "rhythmic glitch sine", "$(t*fn) | t*n/10>>4 ^ p>>(m/250%12)", 0.15f, bd(13.0f) }
+            { "rhythmic glitch sine", "$(t*Fn) | t*n/10>>4 ^ p>>(m/250%12)", 0.15f, bd(13.0f) }
         };
         
         const int32 EvaluatorProcessor::numPresets = sizeof(EvaluatorProcessor::presets)/sizeof(EvaluatorProcessor::Preset);

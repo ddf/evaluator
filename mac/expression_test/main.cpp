@@ -49,7 +49,7 @@ static EvalValue s(EvalValue a)
     return a%r < r/2 ? 0 : r-1;
 }
 
-static EvalValue f(EvalValue a)
+static EvalValue F(EvalValue a)
 {
     double f = round(3 * pow(2.0, (double)a/12.0));
     return (EvalValue)f;
@@ -83,7 +83,7 @@ Test tests[] = {
     { "2*2", EVAL(2*2), EEE_NO_ERROR },
     { "2/2", EVAL(2/2), EEE_NO_ERROR },
     { "1+2*3", EVAL(1+2*3), EEE_NO_ERROR },
-    { "fn", EVAL(f(n)), EEE_NO_ERROR },
+    { "Fn", EVAL(F(n)), EEE_NO_ERROR },
     { "--2", EVAL(2), EEE_NO_ERROR },
     { "2--2", EVAL(4), EEE_NO_ERROR },
     { "2+-2", EVAL(0), EEE_NO_ERROR },
@@ -91,17 +91,17 @@ Test tests[] = {
     { "#$2", EVAL(s($(2))), EEE_NO_ERROR },
     { "$#2", EVAL($(s(2))), EEE_NO_ERROR },
     { "$(#2)", EVAL($((s(2)))), EEE_NO_ERROR },
-    { "$fn", EVAL($(f(n))), EEE_NO_ERROR },
-    { "$(fn)", EVAL($(f(n))), EEE_NO_ERROR },
-    { "(t*fn)*((t*fn/r)%2) + (r-t*fn-1)*(1 - (t*fn/r)%2)", EVAL((t*f(n))*((t*f(n)/r)%2) + (r-t*f(n)-1)*(1 - (t*f(n)/r)%2)), EEE_NO_ERROR },
+    { "$Fn", EVAL($(F(n))), EEE_NO_ERROR },
+    { "$(Fn)", EVAL($(F(n))), EEE_NO_ERROR },
+    { "(t*Fn)*((t*Fn/r)%2) + (r-t*Fn-1)*(1 - (t*Fn/r)%2)", EVAL((t*F(n))*((t*F(n)/r)%2) + (r-t*F(n)-1)*(1 - (t*F(n)/r)%2)), EEE_NO_ERROR },
     { "(t*128 + $(t)) | t>>(t%(8*r))/r | t>>128", EVAL((t*128 + $(t)) | t>>(t%(8*r))/r | sr(t,128)), EEE_NO_ERROR },
     { "(t*64 + $(t^$(m/2000))*$(m/2000)) | t*32", EVAL((t*64 + $(t^$(m/2000))*$(m/2000)) | t*32), EEE_NO_ERROR },
     { "t*(128*(32-(m/50)%32)) | t*(128*((m/100)%64)) | t*128", EVAL(t*(128*(32-(m/50)%32)) | t*(128*((m/100)%64)) | t*128), EEE_NO_ERROR },
-    { "$(t*f(n + 7*((m/125)%3) - 3*((m/125)%5) + 2*((m/125)%7)))", EVAL($(t*f(n + 7*((m/125)%3) - 3*((m/125)%5) + 2*((m/125)%7)))), EEE_NO_ERROR },
+    { "$(t*F(n + 7*((m/125)%3) - 3*((m/125)%5) + 2*((m/125)%7)))", EVAL($(t*F(n + 7*((m/125)%3) - 3*((m/125)%5) + 2*((m/125)%7)))), EEE_NO_ERROR },
     { "(t<<t/(1024*8) | t>>t/16 & t>>t/32) / (t%(t/512+1) + 1) * 32", EVAL((t<<t/(1024*8) | sr(t,t/16) & sr(t,t/32)) / (t%(t/512+1) + 1) * 32), EEE_NO_ERROR },
     { "(r/2 - (256*(m/16%16)) + (t*(m/16%16)%(512*(m/16%16)+1))) * (m/16)", EVAL((r/2 - (256*(m/16%16)) + (t*(m/16%16)%(512*(m/16%16)+1))) * (m/16)), EEE_NO_ERROR },
     { "(1 + $(m)%32) ^ (t*128 & t*64 & t*32) | (p/16)<<p%4 | $(p/128)>>p%4", EVAL((1 + $(m)%32) ^ (t*128 & t*64 & t*32) | (p/16)<<p%4 | $(p/128)>>p%4), EEE_NO_ERROR },
-    { "$(t*fn) | t*n/10>>4 ^ p>>(m/250%12)", EVAL($(t*f(n)) | t*n/10>>4 ^ p>>(m/250%12)), EEE_NO_ERROR },
+    { "$(t*Fn) | t*n/10>>4 ^ p>>(m/250%12)", EVAL($(t*F(n)) | t*n/10>>4 ^ p>>(m/250%12)), EEE_NO_ERROR },
     { "(t*128 | t*17>>2) | ((t-4500)*64 | (t-4500)*5>>3) | p<<12", EVAL((t*128 | t*17>>2) | ((t-4500)*64 | (t-4500)*5>>3) | p<<12), EEE_NO_ERROR },
     
     // test syntax errors
