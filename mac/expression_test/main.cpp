@@ -55,6 +55,12 @@ static EvalValue F(EvalValue a)
     return (EvalValue)f;
 }
 
+static EvalValue T(EvalValue a)
+{
+	a *= 2;
+	return a*((a / r) % 2) + (r - a - 1)*(1 - (a / r) % 2);
+}
+
 // ddf (12/5/16)
 // if b is greater than the width of the int being shifted
 // and is present in the lamba as a numeric constant
@@ -84,6 +90,7 @@ Test tests[] = {
     { "2/2", EVAL(2/2), EEE_NO_ERROR },
     { "1+2*3", EVAL(1+2*3), EEE_NO_ERROR },
     { "Fn", EVAL(F(n)), EEE_NO_ERROR },
+	{ "Tn", EVAL(T(n)), EEE_NO_ERROR },
     { "--2", EVAL(2), EEE_NO_ERROR },
     { "2--2", EVAL(4), EEE_NO_ERROR },
     { "2+-2", EVAL(0), EEE_NO_ERROR },

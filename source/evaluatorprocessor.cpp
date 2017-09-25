@@ -61,7 +61,7 @@ namespace Compartmental
             { "saw wave", "t*Fn", 0.1f, bd(15.0f) },
             { "square wave", "#(t*Fn)", 0.1f, bd(15.0f) },
             { "sine wave", "$(t*Fn)", 0.1f, bd(15.0f) },
-            { "triangle wave", "(t*Fn)*((t*Fn/r)%2) + (r-t*Fn-1)*(1 - (t*Fn/r)%2)", 0.1f, bd(13.0f) },
+            { "triangle wave", "T(t*Fn)", 0.1f, bd(13.0f) },
             { "amplitude modulation", "t*Fn | $(t)", 0.1f, bd(15.0f) },
             { "frequency modulation", "t*Fn + $(t*2)", 0.1f, bd(15.0f) },
             { "bouncing balls", "$(t*(1000 - m%500))", 0.1f, bd(15.0f) },
