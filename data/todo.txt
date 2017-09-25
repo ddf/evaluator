@@ -1,15 +1,23 @@
-a basic oscilloscope view for the gui?
-
-support for multiple voices??
+﻿a basic oscilloscope view for the gui?
 
 some number of sub-expressions?
-- may not need this if expression can include subs as below.
++ in the gui would look something like
+A = [       ]
+B = [       ]
+C = [       ]
+Each text field for each letter would compile to a user-defined function that behaves the same as built-in function operators like #, $, and so forth.
+Could use 'i' as a special variable to hold the input value, but might also want a setting for each one to indicate whether it requires an argument.
 
 different modes for when to reset t: 
 - with every note on (as it does currently)
 - follow project time (ie when note on is received set t to current project time in samples, increment from there)
 
-figure out symbol to use for ‘triangle’ operator, maybe ‘V’?
+ability to run t at a user-defined rate (for instance if they want to always run it 44.1khz)
+
+custom text-entry field because of inconsistencies in text-entry field between platforms and improve behavior, eg:
+- clicking the field in Windows causes the font size to increase a lot, but it should remain the same
+- clicking the field in Windows selects the entire string, but should simply place the carat for editing
++ custom text-entry means possibly easier to have some sort of syntax-coloring
 
 support branching with ternary operator?
 - eg: t%10 < 5 ? 0 : r
