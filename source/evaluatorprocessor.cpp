@@ -293,12 +293,13 @@ namespace Compartmental
                 const int32 shift = std::min<int32> (stepCount, (int32)(mBitDepth * (stepCount + 1))) + kBitDepthMin;
                 const EvalValue range = 1<<shift;
                 const float amp = !mNotes.empty() ? mVolume*mNotes.back().noteOn.velocity : 0;
-                const uint64 mdenom = (uint64)(processSetup.sampleRate/1000);
+                const uint64 mdenom = (uint64)(data.processContext->sampleRate/1000);
                 const bool generate = amp > 0;
                 const EvalValue p = mEvaluator->GetVar('p');
-                const uint64 qdenom = (uint64)(processSetup.sampleRate/(data.processContext->tempo/60.0))/128;
+                const uint64 qdenom = (uint64)(data.processContext->sampleRate/(data.processContext->tempo/60.0))/128;
                 
                 mEvaluator->SetVar('r', range);
+				mEvaluator->SetSampleRate(data.processContext->sampleRate);
                 
                 for (int32 channel = 0; channel < numChannels; channel++)
                 {

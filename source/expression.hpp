@@ -33,6 +33,10 @@ namespace Compartmental
         {
         public:
             Expression()
+				: _err(EEE_NO_ERROR)
+				, _err_pos(0)
+				, _paren_count(0)
+				, _sample_rate(44100)
             {
                 memset(_vars, 0, sizeof(_vars));
             }
@@ -53,6 +57,11 @@ namespace Compartmental
             {
                 return _err_pos;
             }
+
+			void SetSampleRate(double val)
+			{
+				_sample_rate = val;
+			}
             
             EXPR_EVAL_ERR Compile(EVAL_CHAR* expr);
             unsigned long GetInstructionCount() const { return _ops.size(); }
@@ -86,6 +95,7 @@ namespace Compartmental
             EXPR_EVAL_ERR _err;
             EVAL_CHAR* _err_pos;
             unsigned int _paren_count;
+			double _sample_rate; // the sample rate of the VST host
             
             EvalValue _vars[256];
             

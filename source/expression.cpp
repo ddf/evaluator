@@ -284,7 +284,7 @@ namespace Compartmental
                     case '+': break; // no op
                     case '$': unaryOps.push( Op(SIN,this) ); break;
                     case '#': unaryOps.push( Op(SQR, this) ); break;
-                    case 'f': unaryOps.push( Op(FREQ) ); break;
+                    case 'f': unaryOps.push( Op(FREQ, this) ); break;
                     case 'T': unaryOps.push( Op(TRI, this) ); break;
                 }
                 expr++;
@@ -411,7 +411,7 @@ namespace Compartmental
                     
                 case FREQ:
                 {
-                    double f = round(3 * pow(2.0, (double)a/12.0));
+                    double f = round(3 * pow(2.0, (double)a/12.0) * (44100.0 / expr->_sample_rate));
                     return (EvalValue)f;
                 }
                     
