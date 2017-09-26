@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5810B8E71083557600EBDCF2 /* vstinitiids.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5810B8E61083557600EBDCF2 /* vstinitiids.cpp */; };
+		771FC6A31F79F6C100CEDA13 /* evaluator.vst3 in CopyFiles */ = {isa = PBXBuildFile; fileRef = 8D01CCD20486CAD60068D4B7 /* evaluator.vst3 */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		7739F0AD1D7668610061B3F7 /* evaluatoreditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7739F0AB1D7668610061B3F7 /* evaluatoreditor.cpp */; };
 		7739F0CF1D766EC40061B3F7 /* vstgui_mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 7739F0CE1D766EC40061B3F7 /* vstgui_mac.mm */; };
 		7739F0D11D766F410061B3F7 /* Accelerate.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7739F0D01D766F410061B3F7 /* Accelerate.framework */; };
@@ -94,6 +95,16 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		771FC6A21F79F6BD00CEDA13 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "/Library/Audio/Plug-Ins/VST3";
+			dstSubfolderSpec = 0;
+			files = (
+				771FC6A31F79F6C100CEDA13 /* evaluator.vst3 in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		776862B81DE8DB7900F115CB /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -468,8 +479,8 @@
 				8D01CCC90486CAD60068D4B7 /* Resources */,
 				8D01CCCB0486CAD60068D4B7 /* Sources */,
 				8D01CCCD0486CAD60068D4B7 /* Frameworks */,
-				F44C5733100CACD100D03421 /* Make Symbolic Link */,
 				F44E2FAA12B2415E00D5C220 /* Run vstvalidator */,
+				771FC6A21F79F6BD00CEDA13 /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -576,20 +587,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		F44C5733100CACD100D03421 /* Make Symbolic Link */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Make Symbolic Link";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "source ../../mac/make_vst3_symbolic_link.sh\n";
-		};
 		F44E2FAA12B2415E00D5C220 /* Run vstvalidator */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -672,6 +669,7 @@
 					../../../../../,
 					../../../../../vstgui4/,
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = evaluator;
 			};
 			name = Debug;
@@ -685,6 +683,7 @@
 					../../../../../,
 					../../../../../vstgui4/,
 				);
+				MACOSX_DEPLOYMENT_TARGET = 10.7;
 				PRODUCT_NAME = evaluator;
 			};
 			name = Release;
