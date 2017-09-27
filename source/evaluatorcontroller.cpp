@@ -168,6 +168,15 @@ namespace Compartmental
                             SWAP_16 (defaultExpression[i])
                         }
                     }
+
+					// update the UI
+					for (int32 i = 0; i < viewsArray.total(); i++)
+					{
+						if (viewsArray.at(i))
+						{
+							viewsArray.at(i)->messageTextChanged();
+						}
+					}
                 }
             }
 
