@@ -1,7 +1,5 @@
 ﻿convert to wdl-ol
 
-bug: the text box doesn't update when selecting a User Preset in Windows Reaper, have to switch UI modes to get it to show up
-
 a basic oscilloscope view for the gui?
 
 some number of sub-expressions?
