@@ -1,9 +1,9 @@
-#define PLUG_MFR "DamienQuartz"
+#define PLUG_MFR "Damien Quartz"
 #define PLUG_NAME "Evaluator"
 
 #define PLUG_CLASS_NAME Evaluator
 
-#define BUNDLE_MFR "DamienQuartz"
+#define BUNDLE_MFR "Damien Quartz"
 #define BUNDLE_NAME "Evaluator"
 
 #define PLUG_ENTRY Evaluator_Entry
@@ -33,7 +33,7 @@
   const int PLUG_TYPE_IDS_AS[2] = {'EFA1', 'EFA2'}; // AudioSuite
 #endif
 
-#define PLUG_MFR_PT "DamienQuartz\nDamienQuartz\nCompartmental"
+#define PLUG_MFR_PT "Damien Quartz\nDamien Quartz\nCompartmental"
 #define PLUG_NAME_PT "Evaluator\nEVAL"
 #define PLUG_TYPE_PT "Effect"
 #define PLUG_DOES_AUDIOSUITE 1
@@ -54,14 +54,24 @@ instrument determined by PLUG _IS _INST
 #define PLUG_DOES_STATE_CHUNKS 0
 
 // Unique IDs for each image resource.
-#define KNOB_ID 101
+#define BACKGROUND_ID 101
+#define SLIDER_BACK_ID 102
+#define SLIDER_KNOB_ID 103
+#define NUMBERBOX_ARROW_UP_ID 104
+#define NUMBERBOX_ARROW_DOWN_ID 105
+#define NUMBERBOX_BACK_ID 106
 
 // Image resource locations for this plug.
-#define KNOB_FN "resources/img/knob.png"
+#define BACKGROUND_FN "resources/img/background.png"
+#define SLIDER_BACK_FN "resources/img/vslider_background.png"
+#define SLIDER_KNOB_FN "resources/img/vslider_handle.png"
+#define NUMBERBOX_ARROW_UP_FN "resources/img/numberbox_arrow_up.png"
+#define NUMBERBOX_ARROW_DOWN_FN "resources/img/numberbox_arrow_down.png"
+#define NUMBERBOX_BACK_FN "resources/img/numberbox_background.png"
 
 // GUI default dimensions
-#define GUI_WIDTH 300
-#define GUI_HEIGHT 300
+#define GUI_WIDTH 500
+#define GUI_HEIGHT 250
 
 // on MSVC, you must define SA_API in the resource editor preprocessor macros as well as the c++ ones
 #if defined(SA_API)
@@ -70,7 +80,7 @@ instrument determined by PLUG _IS _INST
 
 // vst3 stuff
 #define MFR_URL "www.compartmental.net"
-#define MFR_EMAIL "spam@me.com"
+#define MFR_EMAIL "info@compartmental.net"
 #define EFFECT_TYPE_VST3 "Fx|Instrument"
 
 /* "Fx|Analyzer"", "Fx|Delay", "Fx|Distortion", "Fx|Dynamics", "Fx|EQ", "Fx|Filter",

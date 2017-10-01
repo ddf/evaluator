@@ -3,6 +3,9 @@
 
 #include "IPlug_include_in_plug_hdr.h"
 
+class ITextEdit;
+class ITextControl;
+
 class Evaluator : public IPlug
 {
 public:
@@ -14,7 +17,16 @@ public:
   void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames);
 
 private:
+  void CreateGraphics();
+  
   double mGain;
+  ITextEdit* textEdit;
+  ITextControl* timeLabel;
+  ITextControl* millisLabel;
+  ITextControl* quartLabel;
+  ITextControl* noteLabel;
+  ITextControl* rangeLabel;
+  ITextControl* prevLabel;
 };
 
 #endif
