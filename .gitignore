@@ -38,3 +38,25 @@ xcuserdata/
 win/.vs
 win/Win32
 *.aps
+*.suo
+*.ncb
+*.vcproj.*
+
+# wdl-ol recommends
+*.zip
+*.pkg
+*.dmg
+*.depend
+*.layout
+*.mode1v3
+*.db
+*.LSOverride
+*.xcworkspace
+*.xcuserdata
+*.xcschememanagement.plist
+build-*
+ipch/*
+gui/*
+
+Icon?
+.DS_Stor*
