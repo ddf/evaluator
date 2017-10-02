@@ -17,9 +17,9 @@ public:
   void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames);
 
 private:
+  // UI
   void CreateGraphics();
   
-  double mGain;
   ITextEdit* textEdit;
   ITextControl* timeLabel;
   ITextControl* millisLabel;
@@ -27,6 +27,11 @@ private:
   ITextControl* noteLabel;
   ITextControl* rangeLabel;
   ITextControl* prevLabel;
+  IControl*     bitDepthControl;
+  
+  // plug state
+  double mGain;
+  int    mBitDepth;
 };
 
 #endif

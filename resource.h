@@ -3,7 +3,7 @@
 
 #define PLUG_CLASS_NAME Evaluator
 
-#define BUNDLE_MFR "Damien Quartz"
+#define BUNDLE_MFR "compartmental"
 #define BUNDLE_NAME "Evaluator"
 
 #define PLUG_ENTRY Evaluator_Entry

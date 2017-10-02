@@ -94,17 +94,17 @@ public:
   
   ~ITextEdit() {}
   
-  bool Draw(IGraphics* pGraphics)
+  bool Draw(IGraphics* pGraphics) override
   {
     return pGraphics->DrawIText(&mText, mStr.Get(), &mRECT);
   }
   
-  void OnMouseDown(int x, int y, IMouseMod* pMod)
+  void OnMouseDown(int x, int y, IMouseMod* pMod) override
   {
     mPlug->GetGUI()->CreateTextEntry(this, &mText, &mRECT, mStr.Get());
   }
   
-  void TextFromTextEntry(const char* txt)
+  void TextFromTextEntry(const char* txt) override
   {
     mStr.Set(txt, MAX_ALG_LENGTH);
     
@@ -117,10 +117,46 @@ protected:
   WDL_String mStr;
 };
 
+class IIncrementControl : public IBitmapControl
+{
+public:
+  IIncrementControl(IPlugBase* pPlug, int x, int y, int paramIdx, IBitmap* pBitmap, int direction)
+  : IBitmapControl(pPlug, x, y, paramIdx, pBitmap)
+  , mPressed(0)
+  {
+    IParam* param = GetParam();
+    mInc = direction * 1.0 / (param->GetMax() - param->GetMin());
+    mDblAsSingleClick = true;
+  }
+  
+  bool Draw(IGraphics* pGraphics) override
+  {
+    return pGraphics->DrawBitmap(&mBitmap, &mRECT, mPressed+1, &mBlend);
+  }
+  
+  void OnMouseDown(int x, int y, IMouseMod* pMod) override
+  {
+    mPressed = 1;
+    mValue = GetParam()->GetNormalized() + mInc;
+    SetDirty();
+  }
+  
+  void OnMouseUp(int x, int y, IMouseMod* pMod) override
+  {
+    mPressed = 0;
+  }
+  
+private:
+  float mInc;
+  int   mPressed;
+};
+
 Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
   :	IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo)
-  , mGain(1.)
   , textEdit(0)
+  , bitDepthControl(0)
+  , mGain(1.)
+  , mBitDepth(15)
 {
   TRACE;
 
@@ -128,7 +164,7 @@ Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
   GetParam(kGain)->InitDouble("Gain", 50., 0., 100.0, 0.01, "%");
   GetParam(kGain)->SetShape(2.);
   
-  GetParam(kBitDepth)->InitEnum("Bit Depth", 15, 24);
+  GetParam(kBitDepth)->InitInt("Bit Depth", 15, 1, 24);
 
   CreateGraphics();
 
@@ -207,13 +243,13 @@ void Evaluator::CreateGraphics()
   }
 
   //---Bit Depth--------------
-  if ( 0 )
+  //if ( 0 )
   {
-    IBitmap numberBoxArrowUp = pGraphics->LoadIBitmap(NUMBERBOX_ARROW_UP_ID, NUMBERBOX_ARROW_UP_FN);
-    IBitmap numberBoxArrowDown = pGraphics->LoadIBitmap(NUMBERBOX_ARROW_DOWN_ID, NUMBERBOX_ARROW_DOWN_FN);
+    IBitmap numberBoxArrowUp = pGraphics->LoadIBitmap(NUMBERBOX_ARROW_UP_ID, NUMBERBOX_ARROW_UP_FN, 2);
+    IBitmap numberBoxArrowDown = pGraphics->LoadIBitmap(NUMBERBOX_ARROW_DOWN_ID, NUMBERBOX_ARROW_DOWN_FN, 2);
+    IBitmap numberBack = pGraphics->LoadIBitmap(NUMBERBOX_BACK_ID, NUMBERBOX_BACK_FN);
     
     //--Bit Depth Number Box Background
-    IBitmap numberBack = pGraphics->LoadIBitmap(NUMBERBOX_BACK_ID, NUMBERBOX_BACK_FN);
     IRECT backSize(0,0,numberBack.W,numberBack.H);
     const int offX = kEditorWidth - backSize.W() - 10;
     const int offY = 50;
@@ -225,9 +261,10 @@ void Evaluator::CreateGraphics()
     pGraphics->AttachControl(new IBitmapControl(this, backSize.L, backSize.T, &numberBack));
     
     //---Bit Depth Number Box Value--------
-    const int textHH = 9;
-    IRECT numberSize(backSize.L + 2, backSize.T + numberBack.H/2 - textHH, backSize.L + 20, backSize.T + numberBack.H/2 + textHH);
-    pGraphics->AttachControl(new ICaptionControl(this, numberSize, kBitDepth, &kExprLogTextStyle));
+    const int textHH = 5;
+    IRECT numberSize(backSize.L + 5, backSize.T + numberBack.H/2 - textHH, backSize.L + 25, backSize.T + numberBack.H/2 + textHH);
+    bitDepthControl = new ICaptionControl(this, numberSize, kBitDepth, &kExprLogTextStyle);
+    pGraphics->AttachControl(bitDepthControl);
 //    bitDepthLabel = new CTextLabel(size, "", 0, kNoFrame);
 //    bitDepthLabel->setBackColor(kBlackCColor);
 //    bitDepthLabel->setFont(kDataFont);
@@ -236,22 +273,16 @@ void Evaluator::CreateGraphics()
 //    numberBox->addView(bitDepthLabel);
     
     //---Number Box Buttons
-//    const int ah = numberBoxArrowUp->getHeight()/2;
-//    size(size.getTopRight().x, numberBox->getHeight()/2 - ah, numberBox->getWidth()-2, numberBox->getHeight()/2);
-//    CKickButton* button = new CKickButton(size, this, kBitIncrementTag, ah, numberBoxArrowUp);
-//    numberBox->addView(button);
-//
-//    size.offset(0,size.getHeight());
-//    button = new CKickButton(size, this, kBitDecrementTag, ah, numberBoxArrowDown);
-//    numberBox->addView(button);
-//
-//    frame->addView(numberBox);
+    int arrowX = backSize.R - numberBoxArrowUp.W;
+    int arrowY = backSize.T + numberBack.H/2 - numberBoxArrowUp.H/2;
+    pGraphics->AttachControl(new IIncrementControl(this, arrowX, arrowY, kBitDepth, &numberBoxArrowUp, 1));
+    pGraphics->AttachControl(new IIncrementControl(this, arrowX, arrowY + numberBoxArrowUp.H/2, kBitDepth, &numberBoxArrowDown, -1));
     
     //--Bit Depth Number Box Label
-    IRECT boxLabelSize(backSize.L + kEditorWidth - numberBack.W - 10,
-                       backSize.T + numberBack.H,
+    IRECT boxLabelSize(backSize.L,
+                       backSize.B + 5,
                        backSize.R,
-                       backSize.T + numberBack.H + 20);
+                       backSize.B + 25);
     pGraphics->AttachControl(new ITextControl(this, boxLabelSize, &kLabelTextStyle, "BITS"));
 //    CTextLabel* label = new CTextLabel(size, "BITS", 0, kNoFrame);
 //    label->setBackColor(kTransparentCColor);
@@ -295,7 +326,15 @@ void Evaluator::OnParamChange(int paramIdx)
     case kGain:
       mGain = GetParam(kGain)->Value() / 100.;
       break;
-
+      
+    case kBitDepth:
+      mBitDepth = GetParam(kBitDepth)->Int();
+      if ( bitDepthControl )
+      {
+        bitDepthControl->SetDirty(false);
+      }
+      break;
+      
     default:
       break;
   }
