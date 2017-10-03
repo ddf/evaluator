@@ -316,11 +316,7 @@ void Evaluator::CreateGraphics()
 void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
 {
   // Mutex is already locked for us.
-  
-  // the stepCount and shift calculations match how RangeParameter does it.
-  // ensures that we use same value as is displayed in the UI
-//  const int32_t stepCount = kBitDepthMax-kBitDepthMin;
-//  const int32_t shift = std::min<int32_t> (stepCount, (int32_t)(mBitDepth * (stepCount + 1))) + kBitDepthMin;
+
   const EvalValue range = 1<<mBitDepth;
   const uint64_t mdenom = (uint64_t)(GetSampleRate()/1000);
   const uint64_t qdenom = (uint64_t)(GetSampleRate()/(GetTempo()/60.0))/128;
@@ -447,4 +443,43 @@ void Evaluator::OnParamChange(int paramIdx)
     default:
       break;
   }
+}
+
+// this over-ridden method is called when the host is trying to store the plug-in state and needs to get the current data from your algorithm
+bool Evaluator::SerializeState(ByteChunk* pChunk)
+{
+  TRACE;
+  IMutexLock lock(this);
+  
+  pChunk->PutStr(textEdit->GetText());
+  
+  return IPlugBase::SerializeParams(pChunk); // must remember to call SerializeParams at the end
+}
+
+// this over-ridden method is called when the host is trying to load the plug-in state and you need to unpack the data into your algorithm
+int Evaluator::UnserializeState(ByteChunk* pChunk, int startPos)
+{
+  TRACE;
+  IMutexLock lock(this);
+  
+  WDL_String expression;
+  startPos = pChunk->GetStr(&expression, startPos);
+
+  textEdit->TextFromTextEntry(expression.Get());
+  
+  return IPlugBase::UnserializeParams(pChunk, startPos); // must remember to call UnserializeParams at the end
+}
+
+bool Evaluator::CompareState(const unsigned char* incomingState, int startPos)
+{
+  bool isEqual = true;
+  // create serialized representation of our string
+  ByteChunk chunk;
+  chunk.PutStr(textEdit->GetText());
+  // see if it's the same as the incoming state
+  startPos = chunk.Size();
+  isEqual = (memcmp(incomingState, chunk.GetBytes(), startPos) == 0);
+  isEqual &= IPlugBase::CompareState(incomingState, startPos); // fuzzy compare regular params
+  
+  return isEqual;
 }

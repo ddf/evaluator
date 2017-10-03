@@ -21,6 +21,11 @@ public:
   void OnParamChange(int paramIdx) override;
   void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames) override;
   void ProcessMidiMsg(IMidiMsg* pMsg) override;
+  
+  // have to hook into the chunks so that we can include the contents of our text-entry boxes
+  bool SerializeState(ByteChunk* pChunk) override;
+  int UnserializeState(ByteChunk* pChunk, int startPos) override;
+  bool CompareState(const unsigned char* incomingState, int startPos) override;
 
 private:
   // UI
