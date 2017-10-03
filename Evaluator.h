@@ -2,6 +2,11 @@
 #define __EVALUATOR__
 
 #include "IPlug_include_in_plug_hdr.h"
+#include "expression.hpp"
+#include "IMidiQueue.h"
+#include <vector>
+
+using namespace Compartmental::Vst;
 
 class ITextEdit;
 class ITextControl;
@@ -12,9 +17,10 @@ public:
   Evaluator(IPlugInstanceInfo instanceInfo);
   ~Evaluator();
 
-  void Reset();
-  void OnParamChange(int paramIdx);
-  void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames);
+  void Reset() override;
+  void OnParamChange(int paramIdx) override;
+  void ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames) override;
+  void ProcessMidiMsg(IMidiMsg* pMsg) override;
 
 private:
   // UI
@@ -30,8 +36,12 @@ private:
   IControl*     bitDepthControl;
   
   // plug state
-  double mGain;
-  int    mBitDepth;
+  Expression mExpression;
+  double    mGain;
+  int       mBitDepth;
+  EvalValue mTick;
+  IMidiQueue mMidiQueue;
+  std::vector<IMidiMsg> mNotes;
 };
 
 #endif

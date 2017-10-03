@@ -240,6 +240,10 @@
 		77CB0CCC1F819C910034E05D /* vslider_handle.png in Resources */ = {isa = PBXBuildFile; fileRef = 77CB0C9E1F8178FD0034E05D /* vslider_handle.png */; };
 		77CB0CCD1F819C910034E05D /* vslider_handle.png in Resources */ = {isa = PBXBuildFile; fileRef = 77CB0C9E1F8178FD0034E05D /* vslider_handle.png */; };
 		77CB0CCE1F819C920034E05D /* vslider_handle.png in Resources */ = {isa = PBXBuildFile; fileRef = 77CB0C9E1F8178FD0034E05D /* vslider_handle.png */; };
+		77CB0CD91F8319730034E05D /* expression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77CB0CD41F83166C0034E05D /* expression.cpp */; };
+		77CB0CDA1F8319730034E05D /* expression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77CB0CD41F83166C0034E05D /* expression.cpp */; };
+		77CB0CDB1F8319740034E05D /* expression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77CB0CD41F83166C0034E05D /* expression.cpp */; };
+		77CB0CDC1F8319740034E05D /* expression.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 77CB0CD41F83166C0034E05D /* expression.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -573,6 +577,8 @@
 		77CB0C9E1F8178FD0034E05D /* vslider_handle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = vslider_handle.png; path = resources/img/vslider_handle.png; sourceTree = "<group>"; };
 		77CB0C9F1F8178FD0034E05D /* numberbox_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = numberbox_background.png; path = resources/img/numberbox_background.png; sourceTree = "<group>"; };
 		77CB0CA01F8178FD0034E05D /* vslider_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = vslider_background.png; path = resources/img/vslider_background.png; sourceTree = "<group>"; };
+		77CB0CD41F83166C0034E05D /* expression.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = expression.cpp; path = source/expression.cpp; sourceTree = "<group>"; };
+		77CB0CD81F83166C0034E05D /* expression.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = expression.hpp; path = source/expression.hpp; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -632,6 +638,8 @@
 		089C166AFE841209C02AAC07 /* IPlugExample */ = {
 			isa = PBXGroup;
 			children = (
+				77CB0CD41F83166C0034E05D /* expression.cpp */,
+				77CB0CD81F83166C0034E05D /* expression.hpp */,
 				52FBBED30D0CF143001C8B8A /* resource.h */,
 				52FBBED20D0CF13D001C8B8A /* Evaluator.h */,
 				52FBBED00D0CF139001C8B8A /* Evaluator.cpp */,
@@ -1610,6 +1618,7 @@
 				4F78D9C913B63BA50032E0F3 /* IControl.cpp in Sources */,
 				4F78D9F313B63C6A0032E0F3 /* IPlugVST.cpp in Sources */,
 				4FDA440C13F3E4F2000B4551 /* IBitmapMonoText.cpp in Sources */,
+				77CB0CDA1F8319730034E05D /* expression.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1626,6 +1635,7 @@
 				4F78D94E13B63BA50032E0F3 /* IGraphics.cpp in Sources */,
 				4F78D94F13B63BA50032E0F3 /* IGraphicsCarbon.cpp in Sources */,
 				4F78D95013B63BA50032E0F3 /* IGraphicsCocoa.mm in Sources */,
+				77CB0CDC1F8319740034E05D /* expression.cpp in Sources */,
 				4F78D95313B63BA50032E0F3 /* Log.cpp in Sources */,
 				4F78D95513B63BA50032E0F3 /* IPopupMenu.cpp in Sources */,
 				4F78D95C13B63BA50032E0F3 /* IParam.cpp in Sources */,
@@ -1650,6 +1660,7 @@
 				4F9828BC140A9EB700F3FCC1 /* IGraphics.cpp in Sources */,
 				4F9828BD140A9EB700F3FCC1 /* IGraphicsCarbon.cpp in Sources */,
 				4F9828BE140A9EB700F3FCC1 /* IGraphicsCocoa.mm in Sources */,
+				77CB0CDB1F8319740034E05D /* expression.cpp in Sources */,
 				4F9828BF140A9EB700F3FCC1 /* Log.cpp in Sources */,
 				4F9828C0140A9EB700F3FCC1 /* IPopupMenu.cpp in Sources */,
 				4F9828C1140A9EB700F3FCC1 /* IParam.cpp in Sources */,
@@ -1686,6 +1697,7 @@
 				4FD16D1613B634D2001D0217 /* swell-ini.cpp in Sources */,
 				4FD16D3A13B63582001D0217 /* swell-kb.mm in Sources */,
 				4FD16D3C13B6358C001D0217 /* swell-miscdlg.mm in Sources */,
+				77CB0CD91F8319730034E05D /* expression.cpp in Sources */,
 				4FD16D3E13B63595001D0217 /* swell-menu.mm in Sources */,
 				4FD16D4013B635A0001D0217 /* swell-misc.mm in Sources */,
 				4FD16D4213B635AB001D0217 /* swell-wnd.mm in Sources */,

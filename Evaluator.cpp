@@ -5,13 +5,21 @@
 
 #define MAX_ALG_LENGTH 128
 
+using namespace Compartmental::Vst;
+
 const int kNumPrograms = 1;
 
 enum EParams
 {
   kGain = 0,
   kBitDepth = 1,
-  kNumParams
+  kNumParams,
+  
+  // used for text edit fields so the UI can call OnParamChange
+  kExpression = 101,
+  
+  kBitDepthMin = 1,
+  kBitDepthMax = 24
 };
 
 enum ELayout
@@ -84,8 +92,9 @@ IText kLabelTextStyle(12,
 class ITextEdit : public IControl
 {
 public:
-  ITextEdit(IPlugBase* pPlug, IRECT pR, IText* pText, const char* str)
+  ITextEdit(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, const char* str)
   : IControl(pPlug, pR)
+  , mIdx(paramIdx)
   {
     mDisablePrompt = true;
     mText = *pText;
@@ -107,13 +116,22 @@ public:
   void TextFromTextEntry(const char* txt) override
   {
     mStr.Set(txt, MAX_ALG_LENGTH);
-    
-    //TODO: update alg
-    
     SetDirty(false);
+    mPlug->OnParamChange(mIdx);
+  }
+  
+  const char * GetText() const
+  {
+    return mStr.Get();
+  }
+  
+  int GetTextLength() const
+  {
+    return mStr.GetLength();
   }
   
 protected:
+  int        mIdx;
   WDL_String mStr;
 };
 
@@ -155,6 +173,7 @@ Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
   :	IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo)
   , textEdit(0)
   , bitDepthControl(0)
+  , mExpression()
   , mGain(1.)
   , mBitDepth(15)
 {
@@ -162,9 +181,8 @@ Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
 
   //arguments are: name, defaultVal, minVal, maxVal, step, label
   GetParam(kGain)->InitDouble("Gain", 50., 0., 100.0, 0.01, "%");
-  GetParam(kGain)->SetShape(2.);
   
-  GetParam(kBitDepth)->InitInt("Bit Depth", 15, 1, 24);
+  GetParam(kBitDepth)->InitInt("Bit Depth", 15, kBitDepthMin, kBitDepthMax);
 
   CreateGraphics();
 
@@ -195,7 +213,7 @@ void Evaluator::CreateGraphics()
   pGraphics->AttachPanelBackground(&kBackgroundColor);
 
   //--- Text input for the expression ------
-  textEdit = new ITextEdit (this, MakeIRect(kExpression), &kExpressionTextStyle, "t*128");
+  textEdit = new ITextEdit (this, MakeIRect(kExpression), kExpression, &kExpressionTextStyle, "t*128");
   pGraphics->AttachControl(textEdit);
 
   ITextControl* textResult = new ITextControl(this, MakeIRect(kExprMsg), &kExprMsgTextStyle);
@@ -298,23 +316,108 @@ void Evaluator::CreateGraphics()
 void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
 {
   // Mutex is already locked for us.
+  
+  // the stepCount and shift calculations match how RangeParameter does it.
+  // ensures that we use same value as is displayed in the UI
+//  const int32_t stepCount = kBitDepthMax-kBitDepthMin;
+//  const int32_t shift = std::min<int32_t> (stepCount, (int32_t)(mBitDepth * (stepCount + 1))) + kBitDepthMin;
+  const EvalValue range = 1<<mBitDepth;
+  const uint64_t mdenom = (uint64_t)(GetSampleRate()/1000);
+  const uint64_t qdenom = (uint64_t)(GetSampleRate()/(GetTempo()/60.0))/128;
+  
+  mExpression.SetVar('r', range);
+  mExpression.SetSampleRate(GetSampleRate());
 
   double* in1 = inputs[0];
   double* in2 = inputs[1];
   double* out1 = outputs[0];
   double* out2 = outputs[1];
+  
+  double amp = !mNotes.empty() ? mGain*mNotes.back().Velocity()/127 : 0;
 
   for (int s = 0; s < nFrames; ++s, ++in1, ++in2, ++out1, ++out2)
   {
-    *out1 = *in1 * mGain;
-    *out2 = *in2 * mGain;
+    while (!mMidiQueue.Empty())
+    {
+      IMidiMsg* pMsg = mMidiQueue.Peek();
+      if (pMsg->mOffset > s) break;
+      
+      // To-do: Handle the MIDI message
+      switch(pMsg->StatusMsg())
+      {
+        case IMidiMsg::kNoteOn:
+          if (mNotes.empty())
+          {
+            mExpression.SetVar('p', 0);
+            mTick = 0;
+          }
+          mNotes.push_back(*pMsg);
+          mExpression.SetVar('n',pMsg->NoteNumber());
+          amp = mGain*pMsg->Velocity()/127;
+          break;
+          
+        case IMidiMsg::kNoteOff:
+          for (auto iter = mNotes.crbegin(); iter != mNotes.crend(); ++iter)
+          {
+            // remove the most recent note on with the same pitch
+            if (pMsg->NoteNumber() == iter->NoteNumber())
+            {
+              mNotes.erase((iter+1).base());
+              break;
+            }
+          }
+          
+          if (mNotes.empty())
+          {
+            mTick = 0;
+            amp   = 0;
+          }
+          else
+          {
+            mExpression.SetVar('n', mNotes.back().NoteNumber());
+            amp = mGain*mNotes.back().Velocity()/127;
+          }
+          break;
+          
+        default:
+          break;
+      }
+      
+      mMidiQueue.Remove();
+    }
+    
+    ++mTick;
+    mExpression.SetVar('t', mTick);
+    mExpression.SetVar('m', mTick/mdenom);
+    mExpression.SetVar('q', mTick/qdenom);
+    EvalValue result = mExpression.Eval();
+    mExpression.SetVar('p', result);
+    double evalSample = amp * (-1.0 + 2.0*((double)(result%range)/(range-1)) );
+    
+    *out1 = *in1 + evalSample * amp;
+    *out2 = *in2 + evalSample * amp;
   }
+  
+  mMidiQueue.Flush(nFrames);
 }
 
 void Evaluator::Reset()
 {
   TRACE;
   IMutexLock lock(this);
+  
+  // re-init vars
+  mExpression = Expression();
+  // force recompile
+  OnParamChange(kExpression);
+  
+  mMidiQueue.Resize(GetBlockSize());
+  mNotes.clear();
+}
+
+void Evaluator::ProcessMidiMsg(IMidiMsg *pMsg)
+{
+  mMidiQueue.Add(pMsg);
 }
 
 void Evaluator::OnParamChange(int paramIdx)
@@ -333,6 +436,12 @@ void Evaluator::OnParamChange(int paramIdx)
       {
         bitDepthControl->SetDirty(false);
       }
+      break;
+      
+    case kExpression:
+      char expr[MAX_ALG_LENGTH];
+      strncpy(expr, textEdit->GetText(), textEdit->GetTextLength());
+      mExpression.Compile(expr);
       break;
       
     default:

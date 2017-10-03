@@ -11,7 +11,6 @@
 
 #include <unordered_map>
 #include <vector>
-#include "pluginterfaces/base/ftypes.h"
 
 namespace Compartmental
 {
@@ -27,7 +26,7 @@ namespace Compartmental
         };
         
         typedef char EVAL_CHAR;
-        typedef Steinberg::uint64 EvalValue;
+        typedef uint64_t EvalValue;
         
         class Expression
         {
