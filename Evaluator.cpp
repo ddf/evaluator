@@ -98,6 +98,7 @@ public:
     mDisablePrompt = true;
     mText = *pText;
     mStr.Set(str);
+	mTextEntryLength = MAX_ALG_LENGTH;
   }
   
   ~ITextEdit() {}
