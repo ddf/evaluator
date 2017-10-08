@@ -75,6 +75,7 @@
     <ClCompile Include="..\..\WDL\IPlug\IPlugStandalone.cpp">
       <Filter>app</Filter>
     </ClCompile>
+    <ClCompile Include="source\expression.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Evaluator.rc" />

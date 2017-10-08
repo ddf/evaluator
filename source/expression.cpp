@@ -8,6 +8,9 @@
 
 //#define STDSTACK
 
+// required to get M_PI on windows
+#define _USE_MATH_DEFINES
+
 #include "expression.hpp"
 #include <stdlib.h>
 #include <math.h>

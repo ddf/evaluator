@@ -242,6 +242,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\WDL\IPlug\IPlugVST.cpp" />
     <ClCompile Include="Evaluator.cpp" />
+    <ClCompile Include="source\expression.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Evaluator.rc" />

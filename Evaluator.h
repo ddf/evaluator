@@ -2,7 +2,7 @@
 #define __EVALUATOR__
 
 #include "IPlug_include_in_plug_hdr.h"
-#include "expression.hpp"
+#include "source/expression.hpp"
 #include "IMidiQueue.h"
 #include <vector>
 

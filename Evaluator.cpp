@@ -3,10 +3,9 @@
 #include "IControl.h"
 #include "resource.h"
 
-#define MAX_ALG_LENGTH 128
-
 using namespace Compartmental::Vst;
 
+const size_t MAX_ALG_LENGTH = 128;
 const int kNumPrograms = 1;
 
 enum EParams
@@ -187,7 +186,12 @@ Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
   CreateGraphics();
 
   //MakePreset("preset 1", ... );
-  MakeDefaultPreset((char *) "-", kNumPrograms);
+  //MakeDefaultPreset((char *) "-", kNumPrograms);
+  // TODO: initialize presets better
+  textEdit->TextFromTextEntry("t*128");
+  ByteChunk chunk;
+  SerializeState(&chunk);
+  MakePresetFromChunk("saw wave", &chunk);
 }
 
 Evaluator::~Evaluator() {}
@@ -435,9 +439,14 @@ void Evaluator::OnParamChange(int paramIdx)
       break;
       
     case kExpression:
-      char expr[MAX_ALG_LENGTH];
-      strncpy(expr, textEdit->GetText(), textEdit->GetTextLength());
-      mExpression.Compile(expr);
+	{
+		char expr[MAX_ALG_LENGTH+1];
+		const char * text = textEdit->GetText();
+		const size_t textLen = textEdit->GetTextLength();
+		strncpy(expr, text, textLen);
+		expr[textLen] = '\0';
+		mExpression.Compile(expr);
+	}
       break;
       
     default:
@@ -462,7 +471,8 @@ int Evaluator::UnserializeState(ByteChunk* pChunk, int startPos)
   TRACE;
   IMutexLock lock(this);
   
-  WDL_String expression;
+  // initialize from empty string in case the get fails
+  WDL_String expression("");
   startPos = pChunk->GetStr(&expression, startPos);
 
   textEdit->TextFromTextEntry(expression.Get());
