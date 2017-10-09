@@ -3,9 +3,7 @@
 #include "IControl.h"
 #include "resource.h"
 
-using namespace Compartmental::Vst;
-
-const size_t MAX_ALG_LENGTH = 128;
+const size_t MAX_ALG_LENGTH = 256;
 const int kNumPrograms = 1;
 
 enum EParams
@@ -165,7 +163,7 @@ public:
   }
   
 private:
-  float mInc;
+  double mInc;
   int   mPressed;
 };
 
@@ -173,7 +171,7 @@ Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
   :	IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo)
   , textEdit(0)
   , bitDepthControl(0)
-  , mExpression()
+  , mProgram(0)
   , mGain(1.)
   , mBitDepth(15)
 {
@@ -322,12 +320,12 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 {
   // Mutex is already locked for us.
 
-  const EvalValue range = 1<<mBitDepth;
+  const Program::Value range = 1<<mBitDepth;
   const uint64_t mdenom = (uint64_t)(GetSampleRate()/1000);
   const uint64_t qdenom = (uint64_t)(GetSampleRate()/(GetTempo()/60.0))/128;
   
-  mExpression.SetVar('r', range);
-  mExpression.SetSampleRate(GetSampleRate());
+  mProgram->Set('r', range);
+  mProgram->Set('~', (Program::Value)GetSampleRate());
 
   double* in1 = inputs[0];
   double* in2 = inputs[1];
@@ -349,11 +347,11 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
         case IMidiMsg::kNoteOn:
           if (mNotes.empty())
           {
-            mExpression.SetVar('p', 0);
+            mProgram->Set('p', 0);
             mTick = 0;
           }
           mNotes.push_back(*pMsg);
-          mExpression.SetVar('n',pMsg->NoteNumber());
+          mProgram->Set('n',pMsg->NoteNumber());
           amp = mGain*pMsg->Velocity()/127;
           break;
           
@@ -375,7 +373,7 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
           }
           else
           {
-            mExpression.SetVar('n', mNotes.back().NoteNumber());
+            mProgram->Set('n', mNotes.back().NoteNumber());
             amp = mGain*mNotes.back().Velocity()/127;
           }
           break;
@@ -388,11 +386,13 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
     }
     
     ++mTick;
-    mExpression.SetVar('t', mTick);
-    mExpression.SetVar('m', mTick/mdenom);
-    mExpression.SetVar('q', mTick/qdenom);
-    EvalValue result = mExpression.Eval();
-    mExpression.SetVar('p', result);
+    mProgram->Set('t', mTick);
+    mProgram->Set('m', mTick/mdenom);
+    mProgram->Set('q', mTick/qdenom);
+	Program::Value result;
+	// TODO: report the error to the UI if need be
+	Program::RuntimeError error = mProgram->Run(result);
+    mProgram->Set('p', result);
     double evalSample = amp * (-1.0 + 2.0*((double)(result%range)/(range-1)) );
     
     *out1 = *in1 + evalSample * amp;
@@ -408,7 +408,11 @@ void Evaluator::Reset()
   IMutexLock lock(this);
   
   // re-init vars
-  mExpression = Expression();
+  if (mProgram != nullptr)
+  {
+	  delete mProgram;
+	  mProgram = nullptr;
+  }
   // force recompile
   OnParamChange(kExpression);
   
@@ -446,7 +450,15 @@ void Evaluator::OnParamChange(int paramIdx)
 		const size_t textLen = textEdit->GetTextLength();
 		strncpy(expr, text, textLen);
 		expr[textLen] = '\0';
-		mExpression.Compile(expr);
+		Program::CompileError error;
+		int errorPosition;
+		mProgram = Program::Compile(expr, error, errorPosition);
+		// we want to always have a program we can run,
+		// so if compilation fails, we create one that simply evaluates to 0.
+		if (mProgram == nullptr)
+		{
+			mProgram = Program::Compile("0", error, errorPosition);
+		}
 	}
       break;
       

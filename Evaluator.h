@@ -2,11 +2,9 @@
 #define __EVALUATOR__
 
 #include "IPlug_include_in_plug_hdr.h"
-#include "source/expression.hpp"
+#include "Program.h"
 #include "IMidiQueue.h"
 #include <vector>
-
-using namespace Compartmental::Vst;
 
 class ITextEdit;
 class ITextControl;
@@ -41,11 +39,11 @@ private:
   IControl*     bitDepthControl;
   
   // plug state
-  Expression mExpression;
-  double    mGain;
-  int       mBitDepth;
-  EvalValue mTick;
-  IMidiQueue mMidiQueue;
+  Program*				mProgram;
+  double				mGain;
+  int					mBitDepth;
+  Program::Value		mTick;
+  IMidiQueue			mMidiQueue;
   std::vector<IMidiMsg> mNotes;
 };
 
