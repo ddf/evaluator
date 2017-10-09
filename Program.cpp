@@ -439,8 +439,15 @@ Program::RuntimeError Program::Exec(const Op& op)
 		case Op::FREQ:
 		{
 			POP1;
-			double f = round(3 * pow(2.0, (double)a / 12.0) * (44100.0 / Get('~')));
-			stack.push((Value)f);
+			if (a == 0)
+			{
+				stack.push(0);
+			}
+			else
+			{
+				double f = round(3 * pow(2.0, (double)a / 12.0) * (44100.0 / Get('~')));
+				stack.push((Value)f);
+			}
 		}
 		break;
 

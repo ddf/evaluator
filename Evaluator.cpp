@@ -46,8 +46,6 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
   double* in2 = inputs[1];
   double* out1 = outputs[0];
   double* out2 = outputs[1];
-  
-  double amp = !mNotes.empty() ? mGain*mNotes.back().Velocity()/127 : 0;
 
   for (int s = 0; s < nFrames; ++s, ++in1, ++in2, ++out1, ++out2)
   {
@@ -66,8 +64,8 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
             mTick = 0;
           }
           mNotes.push_back(*pMsg);
-          mProgram->Set('n',pMsg->NoteNumber());
-          amp = mGain*pMsg->Velocity()/127;
+          mProgram->Set('n', pMsg->NoteNumber());
+		  mProgram->Set('v', pMsg->Velocity());
           break;
           
         case IMidiMsg::kNoteOff:
@@ -83,13 +81,13 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
           
           if (mNotes.empty())
           {
-            mTick = 0;
-            amp   = 0;
+			  mProgram->Set('n', 0);
+			  mProgram->Set('v', 0);
           }
           else
           {
             mProgram->Set('n', mNotes.back().NoteNumber());
-            amp = mGain*mNotes.back().Velocity()/127;
+			mProgram->Set('v', mNotes.back().Velocity());
           }
           break;
           
@@ -108,10 +106,10 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 	// TODO: report the error to the UI if need be
 	Program::RuntimeError error = mProgram->Run(result);
     mProgram->Set('p', result);
-    double evalSample = amp * (-1.0 + 2.0*((double)(result%range)/(range-1)) );
+    double evalSample = mGain * (-1.0 + 2.0*((double)(result%range)/(range-1)) );
     
-    *out1 = *in1 + evalSample * amp;
-    *out2 = *in2 + evalSample * amp;
+	*out1 = *in1 + evalSample;
+	*out2 = *in2 + evalSample;
   }
   
   mMidiQueue.Flush(nFrames);
@@ -184,6 +182,7 @@ void Evaluator::OnParamChange(int paramIdx)
 		// initializeeeee
 		mTick = 0;
 		mProgram->Set('n', 0);
+		mProgram->Set('v', 0);
 		mProgram->Set('p', 0);
 	}
       break;
@@ -254,10 +253,11 @@ const char * Evaluator::GetProgramState() const
 	static char state[max_state];
 
 	sprintf_s(state, max_state,
-		"IC: %llu\nr=%llu\nn=%llu\nt=%llu\nm=%llu\nq=%llu\np=%llu",
+		"IC: %llu\nr=%llu\nn=%llu\nv=%llu\nt=%llu\nm=%llu\nq=%llu\np=%llu",
 		mProgram->GetInstructionCount(),
 		mProgram->Get('r'),
 		mProgram->Get('n'),
+		mProgram->Get('v'),
 		mProgram->Get('t'),
 		mProgram->Get('m'),
 		mProgram->Get('q'),
