@@ -10,17 +10,20 @@ enum ELayout
 	kExpression_X = 10,
 	kExpression_Y = 10,
 	kExpression_W = kEditorWidth - 20,
-	kExpression_H = 20,
+	kExpression_H = 60,
 
-	kExprMsg_X = 10,
-	kExprMsg_Y = kExpression_Y + 20,
-	kExprMsg_W = kExpression_W,
-	kExprMsg_H = 20,
+	kVolume_X = kExpression_X,
+	kVolume_Y = kExpression_Y + kExpression_H + 10,
+	kVolume_W = 35,
+	kVolume_H = 35,
+
+	kBitDepth_X = kVolume_X + kVolume_W + 10,
+	kBitDepth_Y = kVolume_Y,
 
 	// the log window that shows the internal state of the expression
-	kExprLog_X = 10,
-	kExprLog_Y = kExprMsg_Y + 20,
-	kExprLog_W = 400,
+	kExprLog_X = kExpression_X,
+	kExprLog_Y = kVolume_Y + kVolume_H + 15,
+	kExprLog_W = kExpression_W,
 	kExprLog_H = 150,
 
 	kExprLog_M = 5,   // margin
@@ -38,7 +41,7 @@ IText  kExpressionTextStyle(11,
 							&kGreenColor,
 							"Courier",
 							IText::kStyleNormal,
-							IText::kAlignCenter,
+							IText::kAlignNear,
 							0, // orientation
 							IText::kQualityDefault,
 							&kExprBackgroundColor,
@@ -179,19 +182,6 @@ private:
 	int   mPressed;
 };
 
-// helper for adding text controls to the log window
-ITextControl* AttachLogText(IPlugBase* pPlug, IGraphics* pGraphics, int& y, const char* defaultText)
-{
-	const int xl = kExprLog_X + kExprLog_M;
-	const int xr = xl + kExprLog_TW;
-
-	ITextControl* control = new ITextControl(pPlug, IRECT(xl, y, xr, y + kExprLog_TH), &kExprLogTextStyle, defaultText);
-	pGraphics->AttachControl(control);
-
-	y += kExprLog_TH;
-
-	return control;
-}
 
 Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 : mPlug(plug)
@@ -201,9 +191,6 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 	//--- Text input for the expression ------
 	textEdit = new ITextEdit(mPlug, MakeIRect(kExpression), kExpression, &kExpressionTextStyle, "t*128");
 	pGraphics->AttachControl(textEdit);
-
-	ITextControl* textResult = new ITextControl(mPlug, MakeIRect(kExprMsg), &kExprMsgTextStyle);
-	pGraphics->AttachControl(textResult);
 
 	//-- "window" displaying internal state of the expression
 	{
@@ -215,11 +202,8 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 	//---Volume--------------------
 	{
 		//---Volume Knob-------
-		const int knobSize(35);
-		const int knobLeft = kEditorWidth - knobSize - 10;
-		const int knobTop = kEditorHeight - knobSize - 20;
-		IRECT size(knobLeft, knobTop, knobLeft + knobSize, knobTop + knobSize);
-		pGraphics->AttachControl(new IKnobLineControl(mPlug, size, kGain, &kGreenColor));
+		IRECT size = MakeIRect(kVolume);
+		pGraphics->AttachControl(new IKnobLineControl(mPlug, MakeIRect(kVolume), kGain, &kGreenColor));
 
 		//---Volume Label--------
 		IRECT labelSize(size.L - 10, size.B - 5, size.R + 10, size.B + 10);
@@ -233,13 +217,7 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 		IBitmap numberBack = pGraphics->LoadIBitmap(NUMBERBOX_BACK_ID, NUMBERBOX_BACK_FN);
 
 		//--Bit Depth Number Box Background
-		IRECT backSize(0, 0, numberBack.W, numberBack.H);
-		const int offX = kEditorWidth - backSize.W() - 10;
-		const int offY = 50;
-		backSize.L += offX;
-		backSize.R += offX;
-		backSize.T += offY;
-		backSize.B += offY;
+		IRECT backSize(kBitDepth_X, kBitDepth_Y, kBitDepth_X + numberBack.W, kBitDepth_Y + numberBack.H);
 
 		pGraphics->AttachControl(new IBitmapControl(mPlug, backSize.L, backSize.T, &numberBack));
 
