@@ -89,6 +89,7 @@ public:
 
 	bool Draw(IGraphics* pGraphics) override
 	{
+		pGraphics->FillIRect(&mText.mTextEntryBGColor, &mRECT);
 		return pGraphics->DrawIText(&mText, mStr.Get(), &mRECT);
 	}
 
