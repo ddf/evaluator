@@ -116,6 +116,34 @@ protected:
 	WDL_String mStr;
 };
 
+class ConsoleText : public IControl
+{
+public:
+	ConsoleText(IPlugBase* plug, IRECT pR, IText* textStyle, const IColor* backgroundColor, int margin)
+		: IControl(plug, pR)
+		, mPanel(plug, pR, backgroundColor)
+		, mText(plug, pR.GetPadded(-margin), textStyle, "Program State")
+	{}
+
+	bool Draw(IGraphics* pGraphics) override
+	{		
+		return mPanel.Draw(pGraphics) && mText.Draw(pGraphics);
+	}
+
+	void SetTextFromPlug(const char * text)
+	{
+		mText.SetTextFromPlug(const_cast<char*>(text));
+		if (mText.IsDirty())
+		{
+			SetDirty(false);
+		}
+	}
+
+private:
+	IPanelControl mPanel;
+	ITextControl  mText;
+};
+
 class IIncrementControl : public IBitmapControl
 {
 public:
@@ -177,15 +205,10 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 	pGraphics->AttachControl(textResult);
 
 	//-- "window" displaying internal state of the expression
-	pGraphics->AttachControl(new IPanelControl(mPlug, MakeIRect(kExprLog), &COLOR_BLACK));
 	{
-		int y = kExprLog_Y + kExprLog_M;
-		timeLabel = AttachLogText(mPlug, pGraphics, y, "t=0");
-		millisLabel = AttachLogText(mPlug, pGraphics, y, "m=0");
-		quartLabel = AttachLogText(mPlug, pGraphics, y, "q=0");
-		rangeLabel = AttachLogText(mPlug, pGraphics, y, "r=0");
-		noteLabel = AttachLogText(mPlug, pGraphics, y, "n=0");
-		prevLabel = AttachLogText(mPlug, pGraphics, y, "p=0");
+		IRECT LogRect = MakeIRect(kExprLog);
+		consoleTextControl = new ConsoleText(mPlug, LogRect, &kExprLogTextStyle, &COLOR_BLACK, 5);
+		pGraphics->AttachControl(consoleTextControl);
 	}
 
 	//---Volume--------------------
@@ -266,4 +289,9 @@ const char * Interface::GetProgramText() const
 void Interface::SetProgramText(const char * programText)
 {
 	textEdit->TextFromTextEntry(programText);
+}
+
+void Interface::SetConsoleText(const char * consoleText)
+{
+	consoleTextControl->SetTextFromPlug(const_cast<char*>(consoleText));
 }

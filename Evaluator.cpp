@@ -115,6 +115,11 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
   }
   
   mMidiQueue.Flush(nFrames);
+
+  if (mInterface != nullptr)
+  {
+	  mInterface->SetConsoleText(GetProgramState());
+  }
 }
 
 void Evaluator::Reset()
@@ -227,4 +232,21 @@ bool Evaluator::CompareState(const unsigned char* incomingState, int startPos)
   isEqual &= IPlugBase::CompareState(incomingState, startPos); // fuzzy compare regular params
   
   return isEqual;
+}
+
+const char * Evaluator::GetProgramState() const
+{
+	static const int max_state = 1024;
+	static char state[max_state];
+
+	sprintf_s(state, max_state,
+		"t=%llu\nm=%llu\nq=%llu\nr=%llu\nn=%llu\np=%llu",
+		mProgram->Get('t'),
+		mProgram->Get('m'),
+		mProgram->Get('q'),
+		mProgram->Get('r'),
+		mProgram->Get('n'),
+		mProgram->Get('p'));
+
+	return state;
 }

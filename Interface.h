@@ -3,7 +3,7 @@
 class Evaluator;
 class IGraphics;
 class ITextEdit;
-class ITextControl;
+class ConsoleText;
 class IControl;
 
 class Interface
@@ -17,16 +17,15 @@ public:
 	const char * GetProgramText() const;
 
 	void SetProgramText(const char * programText);
-private:
+
+	void SetConsoleText(const char * consoleText);
+
+private:	
+
 	Evaluator* mPlug;
 
-	ITextEdit* textEdit;
-	ITextControl* timeLabel;
-	ITextControl* millisLabel;
-	ITextControl* quartLabel;
-	ITextControl* noteLabel;
-	ITextControl* rangeLabel;
-	ITextControl* prevLabel;
-	IControl*     bitDepthControl;
+	ITextEdit*		textEdit;
+	ConsoleText*	consoleTextControl;
+	IControl*		bitDepthControl;
 };
 

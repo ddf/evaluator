@@ -40,6 +40,9 @@ public:
   int UnserializeState(ByteChunk* pChunk, int startPos) override;
   bool CompareState(const unsigned char* incomingState, int startPos) override;
 
+  // get a string that represents the internal state of the program we want to display in the UI
+  const char * GetProgramState() const;
+
 private:
 
   void MakePresetFromData(const Presets::Data& data);
