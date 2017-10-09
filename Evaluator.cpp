@@ -116,7 +116,7 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
   
   mMidiQueue.Flush(nFrames);
 
-  if (mInterface != nullptr)
+  if (mProgramIsValid && mInterface != nullptr)
   {
 	  mInterface->SetConsoleText(GetProgramState());
   }
@@ -135,7 +135,7 @@ void Evaluator::Reset()
   }
   // force recompile
   OnParamChange(kExpression);
-  
+ 
   mMidiQueue.Resize(GetBlockSize());
   mNotes.clear();
 }
@@ -164,13 +164,27 @@ void Evaluator::OnParamChange(int paramIdx)
 	{
 		Program::CompileError error;
 		int errorPosition;
-		mProgram = Program::Compile(mInterface->GetProgramText(), error, errorPosition);
+		const char* programText = mInterface->GetProgramText();
+		mProgram = Program::Compile(programText, error, errorPosition);
 		// we want to always have a program we can run,
 		// so if compilation fails, we create one that simply evaluates to 0.
-		if (mProgram == nullptr)
+		mProgramIsValid = error == Program::CE_NONE;
+		if (!mProgramIsValid)
 		{
-			mProgram = Program::Compile("0", error, errorPosition);
+			static const int maxError = 1024;
+			static char errorDesc[maxError];
+			sprintf_s(errorDesc, maxError,
+				"Error:\n%s\nAt:\n%s",
+				Program::GetErrorString(error),
+				programText + errorPosition);
+			mInterface->SetConsoleText(errorDesc);
+			mProgram = Program::Compile("r/2", error, errorPosition);
 		}
+
+		// initializeeeee
+		mTick = 0;
+		mProgram->Set('n', 0);
+		mProgram->Set('p', 0);
 	}
       break;
       
@@ -240,12 +254,13 @@ const char * Evaluator::GetProgramState() const
 	static char state[max_state];
 
 	sprintf_s(state, max_state,
-		"t=%llu\nm=%llu\nq=%llu\nr=%llu\nn=%llu\np=%llu",
+		"IC: %llu\nr=%llu\nn=%llu\nt=%llu\nm=%llu\nq=%llu\np=%llu",
+		mProgram->GetInstructionCount(),
+		mProgram->Get('r'),
+		mProgram->Get('n'),
 		mProgram->Get('t'),
 		mProgram->Get('m'),
 		mProgram->Get('q'),
-		mProgram->Get('r'),
-		mProgram->Get('n'),
 		mProgram->Get('p'));
 
 	return state;

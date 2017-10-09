@@ -52,6 +52,9 @@ private:
   
   // plug state
   Program*				mProgram;
+  // will be false if user input produced a compilation error.
+  // we want to keep track of this so we don't update the UI in ProcessDoubleReplacing.
+  bool					mProgramIsValid;
   double				mGain;
   int					mBitDepth;
   Program::Value		mTick;

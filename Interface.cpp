@@ -20,7 +20,7 @@ enum ELayout
 	// the log window that shows the internal state of the expression
 	kExprLog_X = 10,
 	kExprLog_Y = kExprMsg_Y + 20,
-	kExprLog_W = 140,
+	kExprLog_W = 400,
 	kExprLog_H = 150,
 
 	kExprLog_M = 5,   // margin
@@ -136,6 +136,7 @@ public:
 		if (mText.IsDirty())
 		{
 			SetDirty(false);
+			Redraw();
 		}
 	}
 

@@ -20,6 +20,23 @@
 //////////////////////////////////////////////////////////////////////////
 #pragma region Compilation
 
+const char * Program::GetErrorString(Program::CompileError error)
+{
+	switch (error)
+	{
+	case Program::CE_NONE:
+		return "None";
+	case Program::CE_MISSING_PAREN:
+		return "Mismatched parens";
+	case Program::CE_UNEXPECTED_CHAR:
+		return "Unexpected character";
+	case Program::CE_UNKNOWN_VAR:
+		return "Undefined variable";
+	default:
+		return "Unknown";
+	}
+}
+
 // used during compilation to keep track of things
 struct CompilationState
 {

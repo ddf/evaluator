@@ -79,6 +79,7 @@ public:
 	static const uint32_t kMemorySize = 1024 * 4;
 
 	static Program* Compile(const Char* source, CompileError& outError, int& outErrorPosition);
+	static const char * GetErrorString(CompileError error);
 
 	Program(const std::vector<Op>& inOps);
 	~Program();
