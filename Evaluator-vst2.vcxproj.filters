@@ -7,6 +7,7 @@
     </ClCompile>
     <ClCompile Include="Presets.cpp" />
     <ClCompile Include="Program.cpp" />
+    <ClCompile Include="Interface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Evaluator.h" />
@@ -16,6 +17,7 @@
     </ClInclude>
     <ClInclude Include="Presets.h" />
     <ClInclude Include="Program.h" />
+    <ClInclude Include="Interface.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Evaluator.rc" />

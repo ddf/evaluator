@@ -7,8 +7,22 @@
 #include "IMidiQueue.h"
 #include <vector>
 
-class ITextEdit;
-class ITextControl;
+class Interface;
+
+enum EParams
+{
+	kGain = 0,
+	kBitDepth = 1,
+	kNumParams,
+
+	// used for text edit fields so the UI can call OnParamChange
+	kExpression = 101,
+
+	kExpressionLengthMax = 256,
+
+	kBitDepthMin = 1,
+	kBitDepthMax = 24
+};
 
 class Evaluator : public IPlug
 {
@@ -27,18 +41,11 @@ public:
   bool CompareState(const unsigned char* incomingState, int startPos) override;
 
 private:
-  // UI
-  void CreateGraphics();
+
   void MakePresetFromData(const Presets::Data& data);
   
-  ITextEdit* textEdit;
-  ITextControl* timeLabel;
-  ITextControl* millisLabel;
-  ITextControl* quartLabel;
-  ITextControl* noteLabel;
-  ITextControl* rangeLabel;
-  ITextControl* prevLabel;
-  IControl*     bitDepthControl;
+  // the UI
+  Interface*			mInterface;
   
   // plug state
   Program*				mProgram;

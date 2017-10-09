@@ -237,6 +237,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\WDL\IPlug\IPlugVST.h" />
     <ClInclude Include="Evaluator.h" />
+    <ClInclude Include="Interface.h" />
     <ClInclude Include="Presets.h" />
     <ClInclude Include="Program.h" />
     <ClInclude Include="resource.h" />
@@ -244,6 +245,7 @@
   <ItemGroup>
     <ClCompile Include="..\..\WDL\IPlug\IPlugVST.cpp" />
     <ClCompile Include="Evaluator.cpp" />
+    <ClCompile Include="Interface.cpp" />
     <ClCompile Include="Presets.cpp" />
     <ClCompile Include="Program.cpp" />
   </ItemGroup>
