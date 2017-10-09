@@ -280,6 +280,7 @@
     <ClInclude Include="app_wrapper\app_main.h" />
     <ClInclude Include="app_wrapper\app_resource.h" />
     <ClInclude Include="Evaluator.h" />
+    <ClInclude Include="Presets.h" />
     <ClInclude Include="Program.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
@@ -293,6 +294,7 @@
     <ClCompile Include="app_wrapper\app_dialog.cpp" />
     <ClCompile Include="app_wrapper\app_main.cpp" />
     <ClCompile Include="Evaluator.cpp" />
+    <ClCompile Include="Presets.cpp" />
     <ClCompile Include="Program.cpp" />
   </ItemGroup>
   <ItemGroup>

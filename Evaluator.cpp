@@ -4,7 +4,6 @@
 #include "resource.h"
 
 const size_t MAX_ALG_LENGTH = 256;
-const int kNumPrograms = 1;
 
 enum EParams
 {
@@ -168,7 +167,7 @@ private:
 };
 
 Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
-  :	IPLUG_CTOR(kNumParams, kNumPrograms, instanceInfo)
+  :	IPLUG_CTOR(kNumParams, Presets::Count(), instanceInfo)
   , textEdit(0)
   , bitDepthControl(0)
   , mProgram(0)
@@ -178,19 +177,16 @@ Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
   TRACE;
 
   //arguments are: name, defaultVal, minVal, maxVal, step, label
-  GetParam(kGain)->InitDouble("Gain", 50., 0., 100.0, 0.01, "%");
+  GetParam(kGain)->InitDouble("Gain", 50., 0., 100.0, 1, "%");
   
   GetParam(kBitDepth)->InitInt("Bit Depth", 15, kBitDepthMin, kBitDepthMax);
 
   CreateGraphics();
 
-  //MakePreset("preset 1", ... );
-  //MakeDefaultPreset((char *) "-", kNumPrograms);
-  // TODO: initialize presets better
-  textEdit->TextFromTextEntry("t*128");
-  ByteChunk chunk;
-  SerializeState(&chunk);
-  MakePresetFromChunk("saw wave", &chunk);
+  for (int i = 0; i < Presets::Count(); ++i)
+  {
+	  MakePresetFromData(Presets::Get(i));
+  }
 }
 
 Evaluator::~Evaluator() {}
@@ -465,6 +461,21 @@ void Evaluator::OnParamChange(int paramIdx)
     default:
       break;
   }
+}
+
+void Evaluator::MakePresetFromData(const Presets::Data& data)
+{
+	// set params.
+	GetParam(kGain)->Set(data.volume);
+	GetParam(kBitDepth)->Set(data.bitDepth);
+
+	// create serialized version
+	ByteChunk chunk;
+	chunk.PutStr(data.program);
+	IPlugBase::SerializeParams(&chunk);
+
+	// create it - const cast on data.name because this method take char*, even though it doesn't change it
+	MakePresetFromChunk(const_cast<char*>(data.name), &chunk);
 }
 
 // this over-ridden method is called when the host is trying to store the plug-in state and needs to get the current data from your algorithm

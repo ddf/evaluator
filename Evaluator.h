@@ -3,6 +3,7 @@
 
 #include "IPlug_include_in_plug_hdr.h"
 #include "Program.h"
+#include "Presets.h"
 #include "IMidiQueue.h"
 #include <vector>
 
@@ -28,6 +29,7 @@ public:
 private:
   // UI
   void CreateGraphics();
+  void MakePresetFromData(const Presets::Data& data);
   
   ITextEdit* textEdit;
   ITextControl* timeLabel;
