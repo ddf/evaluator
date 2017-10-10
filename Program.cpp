@@ -60,7 +60,7 @@ struct CompilationState
 	void Push(Program::Op::Code code, Program::Value value = 0) { ops.push_back(Program::Op(code, value)); }
 };
 
-int Parse(CompilationState& state);
+static int Parse(CompilationState& state);
 
 static int ParseAtom(CompilationState& state)
 {

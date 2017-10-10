@@ -60,7 +60,6 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
         case IMidiMsg::kNoteOn:
           if (mNotes.empty())
           {
-            mProgram->Set('p', 0);
             mTick = 0;
           }
           mNotes.push_back(*pMsg);
@@ -102,14 +101,13 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
     mProgram->Set('t', mTick);
     mProgram->Set('m', mTick/mdenom);
     mProgram->Set('q', mTick/qdenom);
-	Program::Value result;
-	// TODO: report the error to the UI if need be
-	Program::RuntimeError error = mProgram->Run(result);
-    mProgram->Set('p', result);
+    Program::Value result;
+    // TODO: report the error to the UI if need be
+    Program::RuntimeError error = mProgram->Run(result);
     double evalSample = mGain * (-1.0 + 2.0*((double)(result%range)/(range-1)) );
     
-	*out1 = *in1 + evalSample;
-	*out2 = *in2 + evalSample;
+    *out1 = *in1 + evalSample;
+    *out2 = *in2 + evalSample;
   }
   
   mMidiQueue.Flush(nFrames);
@@ -171,7 +169,7 @@ void Evaluator::OnParamChange(int paramIdx)
 		{
 			static const int maxError = 1024;
 			static char errorDesc[maxError];
-			sprintf_s(errorDesc, maxError,
+			snprintf(errorDesc, maxError,
 				"Error:\n%s\nAt:\n%s",
 				Program::GetErrorString(error),
 				programText + errorPosition);
@@ -183,7 +181,6 @@ void Evaluator::OnParamChange(int paramIdx)
 		mTick = 0;
 		mProgram->Set('n', 0);
 		mProgram->Set('v', 0);
-		mProgram->Set('p', 0);
 	}
       break;
       
@@ -252,16 +249,15 @@ const char * Evaluator::GetProgramState() const
 	static const int max_state = 1024;
 	static char state[max_state];
 
-	sprintf_s(state, max_state,
-		"IC: %llu\nr=%llu\nn=%llu\nv=%llu\nt=%llu\nm=%llu\nq=%llu\np=%llu",
+	snprintf(state, max_state,
+		"IC: %llu\nr=%llu\nn=%llu\nv=%llu\nt=%llu\nm=%llu\nq=%llu",
 		mProgram->GetInstructionCount(),
 		mProgram->Get('r'),
 		mProgram->Get('n'),
 		mProgram->Get('v'),
 		mProgram->Get('t'),
 		mProgram->Get('m'),
-		mProgram->Get('q'),
-		mProgram->Get('p'));
+		mProgram->Get('q'));
 
 	return state;
 }
