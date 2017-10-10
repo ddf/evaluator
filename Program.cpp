@@ -228,16 +228,18 @@ static int ParseCmpOrShift(CompilationState& state)
                 case '<': state.Push(Program::Op::CLT); break;
                 case '>': state.Push(Program::Op::CGT); break;
             }
-			return 0;
 		}
-        // is a bitshift, so eat it and continue
-		state.parsePos++;
-		if (ParseSummands(state)) return 1;
-		switch (op)
-		{
-		case '<': state.Push(Program::Op::BSL); break;
-		case '>': state.Push(Program::Op::BSR); break;
-		}
+        else
+        {
+            // is a bitshift, so eat it and continue
+            state.parsePos++;
+            if (ParseSummands(state)) return 1;
+            switch (op)
+            {
+            case '<': state.Push(Program::Op::BSL); break;
+            case '>': state.Push(Program::Op::BSR); break;
+            }
+        }
 	}
 }
 
