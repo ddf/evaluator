@@ -20,7 +20,7 @@ public:
 		CE_NONE,
 		CE_MISSING_PAREN,
 		CE_UNEXPECTED_CHAR,
-		CE_UNKNOWN_VAR
+		CE_ILLEGAL_ASSIGNMENT
 	};
 
 	enum RuntimeError 
@@ -44,7 +44,8 @@ public:
 		enum Code
 		{
 			NUM,
-			VAR,
+			PEK, // get the value at a memory address
+			POK, // set the value at a memory address
 			FREQ,
 			SQR,
 			SIN,
@@ -64,16 +65,10 @@ public:
 
 		// need default constructor or we can't use vector
 		Op() : code(NUM), val(0) {}
-		Op(Code _code) : code(_code) {}
-		Op(Value _val) : code(NUM), val(_val) {}
-		Op(Char _var) : code(VAR), var(_var) {}
+		Op(Code _code, Value _val) : code(_code), val(_val) {}
 
 		const Code code;
-		const union
-		{
-			Value val;
-			Char  var;
-		};
+		const Value val;
 	};
 
 	static const uint32_t kMemorySize = 1024 * 4;
@@ -96,8 +91,8 @@ public:
 private:
 
 	// get the value at this memory address
-	Value Peek(const uint32_t address) const;
-	void  Poke(const uint32_t address, Value value);
+	Value Peek(const Value address) const;
+	void  Poke(const Value address, const Value value);
 
 	RuntimeError Exec(const Op& op);
 

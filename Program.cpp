@@ -30,8 +30,8 @@ const char * Program::GetErrorString(Program::CompileError error)
 		return "Mismatched parens";
 	case Program::CE_UNEXPECTED_CHAR:
 		return "Unexpected character";
-	case Program::CE_UNKNOWN_VAR:
-		return "Undefined variable";
+	case Program::CE_ILLEGAL_ASSIGNMENT:
+		return "Left side of = must be assignable (a variable or address)";
 	default:
 		return "Unknown";
 	}
@@ -57,12 +57,10 @@ struct CompilationState
 
 	// some helpers
 	Program::Char operator*() const { return source[parsePos]; }
-	void Push(const Program::Op::Code code) { ops.push_back(Program::Op(code)); }
-	void Push(const Program::Value value) { ops.push_back(Program::Op(value)); }
-	void Push(const Program::Char var) { ops.push_back(Program::Op(var)); }
+	void Push(Program::Op::Code code, Program::Value value = 0) { ops.push_back(Program::Op(code, value)); }
 };
 
-int ParseOR(CompilationState& state);
+int Parse(CompilationState& state);
 
 static int ParseAtom(CompilationState& state)
 {
@@ -95,7 +93,7 @@ static int ParseAtom(CompilationState& state)
 	{
 		state.parsePos++;
 		state.parenCount++;
-		if (ParseOR(state)) return 1;
+		if (Parse(state)) return 1;
 		if (*state != ')')
 		{
 			// Unmatched opening parenthesis
@@ -116,14 +114,8 @@ static int ParseAtom(CompilationState& state)
 
 	if (isalpha(*state))
 	{
-		//                auto iter = _vars.find(c);
-		//                // error, but a non-fatal on, so we don't return
-		//                if ( iter == _vars.end() )
-		//                {
-		//                    _err = EEE_UNKNOWN_VAR;
-		//                    _err_pos = expr;
-		//                }
-		state.Push(*state);
+		const Program::Char var = *state;
+		state.Push(Program::Op::PEK, var + 128);
 		state.parsePos++;
 	}
 	else // parse a numeric value
@@ -137,7 +129,7 @@ static int ParseAtom(CompilationState& state)
 			state.error = Program::CE_UNEXPECTED_CHAR;
 			return 1;
 		}
-		state.Push(res);
+		state.Push(Program::Op::NUM, res);
 		// advance our index based on where the end pointer wound up
 		state.parsePos += (endPtr - startPtr) / sizeof(Program::Char);
 	}
@@ -302,12 +294,49 @@ static int ParseOR(CompilationState& state)
 	}
 }
 
+static int ParsePOK(CompilationState& state)
+{
+	if (ParseOR(state)) return 1;
+	for (;;)
+	{
+		while (isspace(*state))
+		{
+			state.parsePos++;
+		}
+		Program::Char op = *state;
+		if (op != '=')
+		{
+			return 0;
+		}
+		state.parsePos++;
+		Program::Value address = 0;
+		if (state.ops.back().code == Program::Op::PEK)
+		{
+			address = state.ops.back().val;
+			state.ops.pop_back();
+		}
+		else
+		{
+			state.error = Program::CE_ILLEGAL_ASSIGNMENT;
+			return 1;
+		}
+		if (ParseOR(state)) return 1;
+		state.Push(Program::Op::POK, address);
+	}
+}
+
+// we start here so that we don't have to change the forward declare for ParseAtom when we add another level
+static int Parse(CompilationState& state)
+{
+	return ParsePOK(state);
+}
+
 Program* Program::Compile(const Char* source, CompileError& outError, int& outErrorPosition)
 {
 	Program* program = nullptr;
 	CompilationState state(source);
 
-	ParseOR(state);
+	Parse(state);
 
 	// final error checking
 	if (state.error == CE_NONE)
@@ -404,11 +433,19 @@ Program::RuntimeError Program::Exec(const Op& op)
 			stack.push(op.val); 
 			break;
 
-		case Op::VAR: 
-			stack.push(Get(op.var)); 
+		case Op::PEK: 
+			stack.push(Peek(op.val)); 
 			break;
 
 		// one operand - operand value is popped from the stack, result is pushed back on 
+		case Op::POK:
+		{
+			POP1;
+			Poke(op.val, a);
+			stack.push(a);
+		}
+		break;
+
 		case Op::NEG:
 		{
 			POP1;
@@ -557,23 +594,23 @@ Program::RuntimeError Program::Exec(const Op& op)
 
 Program::Value Program::Get(const Char var) const
 {
-	return Peek((int)var + 128);
+	return Peek((Value)var + 128);
 }
 
 void Program::Set(const Char var, const Value value)
 {
-	Poke((int)var + 128, value);
+	Poke((Value)var + 128, value);
 }
 
 
-Program::Value Program::Peek(const uint32_t address) const
+Program::Value Program::Peek(const Value address) const
 {
 	// peeks wrap around so we never go outside of our memory space
 	return mem[address%kMemorySize];
 }
 
 
-void Program::Poke(const uint32_t address, Value value)
+void Program::Poke(const Value address, const Value value)
 {
 	// pokes wrap around so we never go outside of our memory space
 	mem[address%kMemorySize] = value;
