@@ -369,7 +369,23 @@ static int ParsePOK(CompilationState& state)
 // we start here so that we don't have to change the forward declare for ParseAtom when we add another level
 static int Parse(CompilationState& state)
 {
-	return ParsePOK(state);
+    while(*state != '\0')
+    {
+        if (ParsePOK(state)) return 1;
+        // check for statement termination
+        while (isspace(*state))
+        {
+            state.parsePos++;
+        }
+        if (*state != ';')
+        {
+            return 0;
+        }
+        state.parsePos++;
+        state.Push(Program::Op::POP);
+    }
+    
+    return 0;
 }
 
 Program* Program::Compile(const Char* source, CompileError& outError, int& outErrorPosition)
@@ -432,24 +448,51 @@ Program::RuntimeError Program::Run(Value& result)
 
 	if (count > 0)
 	{
-		for (uint64_t i = 0; i < count; ++i)
+		for (uint64_t i = 0; i < count && error == RE_NONE; ++i)
 		{
-			Exec(ops[i]);
+            if ( ops[i].code == Op::POP )
+            {
+                if ( stack.size() > 0 )
+                {
+                    result = stack.top();
+                    stack.pop();
+                }
+                else
+                {
+                    error = RE_INCONSISTENT_STACK;
+                }
+            }
+            else
+            {
+                error = Exec(ops[i]);
+            }
 		}
 
-		if (error != RE_NONE)
+        // under error-free execution we should have either 1 or 0 values in the stack.
+        // 1 when a program terminates with the result of an expression (eg: t*Fn)
+        // 0 when a program terminates with a POP (eg: t*Fn;)
+        // in the case of the POP, the value of the expression will already be in result.
+		if (error == RE_NONE)
 		{
-			result = 0;
+            if ( stack.size() == 1 )
+            {
+                result = stack.top();
+                stack.pop();
+            }
+            else if ( stack.size() > 1 )
+            {
+                error = RE_INCONSISTENT_STACK;
+            }
 		}
-		else if (stack.size() == 1)
+        else
+        {
+            result = 0;
+        }
+		
+        // clear the stack so it doesn't explode in size due to continual runtime errors
+        while( stack.size() > 1 )
 		{
-			result = stack.top();
-			stack.pop();
-		}
-		else
-		{
-			error = RE_INCONSISTENT_STACK;
-			result = 0;
+            stack.pop();
 		}
 	}
 	else

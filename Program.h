@@ -64,6 +64,7 @@ public:
             CLT, // compare <
             CGT, // compare >
             TRN, // ternary operator - ?:
+            POP, // ;
 		};
 
 		// need default constructor or we can't use vector
