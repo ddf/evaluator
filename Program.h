@@ -60,7 +60,9 @@ public:
 			BSR,
 			AND,
 			OR,
-			XOR
+			XOR,
+            CLT, // compare <
+            CGT, // compare >
 		};
 
 		// need default constructor or we can't use vector

@@ -203,7 +203,7 @@ static int ParseSummands(CompilationState& state)
 	}
 }
 
-static int ParseBitshift(CompilationState& state)
+static int ParseCmpOrShift(CompilationState& state)
 {
 	if (ParseSummands(state)) return 1;
 	for (;;)
@@ -219,11 +219,18 @@ static int ParseBitshift(CompilationState& state)
 		}
 		state.parsePos++;
 		Program::Char op2 = *state;
+        // not a bitshift, so do compare
 		if (op2 != op)
 		{
-			state.error = Program::CE_UNEXPECTED_CHAR;
-			return 1;
+            if (ParseSummands(state)) return 1;
+			switch(op)
+            {
+                case '<': state.Push(Program::Op::CLT); break;
+                case '>': state.Push(Program::Op::CGT); break;
+            }
+			return 0;
 		}
+        // is a bitshift, so eat it and continue
 		state.parsePos++;
 		if (ParseSummands(state)) return 1;
 		switch (op)
@@ -236,7 +243,7 @@ static int ParseBitshift(CompilationState& state)
 
 static int ParseAND(CompilationState& state)
 {
-	if (ParseBitshift(state)) return 1;
+	if (ParseCmpOrShift(state)) return 1;
 	for (;;)
 	{
 		while (isspace(*state))
@@ -249,7 +256,7 @@ static int ParseAND(CompilationState& state)
 			return 0;
 		}
 		state.parsePos++;
-		if (ParseBitshift(state)) return 1;
+		if (ParseCmpOrShift(state)) return 1;
 		state.Push(Program::Op::AND);
 	}
 }
@@ -574,6 +581,20 @@ Program::RuntimeError Program::Exec(const Op& op)
 			stack.push(a^b);
 		}
 		break;
+            
+        case Op::CLT:
+        {
+            POP2;
+            stack.push(a<b);
+        }
+        break;
+            
+        case Op::CGT:
+        {
+            POP2;
+            stack.push(a>b);
+        }
+        break;
 
 		// perform a no-op, but set the error as a result
 		default:

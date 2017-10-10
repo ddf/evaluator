@@ -17,6 +17,7 @@ namespace Presets
 		{ "square wave", "#(t*Fn)", 50, 15 },
 		{ "sine wave", "$(t*Fn)", 50, 15 },
 		{ "triangle wave", "T(t*Fn)", 50, 13 },
+        { "pulse wave", "(r-1)*((t*Fn)%r < 8800)", 50, 15 },
 		{ "amplitude modulation", "t*Fn | $(t)", 50, 15 },
 		{ "frequency modulation", "t*Fn + $(t*2)", 50, 15 },
 		{ "bouncing balls", "$(t*(1000 - m%500))", 50, 15 },
