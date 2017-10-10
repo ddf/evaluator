@@ -63,6 +63,7 @@ public:
 			XOR,
             CLT, // compare <
             CGT, // compare >
+            TRN, // ternary operator - ?:
 		};
 
 		// need default constructor or we can't use vector

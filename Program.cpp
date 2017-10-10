@@ -301,9 +301,41 @@ static int ParseOR(CompilationState& state)
 	}
 }
 
+static int ParseTRN(CompilationState& state)
+{
+    if(ParseOR(state)) return 1;
+    for(;;)
+    {
+        while(isspace(*state))
+        {
+            state.parsePos++;
+        }
+        Program::Char op = *state;
+        if ( op != '?' )
+        {
+            return 0;
+        }
+        state.parsePos++;
+        if(ParseOR(state)) return 1;
+        while(isspace(*state))
+        {
+            state.parsePos++;
+        }
+        op = *state;
+        if ( op != ':' )
+        {
+            state.error = Program::CE_UNEXPECTED_CHAR;
+            return 1;
+        }
+        state.parsePos++;
+        if (ParseOR(state)) return 1;
+        state.Push(Program::Op::TRN);
+    }
+}
+
 static int ParsePOK(CompilationState& state)
 {
-	if (ParseOR(state)) return 1;
+	if (ParseTRN(state)) return 1;
 	for (;;)
 	{
 		while (isspace(*state))
@@ -327,7 +359,7 @@ static int ParsePOK(CompilationState& state)
 			state.error = Program::CE_ILLEGAL_ASSIGNMENT;
 			return 1;
 		}
-		if (ParseOR(state)) return 1;
+		if (ParseTRN(state)) return 1;
 		state.Push(Program::Op::POK, address);
 	}
 }
@@ -428,6 +460,7 @@ Program::RuntimeError Program::Run(Value& result)
 
 #define POP1 if ( stack.size() < 1 ) goto bad_stack; Value a = stack.top(); stack.pop();
 #define POP2 if ( stack.size() < 2 ) goto bad_stack; Value b = stack.top(); stack.pop(); Value a = stack.top(); stack.pop();
+#define POP3 if ( stack.size() < 3 ) goto bad_stack; Value c = stack.top(); stack.pop(); Value b = stack.top(); stack.pop(); Value a = stack.top(); stack.pop();
 
 // perform the operation
 Program::RuntimeError Program::Exec(const Op& op)
@@ -593,6 +626,13 @@ Program::RuntimeError Program::Exec(const Op& op)
         {
             POP2;
             stack.push(a>b);
+        }
+        break;
+            
+        case Op::TRN:
+        {
+            POP3;
+            stack.push(a ? b : c);
         }
         break;
 
