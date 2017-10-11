@@ -37,6 +37,25 @@ const char * Program::GetErrorString(Program::CompileError error)
 	}
 }
 
+const char * Program::GetErrorString(Program::RuntimeError error)
+{
+    switch(error)
+    {
+    case RE_NONE:
+        return "None";
+    case RE_DIVIDE_BY_ZERO:
+        return "Divide by zero";
+    case RE_MISSING_OPERAND:
+        return "Missing operand";
+    case RE_MISSING_OPCODE:
+        return "Unimplemented opcode";
+    case RE_INCONSISTENT_STACK:
+        return "Inconsistent stack";
+    default:
+        return "Unknown";
+    }
+}
+
 // used during compilation to keep track of things
 struct CompilationState
 {

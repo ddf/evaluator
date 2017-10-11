@@ -79,6 +79,7 @@ public:
 
 	static Program* Compile(const Char* source, CompileError& outError, int& outErrorPosition);
 	static const char * GetErrorString(CompileError error);
+    static const char * GetErrorString(RuntimeError error);
 
 	Program(const std::vector<Op>& inOps);
 	~Program();

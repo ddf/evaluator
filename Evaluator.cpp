@@ -46,7 +46,8 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
   double* in2 = inputs[1];
   double* out1 = outputs[0];
   double* out2 = outputs[1];
-
+  
+  Program::RuntimeError error = Program::RE_NONE;
   for (int s = 0; s < nFrames; ++s, ++in1, ++in2, ++out1, ++out2)
   {
     while (!mMidiQueue.Empty())
@@ -102,8 +103,7 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
     mProgram->Set('m', mTick/mdenom);
     mProgram->Set('q', mTick/qdenom);
     Program::Value result;
-    // TODO: report the error to the UI if need be
-    Program::RuntimeError error = mProgram->Run(result);
+    error = mProgram->Run(result);
     double evalSample = mGain * (-1.0 + 2.0*((double)(result%range)/(range-1)) );
     
     *out1 = *in1 + evalSample;
@@ -114,7 +114,19 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 
   if (mProgramIsValid && mInterface != nullptr)
   {
-	  mInterface->SetConsoleText(GetProgramState());
+    if ( error == Program::RE_NONE )
+    {
+      mInterface->SetConsoleText(GetProgramState());
+    }
+    else
+    {
+      static const int maxError = 1024;
+      static char errorDesc[maxError];
+      snprintf(errorDesc, maxError,
+               "Runtime Error: %s",
+               Program::GetErrorString(error));
+      mInterface->SetConsoleText(errorDesc);
+    }
   }
 }
 
@@ -170,7 +182,7 @@ void Evaluator::OnParamChange(int paramIdx)
 			static const int maxError = 1024;
 			static char errorDesc[maxError];
 			snprintf(errorDesc, maxError,
-				"Error:\n%s\nAt:\n%s",
+				"Compile Error:\n%s\nAt:\n%s",
 				Program::GetErrorString(error),
 				programText + errorPosition);
 			mInterface->SetConsoleText(errorDesc);
