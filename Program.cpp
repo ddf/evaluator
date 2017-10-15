@@ -77,6 +77,13 @@ struct CompilationState
 	// some helpers
 	Program::Char operator*() const { return source[parsePos]; }
 	void Push(Program::Op::Code code, Program::Value value = 0) { ops.push_back(Program::Op(code, value)); }
+	void SkipWhitespace()
+	{
+		while (isspace(source[parsePos]))
+		{
+			++parsePos;
+		}
+	}
 };
 
 static int Parse(CompilationState& state);
@@ -84,10 +91,7 @@ static int Parse(CompilationState& state);
 static int ParseAtom(CompilationState& state)
 {
 	// Skip spaces
-	while (isspace(*state))
-	{
-		state.parsePos++;
-	}
+	state.SkipWhitespace();
 
 	std::stack<Program::Op::Code> unaryOps;
 
@@ -173,11 +177,7 @@ static int ParseFactors(CompilationState& state)
 	if (ParseAtom(state)) return 1;
 	for (;;)
 	{
-		// Skip spaces
-		while (isspace(*state))
-		{
-			state.parsePos++;
-		}
+		state.SkipWhitespace();
 
 		// Save the operation and position
 		Program::Char op = *state;
@@ -208,11 +208,7 @@ static int ParseSummands(CompilationState& state)
 	if (ParseFactors(state)) return 1;
 	for (;;)
 	{
-		// Skip spaces
-		while (isspace(*state))
-		{
-			state.parsePos++;
-		}
+		state.SkipWhitespace();
 		Program::Char op = *state;
 		if (op != '-' && op != '+')
 		{
@@ -233,10 +229,7 @@ static int ParseCmpOrShift(CompilationState& state)
 	if (ParseSummands(state)) return 1;
 	for (;;)
 	{
-		while (isspace(*state))
-		{
-			state.parsePos++;
-		}
+		state.SkipWhitespace();
 		Program::Char op = *state;
 		if (op != '<' && op != '>')
 		{
@@ -273,10 +266,7 @@ static int ParseAND(CompilationState& state)
 	if (ParseCmpOrShift(state)) return 1;
 	for (;;)
 	{
-		while (isspace(*state))
-		{
-			state.parsePos++;
-		}
+		state.SkipWhitespace();
 		Program::Char op = *state;
 		if (op != '&')
 		{
@@ -293,10 +283,7 @@ static int ParseXOR(CompilationState& state)
 	if (ParseAND(state)) return 1;
 	for (;;)
 	{
-		while (isspace(*state))
-		{
-			state.parsePos++;
-		}
+		state.SkipWhitespace();
 		Program::Char op = *state;
 		if (op != '^')
 		{
@@ -313,10 +300,7 @@ static int ParseOR(CompilationState& state)
 	if (ParseXOR(state)) return 1;
 	for (;;)
 	{
-		while (isspace(*state))
-		{
-			state.parsePos++;
-		}
+		state.SkipWhitespace();
 		Program::Char op = *state;
 		if (op != '|')
 		{
@@ -333,10 +317,7 @@ static int ParseTRN(CompilationState& state)
     if(ParseOR(state)) return 1;
     for(;;)
     {
-        while(isspace(*state))
-        {
-            state.parsePos++;
-        }
+		state.SkipWhitespace();
         Program::Char op = *state;
         if ( op != '?' )
         {
@@ -344,10 +325,7 @@ static int ParseTRN(CompilationState& state)
         }
         state.parsePos++;
         if(ParseOR(state)) return 1;
-        while(isspace(*state))
-        {
-            state.parsePos++;
-        }
+		state.SkipWhitespace();
         op = *state;
         if ( op != ':' )
         {
@@ -365,10 +343,7 @@ static int ParsePOK(CompilationState& state)
 	if (ParseTRN(state)) return 1;
 	for (;;)
 	{
-		while (isspace(*state))
-		{
-			state.parsePos++;
-		}
+		state.SkipWhitespace();
 		Program::Char op = *state;
 		if (op != '=')
 		{
@@ -403,16 +378,16 @@ static int Parse(CompilationState& state)
     {
         if (ParsePOK(state)) return 1;
         // check for statement termination
-        while (isspace(*state))
-        {
-            state.parsePos++;
-        }
+		state.SkipWhitespace();
         if (*state != ';')
         {
             return 0;
         }
         state.parsePos++;
         state.Push(Program::Op::POP);
+		// skip space immediately after statement termination
+		// in case this is the last symbol of the program but there is trailing whitespace
+		state.SkipWhitespace();
     }
     
     return 0;
