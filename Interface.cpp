@@ -10,7 +10,7 @@ enum ELayout
 	kExpression_X = 10,
 	kExpression_Y = 10,
 	kExpression_W = kEditorWidth - 20,
-	kExpression_H = 60,
+	kExpression_H = 200,
 
 	kVolume_X = kExpression_X,
 	kVolume_Y = kExpression_Y + kExpression_H + 10,
@@ -83,6 +83,7 @@ public:
 		mText = *pText;
 		mStr.Set(str);
 		mTextEntryLength = kExpressionLengthMax;
+		mTextEntryOptions = ETextEntryOptions(kTextEntryMultiline | kTextEntryEnterKeyInsertsCR);
 	}
 
 	~ITextEdit() {}
