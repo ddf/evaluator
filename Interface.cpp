@@ -6,24 +6,39 @@ enum ELayout
 {
 	kEditorWidth = GUI_WIDTH,
 	kEditorHeight = GUI_HEIGHT,
+  
+  kVolumeLabel_X = 10,
+  kVolumeLabel_Y = 10,
+  kVolumeLabel_W = 30,
+  kVolumeLabel_H = 15,
+  
+  kVolumeKnob_X = kVolumeLabel_X,
+  kVolumeKnob_Y = kVolumeLabel_Y + kVolumeLabel_H,
+  kVolumeKnob_W = kVolumeLabel_W,
+  kVolumeKnob_H = kVolumeLabel_W,
+  
+  kBitDepth_X = kVolumeKnob_X + kVolumeKnob_W + 10,
+  kBitDepth_Y = kVolumeKnob_Y,
+  
+  kProgramLabel_X = 10,
+  kProgramLabel_Y = kVolumeKnob_Y + kVolumeKnob_H + 5,
+  kProgramLabel_W = kEditorWidth - 20,
+  kProgramLabel_H = 15,
 
-	kExpression_X = 10,
-	kExpression_Y = 10,
-	kExpression_W = kEditorWidth - 20,
-	kExpression_H = 200,
-
-	kVolume_X = kExpression_X,
-	kVolume_Y = kExpression_Y + kExpression_H + 10,
-	kVolume_W = 35,
-	kVolume_H = 35,
-
-	kBitDepth_X = kVolume_X + kVolume_W + 10,
-	kBitDepth_Y = kVolume_Y,
+	kProgramText_X = 10,
+	kProgramText_Y = kProgramLabel_Y + kProgramLabel_H,
+	kProgramText_W = kEditorWidth - 20,
+	kProgramText_H = 200,
+  
+  kExprLogTitle_X = kProgramText_X,
+  kExprLogTitle_Y = kProgramText_Y + kProgramText_H + 15,
+  kExprLogTitle_W = kProgramText_W,
+  kExprLogTitle_H = 15,
 
 	// the log window that shows the internal state of the expression
-	kExprLog_X = kExpression_X,
-	kExprLog_Y = kVolume_Y + kVolume_H + 15,
-	kExprLog_W = kExpression_W,
+	kExprLog_X = kProgramText_X,
+	kExprLog_Y = kExprLogTitle_Y + kExprLogTitle_H,
+	kExprLog_W = kProgramText_W,
 	kExprLog_H = 150,
 
 	kExprLog_M = 5,   // margin
@@ -70,6 +85,14 @@ IText kLabelTextStyle(12,
 					IText::kAlignCenter,
 					0, // orientation
 					IText::kQualityDefault);
+
+IText kTitleTextStyle(12,
+                      &kTextColor,
+                      "Arial",
+                      IText::kStyleBold,
+                      IText::kAlignNear,
+                      0, // orientation
+                      IText::kQualityDefault);
 
 // originally cribbed from the IPlugEEL example
 class ITextEdit : public IControl
@@ -191,11 +214,15 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 	pGraphics->AttachPanelBackground(&kBackgroundColor);
 
 	//--- Text input for the expression ------
-	textEdit = new ITextEdit(mPlug, MakeIRect(kExpression), kExpression, &kExpressionTextStyle, "t*128");
-	pGraphics->AttachControl(textEdit);
+  {
+    pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kProgramLabel), &kTitleTextStyle, "PROGRAM"));
+    textEdit = new ITextEdit(mPlug, MakeIRect(kProgramText), kExpression, &kExpressionTextStyle, "t*128");
+    pGraphics->AttachControl(textEdit);
+  }
 
 	//-- "window" displaying internal state of the expression
 	{
+    pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kExprLogTitle), &kTitleTextStyle, "STATE"));
 		IRECT LogRect = MakeIRect(kExprLog);
 		consoleTextControl = new ConsoleText(mPlug, LogRect, &kExprLogTextStyle, &COLOR_BLACK, 5);
 		pGraphics->AttachControl(consoleTextControl);
@@ -203,13 +230,11 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 
 	//---Volume--------------------
 	{
+    //---Volume Label--------
+    pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kVolumeLabel), &kLabelTextStyle, "VOL"));
+    
 		//---Volume Knob-------
-		IRECT size = MakeIRect(kVolume);
-		pGraphics->AttachControl(new IKnobLineControl(mPlug, MakeIRect(kVolume), kGain, &kGreenColor));
-
-		//---Volume Label--------
-		IRECT labelSize(size.L - 10, size.B - 5, size.R + 10, size.B + 10);
-		pGraphics->AttachControl(new ITextControl(mPlug, labelSize, &kLabelTextStyle, "VOL"));
+		pGraphics->AttachControl(new IKnobLineControl(mPlug, MakeIRect(kVolumeKnob), kGain, &kGreenColor));
 	}
 
 	//---Bit Depth--------------
@@ -237,9 +262,9 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 
 		//--Bit Depth Number Box Label
 		IRECT boxLabelSize(backSize.L,
-			backSize.B + 5,
+			kVolumeLabel_Y,
 			backSize.R,
-			backSize.B + 25);
+			backSize.T);
 		pGraphics->AttachControl(new ITextControl(mPlug, boxLabelSize, &kLabelTextStyle, "BITS"));
 	}
 }
