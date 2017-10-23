@@ -228,6 +228,12 @@
 		771CF5451F8D44A3000F34E2 /* Program.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 771CF5211F8D4480000F34E2 /* Program.cpp */; };
 		771CF5461F8D44AB000F34E2 /* Interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 771CF5251F8D4481000F34E2 /* Interface.cpp */; };
 		771CF5471F8D44AC000F34E2 /* Interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 771CF5251F8D4481000F34E2 /* Interface.cpp */; };
+		774C73A81F9EA91800E2EFC9 /* Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = 774C73A71F9EA91800E2EFC9 /* Controls.h */; };
+		774C73A91F9EA91800E2EFC9 /* Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = 774C73A71F9EA91800E2EFC9 /* Controls.h */; };
+		774C73AE1F9EA93F00E2EFC9 /* Controls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 774C73AD1F9EA93F00E2EFC9 /* Controls.cpp */; };
+		774C73AF1F9EA93F00E2EFC9 /* Controls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 774C73AD1F9EA93F00E2EFC9 /* Controls.cpp */; };
+		774C73B01F9EA93F00E2EFC9 /* Controls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 774C73AD1F9EA93F00E2EFC9 /* Controls.cpp */; };
+		774C73B11F9EA93F00E2EFC9 /* Controls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 774C73AD1F9EA93F00E2EFC9 /* Controls.cpp */; };
 		77CB0CB41F819B8D0034E05D /* background.png in Resources */ = {isa = PBXBuildFile; fileRef = 77CB0C9B1F8178FC0034E05D /* background.png */; };
 		77CB0CB81F819B8F0034E05D /* numberbox_arrow_down.png in Resources */ = {isa = PBXBuildFile; fileRef = 77CB0C9D1F8178FD0034E05D /* numberbox_arrow_down.png */; };
 		77CB0CB91F819B900034E05D /* numberbox_arrow_up.png in Resources */ = {isa = PBXBuildFile; fileRef = 77CB0C9C1F8178FD0034E05D /* numberbox_arrow_up.png */; };
@@ -585,6 +591,8 @@
 		771CF5241F8D4481000F34E2 /* Interface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interface.h; sourceTree = "<group>"; };
 		771CF5251F8D4481000F34E2 /* Interface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interface.cpp; sourceTree = "<group>"; };
 		771CF5261F8D4481000F34E2 /* Presets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Presets.h; sourceTree = "<group>"; };
+		774C73A71F9EA91800E2EFC9 /* Controls.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Controls.h; sourceTree = "<group>"; };
+		774C73AD1F9EA93F00E2EFC9 /* Controls.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Controls.cpp; sourceTree = "<group>"; };
 		77CB0C9B1F8178FC0034E05D /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = background.png; path = resources/img/background.png; sourceTree = "<group>"; };
 		77CB0C9C1F8178FD0034E05D /* numberbox_arrow_up.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = numberbox_arrow_up.png; path = resources/img/numberbox_arrow_up.png; sourceTree = "<group>"; };
 		77CB0C9D1F8178FD0034E05D /* numberbox_arrow_down.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = numberbox_arrow_down.png; path = resources/img/numberbox_arrow_down.png; sourceTree = "<group>"; };
@@ -650,6 +658,8 @@
 		089C166AFE841209C02AAC07 /* IPlugExample */ = {
 			isa = PBXGroup;
 			children = (
+				774C73AD1F9EA93F00E2EFC9 /* Controls.cpp */,
+				774C73A71F9EA91800E2EFC9 /* Controls.h */,
 				771CF5251F8D4481000F34E2 /* Interface.cpp */,
 				771CF5241F8D4481000F34E2 /* Interface.h */,
 				771CF5221F8D4481000F34E2 /* Presets.cpp */,
@@ -1292,6 +1302,7 @@
 				4F78DA0713B63CD90032E0F3 /* IPlugAU.h in Headers */,
 				4F3EE94913B65A350097B791 /* IPlugOSDetect.h in Headers */,
 				4FDA440913F3E4F2000B4551 /* IBitmapMonoText.h in Headers */,
+				774C73A91F9EA91800E2EFC9 /* Controls.h in Headers */,
 				4FA88B931444E4C4006CB8DA /* dfx-au-utilities.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1313,6 +1324,7 @@
 				4F78DA8C13B640050032E0F3 /* wdlstring.h in Headers */,
 				4F78DA8D13B640050032E0F3 /* heapbuf.h in Headers */,
 				4F78DA8E13B640050032E0F3 /* wdlendian.h in Headers */,
+				774C73A81F9EA91800E2EFC9 /* Controls.h in Headers */,
 				4F78DA8F13B640050032E0F3 /* swell.h in Headers */,
 				4F78DA9013B640050032E0F3 /* swell-functions.h in Headers */,
 				4F78DA9113B640050032E0F3 /* swell-internal.h in Headers */,
@@ -1627,6 +1639,7 @@
 				4F78D9BF13B63BA50032E0F3 /* IGraphicsMac.mm in Sources */,
 				4F78D9C013B63BA50032E0F3 /* IGraphics.cpp in Sources */,
 				4F78D9C113B63BA50032E0F3 /* IGraphicsCarbon.cpp in Sources */,
+				774C73AF1F9EA93F00E2EFC9 /* Controls.cpp in Sources */,
 				4F78D9C213B63BA50032E0F3 /* IGraphicsCocoa.mm in Sources */,
 				4F78D9C313B63BA50032E0F3 /* Log.cpp in Sources */,
 				771CF5401F8D44A2000F34E2 /* Presets.cpp in Sources */,
@@ -1654,6 +1667,7 @@
 				4F78D94E13B63BA50032E0F3 /* IGraphics.cpp in Sources */,
 				4F78D94F13B63BA50032E0F3 /* IGraphicsCarbon.cpp in Sources */,
 				4F78D95013B63BA50032E0F3 /* IGraphicsCocoa.mm in Sources */,
+				774C73B11F9EA93F00E2EFC9 /* Controls.cpp in Sources */,
 				4F78D95313B63BA50032E0F3 /* Log.cpp in Sources */,
 				4F78D95513B63BA50032E0F3 /* IPopupMenu.cpp in Sources */,
 				771CF5451F8D44A3000F34E2 /* Program.cpp in Sources */,
@@ -1672,6 +1686,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4F9828B6140A9EB700F3FCC1 /* Evaluator.cpp in Sources */,
+				774C73B01F9EA93F00E2EFC9 /* Controls.cpp in Sources */,
 				4F9828B7140A9EB700F3FCC1 /* swell-gdi.mm in Sources */,
 				4F9828B8140A9EB700F3FCC1 /* IPlugBase.cpp in Sources */,
 				4F9828B9140A9EB700F3FCC1 /* IPlugStructs.cpp in Sources */,
@@ -1734,6 +1749,7 @@
 				4F78D90C13B63BA50032E0F3 /* IPlugStructs.cpp in Sources */,
 				4F78D90D13B63BA50032E0F3 /* Hosts.cpp in Sources */,
 				4F78D90F13B63BA50032E0F3 /* IGraphicsMac.mm in Sources */,
+				774C73AE1F9EA93F00E2EFC9 /* Controls.cpp in Sources */,
 				4F78D91013B63BA50032E0F3 /* IGraphics.cpp in Sources */,
 				4F78D91113B63BA50032E0F3 /* IGraphicsCarbon.cpp in Sources */,
 				4F78D91213B63BA50032E0F3 /* IGraphicsCocoa.mm in Sources */,

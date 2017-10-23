@@ -1,6 +1,7 @@
 #include "Interface.h"
 #include "Evaluator.h"
 #include "IControl.h"
+#include "Controls.h"
 
 enum ELayout
 {
@@ -93,120 +94,6 @@ IText kTitleTextStyle(12,
                       IText::kAlignNear,
                       0, // orientation
                       IText::kQualityDefault);
-
-// originally cribbed from the IPlugEEL example
-class ITextEdit : public IControl
-{
-public:
-	ITextEdit(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, const char* str)
-		: IControl(pPlug, pR)
-		, mIdx(paramIdx)
-	{
-		mDisablePrompt = true;
-		mText = *pText;
-		mStr.Set(str);
-		mTextEntryLength = kExpressionLengthMax;
-		mTextEntryOptions = ETextEntryOptions(kTextEntryMultiline | kTextEntryEnterKeyInsertsCR);
-	}
-
-	~ITextEdit() {}
-
-	bool Draw(IGraphics* pGraphics) override
-	{
-		pGraphics->FillIRect(&mText.mTextEntryBGColor, &mRECT);
-		return pGraphics->DrawIText(&mText, mStr.Get(), &mRECT);
-	}
-
-	void OnMouseDown(int x, int y, IMouseMod* pMod) override
-	{
-		mPlug->GetGUI()->CreateTextEntry(this, &mText, &mRECT, mStr.Get());
-	}
-
-	void TextFromTextEntry(const char* txt) override
-	{
-		mStr.Set(txt);
-		SetDirty(false);
-		mPlug->OnParamChange(mIdx);
-	}
-
-	const char * GetText() const
-	{
-		return mStr.Get();
-	}
-
-	int GetTextLength() const
-	{
-		return mStr.GetLength();
-	}
-
-protected:
-	int        mIdx;
-	WDL_String mStr;
-};
-
-class ConsoleText : public IControl
-{
-public:
-	ConsoleText(IPlugBase* plug, IRECT pR, IText* textStyle, const IColor* backgroundColor, int margin)
-		: IControl(plug, pR)
-		, mPanel(plug, pR, backgroundColor)
-		, mText(plug, pR.GetPadded(-margin), textStyle, "Program State")
-	{}
-
-	bool Draw(IGraphics* pGraphics) override
-	{		
-		return mPanel.Draw(pGraphics) && mText.Draw(pGraphics);
-	}
-
-	void SetTextFromPlug(const char * text)
-	{
-		mText.SetTextFromPlug(const_cast<char*>(text));
-		if (mText.IsDirty())
-		{
-			SetDirty(false);
-			Redraw();
-		}
-	}
-
-private:
-	IPanelControl mPanel;
-	ITextControl  mText;
-};
-
-class IIncrementControl : public IBitmapControl
-{
-public:
-	IIncrementControl(IPlugBase* pPlug, int x, int y, int paramIdx, IBitmap* pBitmap, int direction)
-		: IBitmapControl(pPlug, x, y, paramIdx, pBitmap)
-		, mPressed(0)
-	{
-		IParam* param = GetParam();
-		mInc = direction * 1.0 / (param->GetMax() - param->GetMin());
-		mDblAsSingleClick = true;
-	}
-
-	bool Draw(IGraphics* pGraphics) override
-	{
-		return pGraphics->DrawBitmap(&mBitmap, &mRECT, mPressed + 1, &mBlend);
-	}
-
-	void OnMouseDown(int x, int y, IMouseMod* pMod) override
-	{
-		mPressed = 1;
-		mValue = GetParam()->GetNormalized() + mInc;
-		SetDirty();
-	}
-
-	void OnMouseUp(int x, int y, IMouseMod* pMod) override
-	{
-		mPressed = 0;
-	}
-
-private:
-	double mInc;
-	int   mPressed;
-};
-
 
 Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 : mPlug(plug)
