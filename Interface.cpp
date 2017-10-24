@@ -18,12 +18,18 @@ enum ELayout
   kVolumeKnob_W = kVolumeLabel_W,
   kVolumeKnob_H = kVolumeLabel_W,
   
-  kBitDepth_X = kVolumeKnob_X + kVolumeKnob_W + 10,
+  kBitDepth_X = kVolumeKnob_X + kVolumeKnob_W + 20,
   kBitDepth_Y = kVolumeKnob_Y,
+
+	// rect for label & buttons
+	kTimeType_X = kBitDepth_X + 60,
+	kTimeType_Y = kVolumeLabel_Y,
+	kTimeType_W = 27 * TTCount,
+	kTimeType_H = kVolumeKnob_H + kVolumeLabel_H,
   
   kProgramLabel_X = 10,
   kProgramLabel_Y = kVolumeKnob_Y + kVolumeKnob_H + 5,
-  kProgramLabel_W = kEditorWidth - 20,
+  kProgramLabel_W = 60,
   kProgramLabel_H = 15,
 
 	kProgramText_X = 10,
@@ -102,7 +108,7 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 
 	//--- Text input for the expression ------
   {
-    pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kProgramLabel), &kTitleTextStyle, "PROGRAM"));
+    pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kProgramLabel), &kTitleTextStyle, "PROGRAM:"));
     textEdit = new ITextEdit(mPlug, MakeIRect(kProgramText), kExpression, &kExpressionTextStyle, "t*128");
     pGraphics->AttachControl(textEdit);
   }
@@ -154,6 +160,30 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 			backSize.R,
 			backSize.T);
 		pGraphics->AttachControl(new ITextControl(mPlug, boxLabelSize, &kLabelTextStyle, "BITS"));
+	}
+
+	// ---Time Type------------------------------
+	{
+		IBitmap radioButton = pGraphics->LoadIBitmap(RADIO_BUTTON_ID, RADIO_BUTTON_FN, 2);
+		IRECT buttonRect = MakeIRect(kTimeType);
+		IText textStyle = kLabelTextStyle;
+		textStyle.mAlign = IText::kAlignNear;
+
+		ITextControl* label = new ITextControl(mPlug, buttonRect, &kLabelTextStyle, "T-MODE");
+
+		IRECT captionRect = MakeIRect(kProgramLabel);
+		captionRect.L += kProgramLabel_W;
+		captionRect.R += kProgramLabel_W;
+		ITextControl* caption = new ICaptionControl(mPlug, captionRect, kTimeType, &textStyle);
+
+		buttonRect.T = kVolumeKnob_Y;
+		buttonRect.B = kVolumeKnob_Y + kVolumeKnob_H;
+		IRadioButtonsControl* radios = new IRadioButtonsControl(mPlug, buttonRect, kTimeType, TTCount, &radioButton, kHorizontal);
+		radios->SetValDisplayControl(caption);
+
+		pGraphics->AttachControl(label);
+		pGraphics->AttachControl(radios);
+		pGraphics->AttachControl(caption);
 	}
 }
 

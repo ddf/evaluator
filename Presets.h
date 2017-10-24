@@ -15,6 +15,7 @@ namespace Presets
 		const char * const program;
 		const float volume;
 		const int   bitDepth;
+		const int   timeType;
 	};
 
 	// how many pre-defined presets are there

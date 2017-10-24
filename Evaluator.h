@@ -13,6 +13,7 @@ enum EParams
 {
 	kGain = 0,
 	kBitDepth = 1,
+	kTimeType = 2, // enumeration to control how we advance 't' in the program
 	kNumParams,
 
 	// used for text edit fields so the UI can call OnParamChange
@@ -22,6 +23,18 @@ enum EParams
 
 	kBitDepthMin = 1,
 	kBitDepthMax = 24
+};
+
+enum TimeType : uint8_t
+{
+	TTAlways,
+	TTWithNote,
+
+#if !SA_API // there is no "Project Time" in the standalone version, so we don't allow this param to have that value
+	TTProjectTime,
+#endif
+
+	TTCount
 };
 
 class Evaluator : public IPlug
@@ -57,6 +70,7 @@ private:
   bool					mProgramIsValid;
   double				mGain;
   int					mBitDepth;
+  TimeType				mTimeType;
   Program::Value		mTick;
   IMidiQueue			mMidiQueue;
   std::vector<IMidiMsg> mNotes;
