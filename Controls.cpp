@@ -101,3 +101,36 @@ void IIncrementControl::OnMouseUp(int x, int y, IMouseMod* pMod)
 }
 //
 //////////////////////////////////////////
+
+//////////////////////////////////////////
+// KnobLineCoronaControl
+//
+KnobLineCoronaControl::KnobLineCoronaControl(IPlugBase* pPlug, IRECT pR, int paramIdx,
+                                             const IColor* pColor, const IColor* pCoronaColor,
+                                             double coronaThickness,
+                                             double innerRadius, double outerRadius,
+                                             double minAngle, double maxAngle,
+                                             EDirection direction, double gearing)
+: IKnobLineControl(pPlug, pR, paramIdx, pColor, innerRadius, outerRadius, minAngle, maxAngle, direction, gearing)
+, mCoronaColor(*pCoronaColor)
+, mCoronaBlend(IChannelBlend::kBlendAdd, coronaThickness)
+{
+}
+
+bool KnobLineCoronaControl::Draw(IGraphics* pGraphics)
+{
+  float cx = mRECT.MW(), cy = mRECT.MH();
+  double v = mMinAngle + mValue * (mMaxAngle - mMinAngle);
+  for(int i = 0; i <= mCoronaBlend.mWeight; ++i)
+  {
+    IColor color = mCoronaColor;
+    pGraphics->DrawArc(&color, cx, cy, mOuterRadius-i, mMinAngle, v, nullptr, true);
+    color.R /= 2;
+    color.G /= 2;
+    color.B /= 2;
+    pGraphics->DrawArc(&color, cx, cy, mOuterRadius-i, v, mMaxAngle, nullptr, true);
+  }
+  return IKnobLineControl::Draw(pGraphics);
+}
+//
+//////////////////////////////////////////

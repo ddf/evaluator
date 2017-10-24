@@ -121,7 +121,8 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
     pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kVolumeLabel), &kLabelTextStyle, "VOL"));
     
 		//---Volume Knob-------
-		pGraphics->AttachControl(new IKnobLineControl(mPlug, MakeIRect(kVolumeKnob), kGain, &kGreenColor));
+    IColor coronaColor(kGreenColor);
+		pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, MakeIRect(kVolumeKnob), kGain, &kGreenColor, &coronaColor, 1.5));
 	}
 
 	//---Bit Depth--------------
