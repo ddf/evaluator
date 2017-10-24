@@ -20,7 +20,8 @@ Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
 
   GetParam(kTimeType)->InitEnum("t Mode", 0, TTCount);
   GetParam(kTimeType)->SetDisplayText(TTAlways, "increment 't' always");
-  GetParam(kTimeType)->SetDisplayText(TTWithNote, "increment 't' while note on");
+  GetParam(kTimeType)->SetDisplayText(TTWithNoteContinuous, "increment 't' while note on");
+  GetParam(kTimeType)->SetDisplayText(TTWithNoteResetting, "increment 't' while note on, reset 't' every note on");
 #if !SA_API
   GetParam(kTimeType)->SetDisplayText(TTProjectTime, "set 't' to project time");
 #endif
@@ -69,7 +70,7 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
       switch(pMsg->StatusMsg())
       {
         case IMidiMsg::kNoteOn:
-          if (mNotes.empty())
+          if (mTimeType == TTWithNoteResetting)
           {
             mTick = 0;
           }
@@ -109,17 +110,18 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
     }
 
 	bool run = true;
-    
+	double outSample = 0;
+
 	switch (mTimeType)
 	{
-	case TTWithNote: if (run = !mNotes.empty()) ++mTick; break;
+	case TTWithNoteContinuous:
+	case TTWithNoteResetting:
+		run = !mNotes.empty(); break;
 #if !SA_API
-	case TTProjectTime: if (run = timeInfo.mTransportIsRunning) mTick = timeInfo.mSamplePos + s; break;
+	case TTProjectTime:
+		if (run = timeInfo.mTransportIsRunning) mTick = timeInfo.mSamplePos + s; break;
 #endif
-	default: ++mTick; break;
 	}
-
-	double outSample = 0;
 
 	if (run)
 	{
@@ -129,6 +131,7 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 		Program::Value result;
 		error = mProgram->Run(result);
 		outSample = mGain * (-1.0 + 2.0*((double)(result%range) / (range - 1)));
+		++mTick;
 	}
     
     *out1 = *in1 + outSample;

@@ -18,14 +18,14 @@ namespace Presets
 	const Data kPresets[] = 
 	{
 		// name, expression, volume, bit depth
-		{ "saw wave", "t*Fn", 50, 15, TTWithNote },
-		{ "square wave", "#(t*Fn)", 50, 15, TTWithNote },
-		{ "sine wave", "$(t*Fn)", 50, 15, TTWithNote },
-		{ "triangle wave", "T(t*Fn)", 50, 13, TTWithNote },
-        { "pulse wave", "(r-1)*((t*Fn)%r < 8800)", 50, 15, TTWithNote },
-        { "ternary arp", "q%64/32 ? t*Fn : t*F(n+12) * (n>0)", 50, 15, TTWithNote },
-		{ "amplitude modulation", "t*Fn | $(t)", 50, 15, TTWithNote },
-		{ "frequency modulation", "t*Fn + $(t*2)", 50, 15, TTWithNote },
+		{ "saw wave", "t*Fn", 50, 15, TTWithNoteResetting },
+		{ "square wave", "#(t*Fn)", 50, 15, TTWithNoteResetting },
+		{ "sine wave", "$(t*Fn)", 50, 15, TTWithNoteResetting },
+		{ "triangle wave", "T(t*Fn)", 50, 13, TTWithNoteResetting },
+        { "pulse wave", "(r-1)*((t*Fn)%r < 8800)", 50, 15, TTWithNoteResetting },
+        { "ternary arp", "q%64/32 ? t*Fn : t*F(n+12) * (n>0)", 50, 15, TTWithNoteResetting },
+		{ "amplitude modulation", "t*Fn | $(t)", 50, 15, TTWithNoteResetting },
+		{ "frequency modulation", "t*Fn + $(t*2)", 50, 15, TTWithNoteResetting },
 		{ "bouncing balls", "$(t*(1000 - m%500))", 50, 15, TTAlways },
 		{ "little ditty", "(t*128 + $(t)) | t>>(t%(8*r))/r | t>>128", 50, 15, TTProjectTime },
 		{ "aggressive texture", "(t*64 + $(t^$(m/2000))*$(m/2000)) | t*32", 50, 15, TTProjectTime },

@@ -28,7 +28,8 @@ enum EParams
 enum TimeType : uint8_t
 {
 	TTAlways,
-	TTWithNote,
+	TTWithNoteContinuous, // continuously increment t if we have notes
+	TTWithNoteResetting, // continuously increment t if we have notes, but reset to 0 with every note on
 
 #if !SA_API // there is no "Project Time" in the standalone version, so we don't allow this param to have that value
 	TTProjectTime,
