@@ -59,6 +59,7 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
   Program::RuntimeError error = Program::RE_NONE;
   ITimeInfo timeInfo;
   GetTime(&timeInfo);
+  Program::Value results[2];
   for (int s = 0; s < nFrames; ++s, ++in1, ++in2, ++out1, ++out2)
   {
     while (!mMidiQueue.Empty())
@@ -110,7 +111,6 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
     }
 
 	bool run = true;
-	double outSample = 0;
 
 	switch (mTimeType)
 	{
@@ -128,14 +128,18 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 		mProgram->Set('t', mTick);
 		mProgram->Set('m', mTick / mdenom);
 		mProgram->Set('q', mTick / qdenom);
-		Program::Value result;
-		error = mProgram->Run(result);
-		outSample = mGain * (-1.0 + 2.0*((double)(result%range) / (range - 1)));
+		results[0] = (*in1 + 1) * (range / 2);
+		results[1] = (*in2 + 1) * (range / 2);
+		error = mProgram->Run(results, 2);
+		*out1 = mGain * (-1.0 + 2.0*((double)(results[0]%range) / (range - 1)));
+		*out2 = mGain * (-1.0 + 2.0*((double)(results[1]%range) / (range - 1)));
 		++mTick;
 	}
-    
-    *out1 = *in1 + outSample;
-    *out2 = *in2 + outSample;
+	else
+	{
+		*out1 = 0;
+		*out2 = 0;
+	}
   }
   
   mMidiQueue.Flush(nFrames);

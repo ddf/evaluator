@@ -19,6 +19,7 @@ public:
 	{
 		CE_NONE,
 		CE_MISSING_PAREN,
+		CE_MISSING_BRACKET,
 		CE_UNEXPECTED_CHAR,
 		CE_ILLEGAL_ASSIGNMENT
 	};
@@ -30,6 +31,9 @@ public:
 		RE_MISSING_OPERAND, // the stack did not contain data for the operation
 		RE_MISSING_OPCODE, // the implementation for an Op::Code is missing
 		RE_INCONSISTENT_STACK, // the stack was not empty after popping the final result
+		RE_EMPTY_PROGRAM, // the program has no instructions to execute
+		RE_GET_OUT_OF_BOUNDS, // index for GET was bigger than the size of the results array
+		RE_PUT_OUT_OF_BOUNDS, // index for PUT was bigger than the size of the results array
 	};
 
 	// type of the string expression for Compile
@@ -65,6 +69,8 @@ public:
             CGT, // compare >
             TRN, // ternary operator - ?:
             POP, // ;
+			GET, // get the the current value of a result. eg [0] or [1].
+			PUT, // assign to an output result using [0] = expression. [] = will assign to all outputs.
 		};
 
 		// need default constructor or we can't use vector
@@ -86,8 +92,9 @@ public:
 
 	uint64_t GetInstructionCount() const { return ops.size(); }
 
-	// run the program placing the value it evaluates to into result
-	RuntimeError Run(Value& result);
+	// run the program placing the value it evaluates to into the results array.
+	// count is provided so that we can prevent the program from overrunning the array.
+	RuntimeError Run(Value* results, const size_t size);
 	// get the current value of a var, eg Get('t')
 	Value Get(const Char var) const;
 	// set the value of a var, eg Set('m', 128)
@@ -99,7 +106,7 @@ private:
 	Value Peek(const Value address) const;
 	void  Poke(const Value address, const Value value);
 
-	RuntimeError Exec(const Op& op);
+	RuntimeError Exec(const Op& op, Value* results, size_t size);
 
 	// the compiled code
 	std::vector<Op> ops;
