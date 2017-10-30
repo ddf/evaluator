@@ -20,9 +20,12 @@ public:
 		CE_NONE,
 		CE_MISSING_PAREN,
 		CE_MISSING_BRACKET,
+		CE_MISSING_COLON_IN_TERNARY,
 		CE_UNEXPECTED_CHAR,
+		CE_FAILED_TO_PARSE_NUMBER,
 		CE_ILLEGAL_ASSIGNMENT,
-		CE_ILLEGAL_STATEMENT_TERMINATION // found a semi-colon where one isn't allowed
+		CE_ILLEGAL_STATEMENT_TERMINATION, // found a semi-colon where one isn't allowed
+		CE_ILLEGAL_VARIABLE_NAME, // found an uppercase letter where we expected a lowercase one
 	};
 
 	enum RuntimeError 

@@ -28,14 +28,20 @@ const char * Program::GetErrorString(Program::CompileError error)
 		return "None";
 	case Program::CE_MISSING_PAREN:
 		return "Mismatched parens";
+	case Program::CE_MISSING_BRACKET:
+		return "Missing ']'";
+	case Program::CE_MISSING_COLON_IN_TERNARY:
+		return "Incomplete ternary statement - expected ':'";
 	case Program::CE_UNEXPECTED_CHAR:
 		return "Unexpected character";
+	case Program::CE_FAILED_TO_PARSE_NUMBER:
+		return "Failed to parse a numeric value";
 	case Program::CE_ILLEGAL_ASSIGNMENT:
-		return "Left side of = must be assignable (a variable or address)";
-	case Program::CE_MISSING_BRACKET:
-		return "Missing ]";
+		return "Left side of '=' must be assignable (a variable, address, or output)";
 	case Program::CE_ILLEGAL_STATEMENT_TERMINATION:
 		return "Illegal statement termination.\nSemi-colon may not appear within parens or ternary operators.";
+	case Program::CE_ILLEGAL_VARIABLE_NAME:
+		return "Illegal variable name - uppercase letters are reserved for operators.";
 	default:
 		return "Unknown";
 	}
@@ -152,11 +158,19 @@ static int ParseAtom(CompilationState& state)
 
 	if (isalpha(*state))
 	{
-		const Program::Char var = *state;
-		// push the address of the variable, which peek will need
-		state.Push(Program::Op::NUM, var + 128);
-		state.Push(Program::Op::PEK);
-		state.parsePos++;
+		if (islower(*state))
+		{
+			const Program::Char var = *state;
+			// push the address of the variable, which peek will need
+			state.Push(Program::Op::NUM, var + 128);
+			state.Push(Program::Op::PEK);
+			state.parsePos++;
+		}
+		else
+		{
+			state.error = Program::CE_ILLEGAL_VARIABLE_NAME;
+			return 1;
+		}
 	}
 	else // parse a numeric value
 	{
@@ -166,7 +180,7 @@ static int ParseAtom(CompilationState& state)
 		// failed to parse a number
 		if (endPtr == startPtr)
 		{
-			state.error = Program::CE_UNEXPECTED_CHAR;
+			state.error = Program::CE_FAILED_TO_PARSE_NUMBER;
 			return 1;
 		}
 		state.Push(Program::Op::NUM, res);
@@ -340,7 +354,7 @@ static int ParseTRN(CompilationState& state)
         op = *state;
         if ( op != ':' )
         {
-            state.error = Program::CE_UNEXPECTED_CHAR;
+			state.error = Program::CE_MISSING_COLON_IN_TERNARY;
             return 1;
         }
         state.parsePos++;
