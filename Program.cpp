@@ -34,6 +34,8 @@ const char * Program::GetErrorString(Program::CompileError error)
 		return "Left side of = must be assignable (a variable or address)";
 	case Program::CE_MISSING_BRACKET:
 		return "Missing ]";
+	case Program::CE_ILLEGAL_STATEMENT_TERMINATION:
+		return "Illegal statement termination.\nSemi-colon may not appear within parens or ternary operators.";
 	default:
 		return "Unknown";
 	}
@@ -46,6 +48,7 @@ struct CompilationState
 	int parsePos;
 	int parenCount;
 	int bracketCount;
+	int parseDepth;
 	Program::CompileError error;
 	std::vector<Program::Op> ops;
 
@@ -54,6 +57,7 @@ struct CompilationState
 		, parsePos(0)
 		, parenCount(0)
 		, bracketCount(0)
+		, parseDepth(0)
 		, error(Program::CE_NONE)
 	{
 
@@ -307,7 +311,7 @@ static int ParseTRN(CompilationState& state)
             return 0;
         }
         state.parsePos++;
-        if(ParseOR(state)) return 1;
+        if(Parse(state)) return 1;
 		state.SkipWhitespace();
         op = *state;
         if ( op != ':' )
@@ -316,8 +320,20 @@ static int ParseTRN(CompilationState& state)
             return 1;
         }
         state.parsePos++;
-        if (ParseOR(state)) return 1;
-        state.Push(Program::Op::TRN);
+        if (Parse(state)) return 1;
+		// if the statement terminated in a semi-colon we will have a POP on the end of the list.
+		// we need that stack value to be able to evaluate the ternary statement,
+		// but we need to retain the POP instruction to account for the semi-colon.
+		if (state.ops.back().code == Program::Op::POP)
+		{
+			state.ops.pop_back();
+			state.Push(Program::Op::TRN);
+			state.Push(Program::Op::POP);
+		}
+		else
+		{
+			state.Push(Program::Op::TRN);
+		}
     }
 }
 
@@ -378,6 +394,7 @@ static int ParsePOK(CompilationState& state)
 // we start here so that we don't have to change the forward declare for ParseAtom when we add another level
 static int Parse(CompilationState& state)
 {
+	state.parseDepth++;
     while(*state != '\0')
     {
         if (ParsePOK(state)) return 1;
@@ -385,8 +402,19 @@ static int Parse(CompilationState& state)
 		state.SkipWhitespace();
         if (*state != ';')
         {
+			state.parseDepth--;
             return 0;
         }
+		// if we have recursed into Parse due to opening parens
+		// or due to parsing a section of a ternary operator,
+		// we should throw an error if we encounter a semi-colon
+		// because those constructs will not evaulate correctly
+		// if a POP appears in the middle of the instructions.
+		if (state.parseDepth != 1)
+		{
+			state.error = Program::CE_ILLEGAL_STATEMENT_TERMINATION;
+			return 1;
+		}
         state.parsePos++;
         state.Push(Program::Op::POP);
 		// skip space immediately after statement termination

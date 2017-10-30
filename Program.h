@@ -15,13 +15,14 @@
 class Program
 {
 public:
-	enum CompileError 
+	enum CompileError
 	{
 		CE_NONE,
 		CE_MISSING_PAREN,
 		CE_MISSING_BRACKET,
 		CE_UNEXPECTED_CHAR,
-		CE_ILLEGAL_ASSIGNMENT
+		CE_ILLEGAL_ASSIGNMENT,
+		CE_ILLEGAL_STATEMENT_TERMINATION // found a semi-colon where one isn't allowed
 	};
 
 	enum RuntimeError 
