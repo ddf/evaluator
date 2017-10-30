@@ -85,7 +85,7 @@ static int ParseAtom(CompilationState& state)
 	std::stack<Program::Op::Code> unaryOps;
 
 	Program::Char op = *state;
-	while (op == '-' || op == '+' || op == '$' || op == '#' || op == 'F' || op == 'T' || op == '@' || op == '[')
+	while (op == '-' || op == '+' || op == '$' || op == '#' || op == 'F' || op == 'T' || op == '@')
 	{
 		switch (op)
 		{
@@ -96,7 +96,6 @@ static int ParseAtom(CompilationState& state)
 		case 'F': unaryOps.push(Program::Op::FREQ); break;
 		case 'T': unaryOps.push(Program::Op::TRI); break;
 		case '@': unaryOps.push(Program::Op::PEK); break;
-		case '[': unaryOps.push(Program::Op::GET); break;
 		}
 		state.parsePos++;
 		op = *state;
@@ -116,6 +115,31 @@ static int ParseAtom(CompilationState& state)
 		}
 		state.parsePos++;
 		state.parenCount--;
+
+		while (!unaryOps.empty())
+		{
+			state.Push(unaryOps.top());
+			unaryOps.pop();
+		}
+
+		return 0;
+	}
+
+	// check for bracket '['
+	if (*state == '[')
+	{
+		state.parsePos++;
+		state.bracketCount++;
+		if (Parse(state)) return 1;
+		if (*state != ']')
+		{
+			state.error = Program::CE_MISSING_BRACKET;
+			return 1;
+		}
+		state.parsePos++;
+		state.bracketCount--;
+
+		state.Push(Program::Op::GET);
 
 		while (!unaryOps.empty())
 		{
