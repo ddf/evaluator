@@ -74,8 +74,9 @@ public:
             TRN, // ternary operator - ?:
             POP, // ;
 			GET, // get the the current value of a result. eg [0] or [1].
-			PUT, // assign to an output result using [0] = expression. [] = will assign to all outputs.
+			PUT, // assign to an output result using [0] = expression.
 			RND, // random number operator - operand is used to wrap value returned by rand() - so like Random.Range(0, operand)
+			CCV, // use the operand to look up the current value of a midi control change
 		};
 
 		// need default constructor or we can't use vector
@@ -105,6 +106,9 @@ public:
 	// set the value of a var, eg Set('m', 128)
 	void  Set(const Char var, const Value value);
 
+	Value GetCC(const Value idx) const;
+	void  SetCC(const Value idx, const Value value);
+
 private:
 
 	// get the value at this memory address
@@ -117,6 +121,8 @@ private:
 	std::vector<Op> ops;
 	// the memory space
 	Value mem[kMemorySize];
+	// memory for storing MIDI CC values
+	Value cc[128];
 	// the execution stack (reused each time Run is called)
 	std::stack<Value> stack;
 };

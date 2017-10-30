@@ -15,6 +15,19 @@
 #include <math.h>
 #include <stdlib.h>
 
+Program::Program(const std::vector<Op>& inOps)
+	: ops(inOps)
+{
+	// initialize cc memory space - we want to accurately represent the midi device
+	memset(cc, 0, sizeof(cc));
+	// default sample rate so the F operator will function
+	Set('~', 44100);
+}
+
+Program::~Program()
+{
+}
+
 //////////////////////////////////////////////////////////////////////////
 // COMPILATION
 //////////////////////////////////////////////////////////////////////////
@@ -91,7 +104,7 @@ static int ParseAtom(CompilationState& state)
 	std::stack<Program::Op::Code> unaryOps;
 
 	Program::Char op = *state;
-	while (op == '-' || op == '+' || op == '$' || op == '#' || op == 'F' || op == 'T' || op == '@' || op == 'R')
+	while (op == '-' || op == '+' || op == '$' || op == '#' || op == 'F' || op == 'T' || op == '@' || op == 'R' || op == 'C')
 	{
 		switch (op)
 		{
@@ -103,6 +116,7 @@ static int ParseAtom(CompilationState& state)
 		case 'T': unaryOps.push(Program::Op::TRI); break;
 		case '@': unaryOps.push(Program::Op::PEK); break;
 		case 'R': unaryOps.push(Program::Op::RND); break;
+		case 'C': unaryOps.push(Program::Op::CCV); break;
 		}
 		state.parsePos++;
 		op = *state;
@@ -500,17 +514,6 @@ Program* Program::Compile(const Char* source, CompileError& outError, int& outEr
 
 	return program;
 }
-
-Program::Program(const std::vector<Op>& inOps)
-: ops(inOps)
-{
-	// default sample rate so the F operator will function
-	Set('~', 44100);
-}
-
-Program::~Program()
-{
-}
 #pragma endregion
 
 //////////////////////////////////////////////////////////////////////////
@@ -711,6 +714,13 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 		}
 		break;
 
+		case Op::CCV:
+		{
+			POP1;
+			stack.push(GetCC(a));
+		}
+		break;
+
 		// two operands - both are popped from the stack, result is pushed back on
 		case Op::POK:
 		{
@@ -866,6 +876,16 @@ void Program::Set(const Char var, const Value value)
 	Poke((Value)var + 128, value);
 }
 
+Program::Value Program::GetCC(const Value idx) const
+{
+	// prevent array reading overrun by wrapping around, since this is how accessing memory works
+	return cc[idx % 128];
+}
+
+void Program::SetCC(const Value idx, const Value value)
+{
+	cc[idx % 128] = value;
+}
 
 Program::Value Program::Peek(const Value address) const
 {

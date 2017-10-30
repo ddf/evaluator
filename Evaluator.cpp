@@ -102,6 +102,10 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 			mProgram->Set('v', mNotes.back().Velocity());
           }
           break;
+
+		case IMidiMsg::kControlChange:
+			mProgram->SetCC(pMsg->mData1, pMsg->mData2);
+			break;
           
         default:
           break;
