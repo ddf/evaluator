@@ -99,7 +99,7 @@ static int ParseAtom(CompilationState& state)
 		case '+': break; // no op
 		case '$': unaryOps.push(Program::Op::SIN); break;
 		case '#': unaryOps.push(Program::Op::SQR); break;
-		case 'F': unaryOps.push(Program::Op::FREQ); break;
+		case 'F': unaryOps.push(Program::Op::FRQ); break;
 		case 'T': unaryOps.push(Program::Op::TRI); break;
 		case '@': unaryOps.push(Program::Op::PEK); break;
 		}
@@ -678,7 +678,7 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 		}
 		break;
 
-		case Op::FREQ:
+		case Op::FRQ:
 		{
 			POP1;
 			if (a == 0)

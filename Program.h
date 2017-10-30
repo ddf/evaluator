@@ -54,7 +54,7 @@ public:
 			NUM,
 			PEK, // get the value at a memory address
 			POK, // set the value at a memory address
-			FREQ,
+			FRQ,
 			SQR,
 			SIN,
 			TRI,
