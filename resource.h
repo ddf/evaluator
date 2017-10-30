@@ -46,7 +46,7 @@ instrument determined by PLUG _IS _INST
 #define PLUG_CHANNEL_IO "1-1 2-2"
 
 #define PLUG_LATENCY 0
-#define PLUG_IS_INST 1
+#define PLUG_IS_INST 0
 
 // if this is 0 RTAS can't get tempo info
 #define PLUG_DOES_MIDI 1
@@ -60,6 +60,7 @@ instrument determined by PLUG _IS _INST
 #define NUMBERBOX_ARROW_UP_ID 104
 #define NUMBERBOX_ARROW_DOWN_ID 105
 #define NUMBERBOX_BACK_ID 106
+#define RADIO_BUTTON_ID 107
 
 // Image resource locations for this plug.
 #define BACKGROUND_FN "resources/img/background.png"
@@ -68,6 +69,7 @@ instrument determined by PLUG _IS _INST
 #define NUMBERBOX_ARROW_UP_FN "resources/img/numberbox_arrow_up.png"
 #define NUMBERBOX_ARROW_DOWN_FN "resources/img/numberbox_arrow_down.png"
 #define NUMBERBOX_BACK_FN "resources/img/numberbox_background.png"
+#define RADIO_BUTTON_FN "resources/img/radio_button.png"
 
 // GUI default dimensions
 #define GUI_WIDTH 640

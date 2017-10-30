@@ -5,10 +5,11 @@
 #include "resource.h"
 
 Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
-  :	IPLUG_CTOR(kNumParams, Presets::Count(), instanceInfo)
-  , mProgram(0)
-  , mGain(1.)
-  , mBitDepth(15)
+: IPLUG_CTOR(kNumParams, Presets::Count(), instanceInfo)
+, mProgram(0)
+, mGain(1.)
+, mBitDepth(15)
+, mTimeType(TTAlways)
 {
   TRACE;
 
@@ -16,6 +17,14 @@ Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
   GetParam(kGain)->InitDouble("Gain", 50., 0., 100.0, 1, "%");
   
   GetParam(kBitDepth)->InitInt("Bit Depth", 15, kBitDepthMin, kBitDepthMax);
+
+  GetParam(kTimeType)->InitEnum("t Mode", 0, TTCount);
+  GetParam(kTimeType)->SetDisplayText(TTAlways, "increment 't' always");
+  GetParam(kTimeType)->SetDisplayText(TTWithNoteContinuous, "increment 't' while note on");
+  GetParam(kTimeType)->SetDisplayText(TTWithNoteResetting, "increment 't' while note on, reset 't' every note on");
+#if !SA_API
+  GetParam(kTimeType)->SetDisplayText(TTProjectTime, "set 't' to project time");
+#endif
 
   for (int i = 0; i < Presets::Count(); ++i)
   {
@@ -48,6 +57,9 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
   double* out2 = outputs[1];
   
   Program::RuntimeError error = Program::RE_NONE;
+  ITimeInfo timeInfo;
+  GetTime(&timeInfo);
+  Program::Value results[2];
   for (int s = 0; s < nFrames; ++s, ++in1, ++in2, ++out1, ++out2)
   {
     while (!mMidiQueue.Empty())
@@ -59,7 +71,7 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
       switch(pMsg->StatusMsg())
       {
         case IMidiMsg::kNoteOn:
-          if (mNotes.empty())
+          if (mTimeType == TTWithNoteResetting)
           {
             mTick = 0;
           }
@@ -97,17 +109,37 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
       
       mMidiQueue.Remove();
     }
-    
-    ++mTick;
-    mProgram->Set('t', mTick);
-    mProgram->Set('m', mTick/mdenom);
-    mProgram->Set('q', mTick/qdenom);
-    Program::Value result;
-    error = mProgram->Run(result);
-    double evalSample = mGain * (-1.0 + 2.0*((double)(result%range)/(range-1)) );
-    
-    *out1 = *in1 + evalSample;
-    *out2 = *in2 + evalSample;
+
+	bool run = true;
+
+	switch (mTimeType)
+	{
+	case TTWithNoteContinuous:
+	case TTWithNoteResetting:
+		run = !mNotes.empty(); break;
+#if !SA_API
+	case TTProjectTime:
+		if (run = timeInfo.mTransportIsRunning) mTick = timeInfo.mSamplePos + s; break;
+#endif
+	}
+
+	if (run)
+	{
+		mProgram->Set('t', mTick);
+		mProgram->Set('m', mTick / mdenom);
+		mProgram->Set('q', mTick / qdenom);
+		results[0] = (*in1 + 1) * (range / 2);
+		results[1] = (*in2 + 1) * (range / 2);
+		error = mProgram->Run(results, 2);
+		*out1 = mGain * (-1.0 + 2.0*((double)(results[0]%range) / (range - 1)));
+		*out2 = mGain * (-1.0 + 2.0*((double)(results[1]%range) / (range - 1)));
+		++mTick;
+	}
+	else
+	{
+		*out1 = 0;
+		*out2 = 0;
+	}
   }
   
   mMidiQueue.Flush(nFrames);
@@ -167,6 +199,10 @@ void Evaluator::OnParamChange(int paramIdx)
       mBitDepth = GetParam(kBitDepth)->Int();
 	  mInterface->SetDirty(kBitDepth, false);
       break;
+
+	case kTimeType:
+		mTimeType = (TimeType)GetParam(kTimeType)->Int();
+		break;
       
     case kExpression:
 	{

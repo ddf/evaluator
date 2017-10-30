@@ -8,6 +8,7 @@
     <ClCompile Include="Presets.cpp" />
     <ClCompile Include="Program.cpp" />
     <ClCompile Include="Interface.cpp" />
+    <ClCompile Include="Controls.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Evaluator.h" />
@@ -18,6 +19,7 @@
     <ClInclude Include="Presets.h" />
     <ClInclude Include="Program.h" />
     <ClInclude Include="Interface.h" />
+    <ClInclude Include="Controls.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Evaluator.rc" />
