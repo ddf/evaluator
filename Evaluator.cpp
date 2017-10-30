@@ -48,7 +48,7 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
   const uint64_t mdenom = (uint64_t)(GetSampleRate()/1000);
   const uint64_t qdenom = (uint64_t)(GetSampleRate()/(GetTempo()/60.0))/128;
   
-  mProgram->Set('r', range);
+  mProgram->Set('w', range);
   mProgram->Set('~', (Program::Value)GetSampleRate());
 
   double* in1 = inputs[0];
@@ -302,14 +302,18 @@ const char * Evaluator::GetProgramState() const
 	static char state[max_state];
 
 	snprintf(state, max_state,
-		"IC: %llu\nr=%llu\nn=%llu\nv=%llu\nt=%llu\nm=%llu\nq=%llu",
-		mProgram->GetInstructionCount(),
-		mProgram->Get('r'),
-		mProgram->Get('n'),
-		mProgram->Get('v'),
+		"time                   input\n"
+		"---------------------- ----------------------\n"
+		"t=%-20llu w=%-20llu\n"
+		"m=%-20llu n=%-20llu\n"
+		"q=%-20llu v=%-20llu\n",
 		mProgram->Get('t'),
+		mProgram->Get('w'),
 		mProgram->Get('m'),
-		mProgram->Get('q'));
+		mProgram->Get('n'),
+		mProgram->Get('q'),
+		mProgram->Get('v')
+	);
 
 	return state;
 }

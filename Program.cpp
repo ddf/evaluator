@@ -665,7 +665,7 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 		case Op::SIN:
 		{
 			POP1;
-			Value r = Get('r');
+			Value r = Get('w');
 			Value hr = r / 2;
 			r += 1;
 			double s = sin(2 * M_PI * ((double)(a%r) / r));
@@ -676,7 +676,7 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 		case Op::SQR:
 		{
 			POP1;
-			const Value r = Get('r');
+			const Value r = Get('w');
 			const Value v = a%r < r / 2 ? 0 : r - 1;
 			stack.push(v);
 		}
@@ -701,7 +701,7 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 		{
 			POP1;
 			a *= 2;
-			const Value r = Get('r');			
+			const Value r = Get('w');			
 			const Value v = a*((a / r) % 2) + (r - a - 1)*(1 - (a / r) % 2);
 			stack.push(v);
 		}
