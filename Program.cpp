@@ -91,7 +91,7 @@ static int ParseAtom(CompilationState& state)
 	std::stack<Program::Op::Code> unaryOps;
 
 	Program::Char op = *state;
-	while (op == '-' || op == '+' || op == '$' || op == '#' || op == 'F' || op == 'T' || op == '@')
+	while (op == '-' || op == '+' || op == '$' || op == '#' || op == 'F' || op == 'T' || op == '@' || op == 'R')
 	{
 		switch (op)
 		{
@@ -102,6 +102,7 @@ static int ParseAtom(CompilationState& state)
 		case 'F': unaryOps.push(Program::Op::FRQ); break;
 		case 'T': unaryOps.push(Program::Op::TRI); break;
 		case '@': unaryOps.push(Program::Op::PEK); break;
+		case 'R': unaryOps.push(Program::Op::RND); break;
 		}
 		state.parsePos++;
 		op = *state;
@@ -700,6 +701,13 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 			const Value r = Get('r');			
 			const Value v = a*((a / r) % 2) + (r - a - 1)*(1 - (a / r) % 2);
 			stack.push(v);
+		}
+		break;
+
+		case Op::RND:
+		{
+			POP1;
+			stack.push(rand()%a);
 		}
 		break;
 

@@ -75,6 +75,7 @@ public:
             POP, // ;
 			GET, // get the the current value of a result. eg [0] or [1].
 			PUT, // assign to an output result using [0] = expression. [] = will assign to all outputs.
+			RND, // random number operator - operand is used to wrap value returned by rand() - so like Random.Range(0, operand)
 		};
 
 		// need default constructor or we can't use vector
