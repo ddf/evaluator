@@ -424,7 +424,11 @@ static int ParsePOK(CompilationState& state)
 			state.error = Program::CE_ILLEGAL_ASSIGNMENT;
 			return 1;
 		}
-		if (ParseTRN(state)) return 1;
+		// decrement the parse depth before recursing because it's 
+		// OK if the expression on the right hand side terminates in a semi-colon
+		state.parseDepth--;
+		if (Parse(state)) return 1;
+		state.parseDepth++;
 		// the statement on the right side of the '=' might have ended with a semi-colon,
 		// which means the last op will be a POP. we need to POK or PUT before that.
 		const bool hasPOP = state.ops.back().code == Program::Op::POP;
