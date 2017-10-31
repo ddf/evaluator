@@ -22,6 +22,7 @@ public:
 	void SetConsoleText(const char * consoleText);
 
 	void UpdateOscilloscope(double left, double right);
+  int GetOscilloscopeWidth() const;
 
 private:	
 

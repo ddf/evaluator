@@ -54,13 +54,24 @@ enum ELayout
   
   kScopeTitle_X = kExprLogTitle_X,
   kScopeTitle_Y = kExprLog_Y + kExprLog_H + 10,
-  kScopeTitle_W = kExprLogTitle_W,
+  kScopeTitle_W = 60,
   kScopeTitle_H = 15,
+  
+  kScopeWindowLabel_X = kScopeTitle_X + kScopeTitle_W,
+  kScopeWindowLabel_Y = kScopeTitle_Y,
+  kScopeWindowLabel_W = 52,
+  kScopeWindowLabel_H = 15,
+  
+  kScopeWindow_X = kScopeWindowLabel_X + kScopeWindowLabel_W,
+  kScopeWindow_Y = kScopeWindowLabel_Y - 5,
+  kScopeWindow_W = 15,
+  kScopeWindow_H = 15,
 
 	kScope_X = kScopeTitle_X,
 	kScope_Y = kScopeTitle_Y + kScopeTitle_H,
 	kScope_W = kProgramText_W,
 	kScope_H = 150,
+
 };
 
 // note: ICOLOR is ARGB
@@ -140,6 +151,21 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
     pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kScopeTitle), &kTitleTextStyle, "SCOPE"));
 		oscilloscope = new Oscilloscope(mPlug, MakeIRect(kScope), &kScopeBackgroundColor, &kScopeLineColorLeft, &kScopeLineColorRight);
 		pGraphics->AttachControl(oscilloscope);
+    
+    pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kScopeWindowLabel), &kTitleTextStyle, "WINDOW"));
+    
+    IRECT updateRect = MakeIRect(kScopeWindow);
+    IControl* updateControl = new KnobLineCoronaControl(mPlug, updateRect, kScopeWindow, &kGreenColor, &kGreenColor, 1);
+    
+    int w = updateRect.W() + 5;
+    updateRect.L += w;
+    updateRect.R += w;
+    updateRect.T = kScopeTitle_Y;
+    IControl* caption = new ICaptionControl(mPlug, updateRect, kScopeWindow, &kTitleTextStyle);
+    updateControl->SetValDisplayControl(caption);
+    
+    pGraphics->AttachControl(updateControl);
+    pGraphics->AttachControl(caption);
 	}
 
 	//---Volume--------------------
@@ -244,4 +270,9 @@ void Interface::SetConsoleText(const char * consoleText)
 void Interface::UpdateOscilloscope(double left, double right)
 {
 	oscilloscope->AddSample(left, right);
+}
+
+int Interface::GetOscilloscopeWidth() const
+{
+  return oscilloscope->GetRECT()->W();
 }

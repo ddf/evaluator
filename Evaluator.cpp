@@ -9,6 +9,7 @@ Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
 , mProgram(0)
 , mGain(1.)
 , mBitDepth(15)
+, mScopeUpdate(0)
 , mTimeType(TTAlways)
 {
   TRACE;
@@ -25,6 +26,8 @@ Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
 #if !SA_API
   GetParam(kTimeType)->SetDisplayText(TTProjectTime, "set 't' to project time");
 #endif
+  
+  GetParam(kScopeWindow)->InitDouble("Scope Window Size", 0.5, (double)kScopeWindowMin/1000.0, (double)kScopeWindowMax/1000.0, 0.05, "s");
 
   for (int i = 0; i < Presets::Count(); ++i)
   {
@@ -150,9 +153,20 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 
 	*out1 = left;
 	*out2 = right;
+    
+    if (mScopeUpdate == 0)
+    {
+      mInterface->UpdateOscilloscope(left, right);
+      // we need to update the oscilloscope this many times every updateSeconds
+      const int samplesPerInterval = mInterface->GetOscilloscopeWidth();
+      const double updateInterval = GetParam(kScopeWindow)->Value();
+      mScopeUpdate = (int)(GetSampleRate()*updateInterval/samplesPerInterval);
+    }
+    else
+    {
+      --mScopeUpdate;
+    }
   }
-
-  mInterface->UpdateOscilloscope(left, right);
   
   mMidiQueue.Flush(nFrames);
 
@@ -190,6 +204,7 @@ void Evaluator::Reset()
  
   mMidiQueue.Resize(GetBlockSize());
   mNotes.clear();
+  mScopeUpdate = 0;
 }
 
 void Evaluator::ProcessMidiMsg(IMidiMsg *pMsg)

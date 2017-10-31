@@ -14,6 +14,7 @@ enum EParams
 	kGain = 0,
 	kBitDepth = 1,
 	kTimeType = 2, // enumeration to control how we advance 't' in the program
+  kScopeWindow = 3, // amount of time in seconds that the scope window represents
 	kNumParams,
 
 	// used for text edit fields so the UI can call OnParamChange
@@ -22,7 +23,11 @@ enum EParams
 	kExpressionLengthMax = 256,
 
 	kBitDepthMin = 1,
-	kBitDepthMax = 24
+	kBitDepthMax = 24,
+  
+  // these are in milliseconds
+  kScopeWindowMin = 1,
+  kScopeWindowMax = 2000
 };
 
 enum TimeType : uint8_t
@@ -71,6 +76,7 @@ private:
   bool					mProgramIsValid;
   double				mGain;
   int					mBitDepth;
+  int           mScopeUpdate;
   TimeType				mTimeType;
   Program::Value		mTick;
   IMidiQueue			mMidiQueue;
