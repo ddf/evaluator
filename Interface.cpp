@@ -29,7 +29,7 @@ enum ELayout
 
 	kProgramLabel_X = 10,
 	kProgramLabel_Y = kVolumeKnob_Y + kVolumeKnob_H + 5,
-	kProgramLabel_W = 60,
+	kProgramLabel_W = 65,
 	kProgramLabel_H = 15,
 
 	kProgramText_X = 10,
@@ -38,7 +38,7 @@ enum ELayout
 	kProgramText_H = 200,
 
 	kExprLogTitle_X = kProgramText_X,
-	kExprLogTitle_Y = kProgramText_Y + kProgramText_H + 15,
+	kExprLogTitle_Y = kProgramText_Y + kProgramText_H + 10,
 	kExprLogTitle_W = kProgramText_W,
 	kExprLogTitle_H = 15,
 
@@ -51,21 +51,27 @@ enum ELayout
 	kExprLog_M = 5,   // margin
 	kExprLog_TH = 12,  // text height
 	kExprLog_TW = kExprLog_W - kExprLog_M * 2, // text width
+  
+  kScopeTitle_X = kExprLogTitle_X,
+  kScopeTitle_Y = kExprLog_Y + kExprLog_H + 10,
+  kScopeTitle_W = kExprLogTitle_W,
+  kScopeTitle_H = 15,
 
-	kOscilloscope_X = kExprLog_X,
-	kOscilloscope_Y = kExprLog_Y + kExprLog_H + 10,
-	kOscilloscope_W = kExprLog_W,
-	kOscilloscope_H = 150
+	kScope_X = kScopeTitle_X,
+	kScope_Y = kScopeTitle_Y + kScopeTitle_H,
+	kScope_W = kProgramText_W,
+	kScope_H = 150,
 };
 
 // note: ICOLOR is ARGB
-const IColor kBackgroundColor(255, 30, 30, 30);
-const IColor kExprBackgroundColor(255, 100, 100, 100);
-const IColor kTextColor(255, 180, 180, 180);
-const IColor kGreenColor(255, 0, 210, 10);
-const IColor kScopeBackgroundColor(255, 0, 0, 0);
-const IColor kScopeLineColorLeft(255, 0, 50, 210);
-const IColor kScopeLineColorRight(255, 210, 0, 50);
+const IColor kBackgroundColor(255, 19, 44, 34);
+const IColor kExprBackgroundColor(255, 32, 56, 59);
+const IColor kTextColor(255, 218, 228, 226);
+const IColor kGreenColor(255, 52, 209, 112);
+const IColor kConsoleBackgroundColor(255, 11, 26, 19);
+const IColor kScopeBackgroundColor(255, 14, 21, 26);
+const IColor kScopeLineColorLeft(255, 194, 218, 150);
+const IColor kScopeLineColorRight(255, 60, 169, 198);
 
 IText  kExpressionTextStyle(11,
 							&kGreenColor,
@@ -125,13 +131,14 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 	{
     pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kExprLogTitle), &kTitleTextStyle, "STATE"));
 		IRECT LogRect = MakeIRect(kExprLog);
-		consoleTextControl = new ConsoleText(mPlug, LogRect, &kExprLogTextStyle, &COLOR_BLACK, 5);
+		consoleTextControl = new ConsoleText(mPlug, LogRect, &kExprLogTextStyle, &kConsoleBackgroundColor, 5);
 		pGraphics->AttachControl(consoleTextControl);
 	}
 	
 	// -- Oscilloscope display
 	{
-		oscilloscope = new Oscilloscope(mPlug, MakeIRect(kOscilloscope), &kScopeBackgroundColor, &kScopeLineColorLeft, &kScopeLineColorRight);
+    pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kScopeTitle), &kTitleTextStyle, "SCOPE"));
+		oscilloscope = new Oscilloscope(mPlug, MakeIRect(kScope), &kScopeBackgroundColor, &kScopeLineColorLeft, &kScopeLineColorRight);
 		pGraphics->AttachControl(oscilloscope);
 	}
 
