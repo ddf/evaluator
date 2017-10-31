@@ -258,6 +258,10 @@
 		77CB0CCC1F819C910034E05D /* vslider_handle.png in Resources */ = {isa = PBXBuildFile; fileRef = 77CB0C9E1F8178FD0034E05D /* vslider_handle.png */; };
 		77CB0CCD1F819C910034E05D /* vslider_handle.png in Resources */ = {isa = PBXBuildFile; fileRef = 77CB0C9E1F8178FD0034E05D /* vslider_handle.png */; };
 		77CB0CCE1F819C920034E05D /* vslider_handle.png in Resources */ = {isa = PBXBuildFile; fileRef = 77CB0C9E1F8178FD0034E05D /* vslider_handle.png */; };
+		77CB8CCB1FA811E5006734F0 /* radio_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 77CB8CC71FA811DD006734F0 /* radio_button.png */; };
+		77CB8CCC1FA811E6006734F0 /* radio_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 77CB8CC71FA811DD006734F0 /* radio_button.png */; };
+		77CB8CCD1FA811E6006734F0 /* radio_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 77CB8CC71FA811DD006734F0 /* radio_button.png */; };
+		77CB8CCE1FA811E7006734F0 /* radio_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 77CB8CC71FA811DD006734F0 /* radio_button.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -599,6 +603,7 @@
 		77CB0C9E1F8178FD0034E05D /* vslider_handle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = vslider_handle.png; path = resources/img/vslider_handle.png; sourceTree = "<group>"; };
 		77CB0C9F1F8178FD0034E05D /* numberbox_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = numberbox_background.png; path = resources/img/numberbox_background.png; sourceTree = "<group>"; };
 		77CB0CA01F8178FD0034E05D /* vslider_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = vslider_background.png; path = resources/img/vslider_background.png; sourceTree = "<group>"; };
+		77CB8CC71FA811DD006734F0 /* radio_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = radio_button.png; path = resources/img/radio_button.png; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -1183,6 +1188,7 @@
 		4FD16A0213B6303B001D0217 /* img */ = {
 			isa = PBXGroup;
 			children = (
+				77CB8CC71FA811DD006734F0 /* radio_button.png */,
 				77CB0C9B1F8178FC0034E05D /* background.png */,
 				77CB0C9D1F8178FD0034E05D /* numberbox_arrow_down.png */,
 				77CB0C9C1F8178FD0034E05D /* numberbox_arrow_up.png */,
@@ -1547,6 +1553,7 @@
 				77CB0CB41F819B8D0034E05D /* background.png in Resources */,
 				77CB0CBB1F819B990034E05D /* vslider_background.png in Resources */,
 				77CB0CBC1F819B9B0034E05D /* vslider_handle.png in Resources */,
+				77CB8CCC1FA811E6006734F0 /* radio_button.png in Resources */,
 				77CB0CB91F819B900034E05D /* numberbox_arrow_up.png in Resources */,
 				77CB0CB81F819B8F0034E05D /* numberbox_arrow_down.png in Resources */,
 				77CB0CBA1F819B930034E05D /* numberbox_background.png in Resources */,
@@ -1560,6 +1567,7 @@
 				77CB0CC71F819C8A0034E05D /* numberbox_background.png in Resources */,
 				77CB0CCE1F819C920034E05D /* vslider_handle.png in Resources */,
 				77CB0CC21F819C7F0034E05D /* numberbox_arrow_down.png in Resources */,
+				77CB8CCE1FA811E7006734F0 /* radio_button.png in Resources */,
 				77CB0CCB1F819C8F0034E05D /* vslider_background.png in Resources */,
 				77CB0CC51F819C830034E05D /* numberbox_arrow_up.png in Resources */,
 				77CB0CBF1F819C780034E05D /* background.png in Resources */,
@@ -1573,6 +1581,7 @@
 				77CB0CC61F819C890034E05D /* numberbox_background.png in Resources */,
 				77CB0CCD1F819C910034E05D /* vslider_handle.png in Resources */,
 				77CB0CC11F819C7E0034E05D /* numberbox_arrow_down.png in Resources */,
+				77CB8CCD1FA811E6006734F0 /* radio_button.png in Resources */,
 				77CB0CCA1F819C8E0034E05D /* vslider_background.png in Resources */,
 				77CB0CC41F819C830034E05D /* numberbox_arrow_up.png in Resources */,
 				77CB0CBE1F819C780034E05D /* background.png in Resources */,
@@ -1586,6 +1595,7 @@
 				4F78D88613B6382B0032E0F3 /* Evaluator.icns in Resources */,
 				77CB0CCC1F819C910034E05D /* vslider_handle.png in Resources */,
 				77CB0CC91F819C8D0034E05D /* vslider_background.png in Resources */,
+				77CB8CCB1FA811E5006734F0 /* radio_button.png in Resources */,
 				77CB0CC31F819C820034E05D /* numberbox_arrow_up.png in Resources */,
 				77CB0CC81F819C8B0034E05D /* numberbox_background.png in Resources */,
 				77CB0CBD1F819C770034E05D /* background.png in Resources */,
