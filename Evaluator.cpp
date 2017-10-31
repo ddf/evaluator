@@ -60,6 +60,8 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
   ITimeInfo timeInfo;
   GetTime(&timeInfo);
   Program::Value results[2];
+  double left = 0;
+  double right = 0;
   for (int s = 0; s < nFrames; ++s, ++in1, ++in2, ++out1, ++out2)
   {
     while (!mMidiQueue.Empty())
@@ -135,16 +137,21 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 		results[0] = (*in1 + 1) * (range / 2);
 		results[1] = (*in2 + 1) * (range / 2);
 		error = mProgram->Run(results, 2);
-		*out1 = mGain * (-1.0 + 2.0*((double)(results[0]%range) / (range - 1)));
-		*out2 = mGain * (-1.0 + 2.0*((double)(results[1]%range) / (range - 1)));
+		left = mGain * (-1.0 + 2.0*((double)(results[0]%range) / (range - 1)));
+		right = mGain * (-1.0 + 2.0*((double)(results[1]%range) / (range - 1)));
 		++mTick;
 	}
 	else
 	{
-		*out1 = 0;
-		*out2 = 0;
+		left = 0;
+		right = 0;
 	}
+
+	*out1 = left;
+	*out2 = right;
   }
+
+  mInterface->UpdateOscilloscope(left, right);
   
   mMidiQueue.Flush(nFrames);
 

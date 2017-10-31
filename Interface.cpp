@@ -7,40 +7,40 @@ enum ELayout
 {
 	kEditorWidth = GUI_WIDTH,
 	kEditorHeight = GUI_HEIGHT,
-  
-  kVolumeLabel_X = 10,
-  kVolumeLabel_Y = 10,
-  kVolumeLabel_W = 30,
-  kVolumeLabel_H = 15,
-  
-  kVolumeKnob_X = kVolumeLabel_X,
-  kVolumeKnob_Y = kVolumeLabel_Y + kVolumeLabel_H,
-  kVolumeKnob_W = kVolumeLabel_W,
-  kVolumeKnob_H = kVolumeLabel_W,
-  
-  kBitDepth_X = kVolumeKnob_X + kVolumeKnob_W + 20,
-  kBitDepth_Y = kVolumeKnob_Y,
+
+	kVolumeLabel_X = 10,
+	kVolumeLabel_Y = 10,
+	kVolumeLabel_W = 30,
+	kVolumeLabel_H = 15,
+
+	kVolumeKnob_X = kVolumeLabel_X,
+	kVolumeKnob_Y = kVolumeLabel_Y + kVolumeLabel_H,
+	kVolumeKnob_W = kVolumeLabel_W,
+	kVolumeKnob_H = kVolumeLabel_W,
+
+	kBitDepth_X = kVolumeKnob_X + kVolumeKnob_W + 20,
+	kBitDepth_Y = kVolumeKnob_Y,
 
 	// rect for label & buttons
 	kTimeType_X = kBitDepth_X + 60,
 	kTimeType_Y = kVolumeLabel_Y,
 	kTimeType_W = 27 * TTCount,
 	kTimeType_H = kVolumeKnob_H + kVolumeLabel_H,
-  
-  kProgramLabel_X = 10,
-  kProgramLabel_Y = kVolumeKnob_Y + kVolumeKnob_H + 5,
-  kProgramLabel_W = 60,
-  kProgramLabel_H = 15,
+
+	kProgramLabel_X = 10,
+	kProgramLabel_Y = kVolumeKnob_Y + kVolumeKnob_H + 5,
+	kProgramLabel_W = 60,
+	kProgramLabel_H = 15,
 
 	kProgramText_X = 10,
 	kProgramText_Y = kProgramLabel_Y + kProgramLabel_H,
 	kProgramText_W = kEditorWidth - 20,
 	kProgramText_H = 200,
-  
-  kExprLogTitle_X = kProgramText_X,
-  kExprLogTitle_Y = kProgramText_Y + kProgramText_H + 15,
-  kExprLogTitle_W = kProgramText_W,
-  kExprLogTitle_H = 15,
+
+	kExprLogTitle_X = kProgramText_X,
+	kExprLogTitle_Y = kProgramText_Y + kProgramText_H + 15,
+	kExprLogTitle_W = kProgramText_W,
+	kExprLogTitle_H = 15,
 
 	// the log window that shows the internal state of the expression
 	kExprLog_X = kProgramText_X,
@@ -51,6 +51,11 @@ enum ELayout
 	kExprLog_M = 5,   // margin
 	kExprLog_TH = 12,  // text height
 	kExprLog_TW = kExprLog_W - kExprLog_M * 2, // text width
+
+	kOscilloscope_X = kExprLog_X,
+	kOscilloscope_Y = kExprLog_Y + kExprLog_H + 10,
+	kOscilloscope_W = kExprLog_W,
+	kOscilloscope_H = 150
 };
 
 // note: ICOLOR is ARGB
@@ -58,6 +63,9 @@ const IColor kBackgroundColor(255, 30, 30, 30);
 const IColor kExprBackgroundColor(255, 100, 100, 100);
 const IColor kTextColor(255, 180, 180, 180);
 const IColor kGreenColor(255, 0, 210, 10);
+const IColor kScopeBackgroundColor(255, 0, 0, 0);
+const IColor kScopeLineColorLeft(255, 0, 50, 210);
+const IColor kScopeLineColorRight(255, 210, 0, 50);
 
 IText  kExpressionTextStyle(11,
 							&kGreenColor,
@@ -119,6 +127,12 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 		IRECT LogRect = MakeIRect(kExprLog);
 		consoleTextControl = new ConsoleText(mPlug, LogRect, &kExprLogTextStyle, &COLOR_BLACK, 5);
 		pGraphics->AttachControl(consoleTextControl);
+	}
+	
+	// -- Oscilloscope display
+	{
+		oscilloscope = new Oscilloscope(mPlug, MakeIRect(kOscilloscope), &kScopeBackgroundColor, &kScopeLineColorLeft, &kScopeLineColorRight);
+		pGraphics->AttachControl(oscilloscope);
 	}
 
 	//---Volume--------------------
@@ -218,4 +232,9 @@ void Interface::SetProgramText(const char * programText)
 void Interface::SetConsoleText(const char * consoleText)
 {
 	consoleTextControl->SetTextFromPlug(const_cast<char*>(consoleText));
+}
+
+void Interface::UpdateOscilloscope(double left, double right)
+{
+	oscilloscope->AddSample(left, right);
 }

@@ -5,6 +5,7 @@ class IGraphics;
 class ITextEdit;
 class ConsoleText;
 class IControl;
+class Oscilloscope;
 
 class Interface
 {
@@ -20,6 +21,8 @@ public:
 
 	void SetConsoleText(const char * consoleText);
 
+	void UpdateOscilloscope(double left, double right);
+
 private:	
 
 	Evaluator* mPlug;
@@ -27,5 +30,6 @@ private:
 	ITextEdit*		textEdit;
 	ConsoleText*	consoleTextControl;
 	IControl*		bitDepthControl;
+	Oscilloscope*   oscilloscope;
 };
 

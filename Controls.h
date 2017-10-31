@@ -79,3 +79,23 @@ private:
   IColor        mCoronaColor;
   IChannelBlend mCoronaBlend;
 };
+
+class Oscilloscope : public IControl
+{
+public:
+	Oscilloscope(IPlugBase* pPlug, IRECT pR, const IColor* backgroundColor, const IColor* lineColorLeft, const IColor* lineColorRight);
+	~Oscilloscope();
+
+	bool Draw(IGraphics* PGraphics) override;
+
+	void AddSample(double left, double right);
+
+private:
+	IColor mBackgroundColor;
+	IColor mLineColorLeft;
+	IColor mLineColorRight;
+
+	double* mBuffer;
+	int		mBufferSize;
+	int		mBufferBegin;
+};

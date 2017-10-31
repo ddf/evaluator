@@ -134,3 +134,74 @@ bool KnobLineCoronaControl::Draw(IGraphics* pGraphics)
 }
 //
 //////////////////////////////////////////
+
+//////////////////////////////////////////
+// Oscilloscope
+Oscilloscope::Oscilloscope(IPlugBase* pPlug, IRECT pR, const IColor* backgroundColor, const IColor* lineColorLeft, const IColor* lineColorRight)
+	: IControl(pPlug, pR)
+	, mBackgroundColor(*backgroundColor)
+	, mLineColorLeft(*lineColorLeft)
+	, mLineColorRight(*lineColorRight)
+{
+	mBufferSize = pR.W() * 2;
+	mBuffer = new double[mBufferSize];
+	memset(mBuffer, 0, mBufferSize*sizeof(double));
+	mBufferBegin = 0;
+}
+
+Oscilloscope::~Oscilloscope()
+{
+	delete[] mBuffer;
+}
+
+bool Oscilloscope::Draw(IGraphics* pGraphics)
+{
+	pGraphics->FillIRect(&mBackgroundColor, &mRECT, &mBlend);
+
+	const float midY = mRECT.MH();
+	const float halfH = mRECT.H()*0.5f;
+	float px1 = mRECT.L;
+	float pyl1 = midY;
+	float pyr1 = midY;
+
+	pGraphics->DrawLine(&COLOR_GRAY, mRECT.L, midY, mRECT.R, midY);
+	IChannelBlend lineBlend = IChannelBlend(IChannelBlend::kBlendAdd);
+	IColor lineGhostLeft(mLineColorLeft);
+	const float fade = 0.25f;
+	lineGhostLeft.R *= fade;
+	lineGhostLeft.G *= fade;
+	lineGhostLeft.B *= fade;
+	IColor lineGhostRight(mLineColorRight);
+	lineGhostRight.R *= fade;
+	lineGhostRight.G *= fade;
+	lineGhostRight.B *= fade;
+
+	for (int x = 0; x < mRECT.W(); x++)
+	{
+		const int lidx = (mBufferBegin + x*2) % mBufferSize;
+		const int ridx = lidx + 1;
+		const float px2 = mRECT.L + x;
+		const float pyl2 = midY - mBuffer[lidx] * halfH;
+		const float pyr2 = midY - mBuffer[ridx] * halfH;
+
+		pGraphics->DrawLine(&lineGhostLeft, px2, midY, px2, pyl2, &lineBlend);
+		pGraphics->DrawLine(&lineGhostRight, px2, midY, px2, pyr2, &lineBlend);
+
+		pGraphics->DrawLine(&mLineColorLeft, px1, pyl1, px2, pyl2, &lineBlend, true);		
+		pGraphics->DrawLine(&mLineColorRight, px1, pyr1, px2, pyr2, &lineBlend, true);
+
+		px1 = px2;
+		pyl1 = pyl2;
+		pyr1 = pyr2;
+	}
+
+	return true;
+}
+
+void Oscilloscope::AddSample(double left, double right)
+{
+	mBuffer[mBufferBegin] = left;
+	mBuffer[mBufferBegin + 1] = right;
+	mBufferBegin = (mBufferBegin + 2) % mBufferSize;
+	SetDirty(false);
+}

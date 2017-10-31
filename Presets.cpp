@@ -27,7 +27,7 @@ namespace Presets
 		{ "amplitude modulation", "t*Fn | $(t)", 50, 15, TTWithNoteResetting },
 		{ "frequency modulation", "t*Fn + $(t*2)", 50, 15, TTWithNoteResetting },
 		{ "bouncing balls", "$(t*(1000 - m%500))", 50, 15, TTAlways },
-		{ "little ditty", "(t*128 + $(t)) | t>>(t%(8*r))/r | t>>128", 50, 15, TTProjectTime },
+		{ "little ditty", "(t*128 + $(t)) | t>>(t%(8*w))/w | t>>128", 50, 15, TTProjectTime },
 		{ "aggressive texture", "(t*64 + $(t^$(m/2000))*$(m/2000)) | t*32", 50, 15, TTProjectTime },
 		{ "overtone waterfall", "t*(128*(32-(m/50)%32)) | t*(128*((m/100)%64)) | t*128", 50, 17, TTAlways },
 		{ "computer music" , "$(t*F(n + 7*((m/125)%3) - 3*((m/125)%5) + 2*((m/125)%7)))", 50, 11, TTAlways },
