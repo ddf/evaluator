@@ -101,19 +101,20 @@ public:
 	// run the program placing the value it evaluates to into the results array.
 	// count is provided so that we can prevent the program from overrunning the array.
 	RuntimeError Run(Value* results, const size_t size);
+
 	// get the current value of a var, eg Get('t')
 	Value Get(const Char var) const;
 	// set the value of a var, eg Set('m', 128)
 	void  Set(const Char var, const Value value);
 
+	// get the value at this memory address
+	Value Peek(const Value address) const;
+	void  Poke(const Value address, const Value value);
+
 	Value GetCC(const Value idx) const;
 	void  SetCC(const Value idx, const Value value);
 
 private:
-
-	// get the value at this memory address
-	Value Peek(const Value address) const;
-	void  Poke(const Value address, const Value value);
 
 	RuntimeError Exec(const Op& op, Value* results, size_t size);
 

@@ -13,7 +13,7 @@
 class ITextEdit : public IControl
 {
 public:
-  ITextEdit(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, const char* str);
+  ITextEdit(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, const char* str, ETextEntryOptions textEntryOptions);
   ~ITextEdit();
   
 // IControl overrides
@@ -25,6 +25,11 @@ public:
   const char * GetText() const
   {
     return mStr.Get();
+  }
+
+  void SetTextFromPlug(const char * text)
+  {
+	  mStr.Set(text);
   }
   
   int GetTextLength() const

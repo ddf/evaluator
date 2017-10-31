@@ -12,7 +12,7 @@
 ////////////////////////////////////////////
 // ITextEdit
 //
-ITextEdit::ITextEdit(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, const char* str)
+ITextEdit::ITextEdit(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, const char* str, ETextEntryOptions textEntryOptions)
 : IControl(pPlug, pR)
 , mIdx(paramIdx)
 {
@@ -20,7 +20,7 @@ ITextEdit::ITextEdit(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, con
   mText = *pText;
   mStr.Set(str);
   mTextEntryLength = kExpressionLengthMax;
-  mTextEntryOptions = ETextEntryOptions(kTextEntryMultiline | kTextEntryEnterKeyInsertsCR);
+  mTextEntryOptions = textEntryOptions;
 }
 
 ITextEdit::~ITextEdit() {}
@@ -51,7 +51,7 @@ void ITextEdit::TextFromTextEntry(const char* txt)
 ConsoleText::ConsoleText(IPlugBase* plug, IRECT pR, IText* textStyle, const IColor* backgroundColor, int margin)
 : IControl(plug, pR)
 , mPanel(plug, pR, backgroundColor)
-, mText(plug, pR.GetPadded(-margin), textStyle, "Program State")
+, mText(plug, pR.GetPadded(-margin), textStyle, "")
 {}
 
 bool ConsoleText::Draw(IGraphics* pGraphics)

@@ -18,6 +18,7 @@ namespace Presets
 	const Data kPresets[] = 
 	{
 		// name, expression, volume, bit depth
+		//{ "test", "a = n<60 ? t*Fn : #(t*Fn); [0] = [1] = a;", 50, 15, TTWithNoteResetting },
 		{ "saw wave", "t*Fn", 50, 15, TTWithNoteResetting },
 		{ "square wave", "#(t*Fn)", 50, 15, TTWithNoteResetting },
 		{ "sine wave", "$(t*Fn)", 50, 15, TTWithNoteResetting },

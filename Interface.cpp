@@ -29,7 +29,7 @@ enum ELayout
 
 	kProgramLabel_X = 10,
 	kProgramLabel_Y = kVolumeKnob_Y + kVolumeKnob_H + 5,
-	kProgramLabel_W = 65,
+	kProgramLabel_W = 75,
 	kProgramLabel_H = 15,
 
 	kProgramText_X = 10,
@@ -37,33 +37,51 @@ enum ELayout
 	kProgramText_W = kEditorWidth - 20,
 	kProgramText_H = 200,
 
-	kExprLogTitle_X = kProgramText_X,
-	kExprLogTitle_Y = kProgramText_Y + kProgramText_H + 10,
-	kExprLogTitle_W = kProgramText_W,
-	kExprLogTitle_H = 15,
+	kConsoleTitle_X = kProgramText_X,
+	kConsoleTitle_Y = kProgramText_Y + kProgramText_H + 10,
+	kConsoleTitle_W = kProgramText_W,
+	kConsoleTitle_H = 15,
 
 	// the log window that shows the internal state of the expression
-	kExprLog_X = kProgramText_X,
-	kExprLog_Y = kExprLogTitle_Y + kExprLogTitle_H,
-	kExprLog_W = kProgramText_W,
-	kExprLog_H = 150,
+	kConsole_X = kProgramText_X,
+	kConsole_Y = kConsoleTitle_Y + kConsoleTitle_H,
+	kConsole_W = 375,
+	kConsole_H = 140,
 
-	kExprLog_M = 5,   // margin
-	kExprLog_TH = 12,  // text height
-	kExprLog_TW = kExprLog_W - kExprLog_M * 2, // text width
+	kConsole_M = 5,   // margin
+	kConsole_TH = 12,  // text height
+	kConsole_TW = kConsole_W - kConsole_M * 2, // text width
+
+	kWatchLabel_X = kConsoleTitle_X + kConsole_W + 10,
+	kWatchLabel_Y = kConsoleTitle_Y,
+	kWatchLabel_W = 25,
+	kWatchLabel_H = 15,
+
+	// rect for a text edit
+	kWatch_X = kWatchLabel_X,
+	kWatch_Y = kConsole_Y + kConsole_M,
+	kWatch_W = 50,
+	kWatch_H = 11,
+	kWatch_S = 2,
+
+	// rect for the watch results
+	kWatchWindow_X = kWatch_X + kWatch_W + 5,
+	kWatchWindow_Y = kConsole_Y,
+	kWatchWindow_W = kEditorWidth - 10 - kWatchWindow_X,
+	kWatchWindow_H = kConsole_H,
   
-  kScopeTitle_X = kExprLogTitle_X,
-  kScopeTitle_Y = kExprLog_Y + kExprLog_H + 10,
+  kScopeTitle_X = kConsoleTitle_X,
+  kScopeTitle_Y = kConsole_Y + kConsole_H + 10,
   kScopeTitle_W = 60,
   kScopeTitle_H = 15,
   
   kScopeWindowLabel_X = kScopeTitle_X + kScopeTitle_W,
-  kScopeWindowLabel_Y = kScopeTitle_Y,
+  kScopeWindowLabel_Y = kScopeTitle_Y + 2,
   kScopeWindowLabel_W = 52,
   kScopeWindowLabel_H = 15,
   
   kScopeWindow_X = kScopeWindowLabel_X + kScopeWindowLabel_W,
-  kScopeWindow_Y = kScopeWindowLabel_Y - 5,
+  kScopeWindow_Y = kScopeWindowLabel_Y - 3,
   kScopeWindow_W = 15,
   kScopeWindow_H = 15,
 
@@ -102,13 +120,23 @@ IText  kExprMsgTextStyle(11,
 						0, // orientation
 						IText::kQualityDefault);
 
-IText  kExprLogTextStyle(11,
+IText  kConsoleTextStyle(11,
 						&kGreenColor,
 						"Courier",
 						IText::kStyleNormal,
 						IText::kAlignNear,
 						0, // orientation
 						IText::kQualityDefault);
+
+IText  kWatchTextStyle(11,
+						&kGreenColor,
+						"Courier",
+						IText::kStyleNormal,
+						IText::kAlignNear,
+						0, // orientation
+						IText::kQualityDefault,
+						&kExprBackgroundColor,
+						&kGreenColor);
 
 IText kLabelTextStyle(12,
 					&kTextColor,
@@ -118,7 +146,7 @@ IText kLabelTextStyle(12,
 					0, // orientation
 					IText::kQualityDefault);
 
-IText kTitleTextStyle(12,
+IText kTitleTextStyle(16,
                       &kTextColor,
                       "Arial",
                       IText::kStyleBold,
@@ -132,40 +160,59 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 	pGraphics->AttachPanelBackground(&kBackgroundColor);
 
 	//--- Text input for the expression ------
-  {
-    pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kProgramLabel), &kTitleTextStyle, "PROGRAM:"));
-    textEdit = new ITextEdit(mPlug, MakeIRect(kProgramText), kExpression, &kExpressionTextStyle, "t*128");
-    pGraphics->AttachControl(textEdit);
-  }
+	{
+		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kProgramLabel), &kTitleTextStyle, "PROGRAM:"));
+		textEdit = new ITextEdit(mPlug, MakeIRect(kProgramText), kExpression, &kExpressionTextStyle, "t*128", ETextEntryOptions(kTextEntryMultiline | kTextEntryEnterKeyInsertsCR));
+		pGraphics->AttachControl(textEdit);
+	}
 
 	//-- "window" displaying internal state of the expression
 	{
-    pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kExprLogTitle), &kTitleTextStyle, "STATE"));
-		IRECT LogRect = MakeIRect(kExprLog);
-		consoleTextControl = new ConsoleText(mPlug, LogRect, &kExprLogTextStyle, &kConsoleBackgroundColor, 5);
+		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kConsoleTitle), &kTitleTextStyle, "AUTO"));
+		IRECT LogRect = MakeIRect(kConsole);
+		consoleTextControl = new ConsoleText(mPlug, LogRect, &kConsoleTextStyle, &kConsoleBackgroundColor, kConsole_M);
 		pGraphics->AttachControl(consoleTextControl);
+	}
+
+	//-- watch window section
+	{
+		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kWatchLabel), &kTitleTextStyle, "WATCH"));
+
+		watches = new ITextEdit*[kWatchNum];
+		IRECT watchRect = MakeIRect(kWatch);
+		for (int i = 0; i < kWatchNum; ++i)
+		{
+			watches[i] = new ITextEdit(mPlug, watchRect, kWatch + i, &kWatchTextStyle, "", kTextEntrySelectTextWhenFocused);
+			watches[i]->SetTextEntryLength(5);
+			pGraphics->AttachControl(watches[i]);
+			watchRect.T += kWatch_H + kWatch_S;
+			watchRect.B += kWatch_H + kWatch_S;
+		}
+
+		watchConsole = new ConsoleText(mPlug, MakeIRect(kWatchWindow), &kConsoleTextStyle, &kConsoleBackgroundColor, kConsole_M);
+		pGraphics->AttachControl(watchConsole);
 	}
 	
 	// -- Oscilloscope display
 	{
-    pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kScopeTitle), &kTitleTextStyle, "SCOPE"));
+		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kScopeTitle), &kTitleTextStyle, "SCOPE"));
 		oscilloscope = new Oscilloscope(mPlug, MakeIRect(kScope), &kScopeBackgroundColor, &kScopeLineColorLeft, &kScopeLineColorRight);
 		pGraphics->AttachControl(oscilloscope);
     
-    pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kScopeWindowLabel), &kTitleTextStyle, "WINDOW"));
-    
-    IRECT updateRect = MakeIRect(kScopeWindow);
-    IControl* updateControl = new KnobLineCoronaControl(mPlug, updateRect, kScopeWindow, &kGreenColor, &kGreenColor, 1);
-    
-    int w = updateRect.W() + 5;
-    updateRect.L += w;
-    updateRect.R += w;
-    updateRect.T = kScopeTitle_Y;
-    IControl* caption = new ICaptionControl(mPlug, updateRect, kScopeWindow, &kTitleTextStyle);
-    updateControl->SetValDisplayControl(caption);
-    
-    pGraphics->AttachControl(updateControl);
-    pGraphics->AttachControl(caption);
+		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kScopeWindowLabel), &kLabelTextStyle, "WINDOW"));
+
+		IRECT updateRect = MakeIRect(kScopeWindow);
+		IControl* updateControl = new KnobLineCoronaControl(mPlug, updateRect, kScopeWindow, &kGreenColor, &kGreenColor, 1);
+
+		int w = updateRect.W() + 15;
+		updateRect.L += w;
+		updateRect.R += w;
+		updateRect.T = kScopeWindowLabel_Y;
+		IControl* caption = new ICaptionControl(mPlug, updateRect, kScopeWindow, &kLabelTextStyle);
+		updateControl->SetValDisplayControl(caption);
+
+		pGraphics->AttachControl(updateControl);
+		pGraphics->AttachControl(caption);
 	}
 
 	//---Volume--------------------
@@ -192,7 +239,7 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 		//---Bit Depth Number Box Value--------
 		const int textHH = 5;
 		IRECT numberSize(backSize.L + 5, backSize.T + numberBack.H / 2 - textHH, backSize.L + 25, backSize.T + numberBack.H / 2 + textHH);
-		bitDepthControl = new ICaptionControl(mPlug, numberSize, kBitDepth, &kExprLogTextStyle);
+		bitDepthControl = new ICaptionControl(mPlug, numberSize, kBitDepth, &kConsoleTextStyle);
 		pGraphics->AttachControl(bitDepthControl);
 
 		//---Number Box Buttons
@@ -237,6 +284,7 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 
 Interface::~Interface()
 {
+	delete[] watches;
 }
 
 void Interface::SetDirty(int paramIdx, bool pushToPlug)
@@ -267,6 +315,11 @@ void Interface::SetConsoleText(const char * consoleText)
 	consoleTextControl->SetTextFromPlug(const_cast<char*>(consoleText));
 }
 
+void Interface::SetWatchText(const char * watchText)
+{
+	watchConsole->SetTextFromPlug(const_cast<char*>(watchText));
+}
+
 void Interface::UpdateOscilloscope(double left, double right)
 {
 	oscilloscope->AddSample(left, right);
@@ -275,4 +328,17 @@ void Interface::UpdateOscilloscope(double left, double right)
 int Interface::GetOscilloscopeWidth() const
 {
   return oscilloscope->GetRECT()->W();
+}
+
+const char * Interface::GetWatch(int idx) const
+{
+	return watches[idx]->GetText();
+}
+
+void Interface::SetWatch(int idx, const char * text) 
+{
+	if (idx >= 0 && idx < kWatchNum)
+	{
+		watches[idx]->SetTextFromPlug(text);
+	}
 }

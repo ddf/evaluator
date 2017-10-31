@@ -19,8 +19,10 @@ enum EParams
 
 	// used for text edit fields so the UI can call OnParamChange
 	kExpression = 101,
-
 	kExpressionLengthMax = 256,
+
+	kWatch = 202, // starting paramIdx for watches
+	kWatchNum = 10, // total number of watches available
 
 	kBitDepthMin = 1,
 	kBitDepthMax = 24,
@@ -61,10 +63,12 @@ public:
 
   // get a string that represents the internal state of the program we want to display in the UI
   const char * GetProgramState() const;
+  void SetWatchText(Interface* forInterface) const;
 
 private:
 
   void MakePresetFromData(const Presets::Data& data);
+  void SerializeOurState(ByteChunk* pChunk);
   
   // the UI
   Interface*			mInterface;

@@ -18,11 +18,14 @@ public:
 	const char * GetProgramText() const;
 
 	void SetProgramText(const char * programText);
-
 	void SetConsoleText(const char * consoleText);
+	void SetWatchText(const char* watchText);
 
 	void UpdateOscilloscope(double left, double right);
-  int GetOscilloscopeWidth() const;
+	int GetOscilloscopeWidth() const;
+
+	const char * GetWatch(int idx) const;
+	void SetWatch(int idx, const char * text);
 
 private:	
 
@@ -30,6 +33,8 @@ private:
 
 	ITextEdit*		textEdit;
 	ConsoleText*	consoleTextControl;
+	ITextEdit**		watches;
+	ConsoleText*	watchConsole;
 	IControl*		bitDepthControl;
 	Oscilloscope*   oscilloscope;
 };

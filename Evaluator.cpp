@@ -185,6 +185,8 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
                Program::GetErrorString(error));
       mInterface->SetConsoleText(errorDesc);
     }
+
+	SetWatchText(mInterface);
   }
 }
 
@@ -256,27 +258,59 @@ void Evaluator::OnParamChange(int paramIdx)
 		mTick = 0;
 		mProgram->Set('n', 0);
 		mProgram->Set('v', 0);
+		DirtyParameters();
 	}
       break;
       
     default:
+		if (paramIdx >= kWatch && paramIdx < kWatch + kWatchNum && mInterface != nullptr)
+		{
+			SetWatchText(mInterface);
+			DirtyParameters();
+		}
       break;
   }
 }
+
+// need to start the version at a really high number cuz
+// i didn't include it at first so unversioned data will have length 
+// of the expression string as the first bit of data.
+static const int kStateFirstVersion = 100000; // add the watch strings to the serialized state
+static const int kStateVersion = kStateFirstVersion;
 
 void Evaluator::MakePresetFromData(const Presets::Data& data)
 {
 	// set params.
 	GetParam(kGain)->Set(data.volume);
 	GetParam(kBitDepth)->Set(data.bitDepth);
+	GetParam(kTimeType)->Set(data.timeType);
 
 	// create serialized version
 	ByteChunk chunk;
+	chunk.Put(&kStateFirstVersion);
 	chunk.PutStr(data.program);
+	int watchNum = kWatchNum;
+	chunk.Put(&watchNum);
+	for (int i = 0; i < kWatchNum; ++i)
+	{
+		chunk.PutStr("");
+	}
 	IPlugBase::SerializeParams(&chunk);
 
 	// create it - const cast on data.name because this method take char*, even though it doesn't change it
 	MakePresetFromChunk(const_cast<char*>(data.name), &chunk);
+}
+
+void Evaluator::SerializeOurState(ByteChunk* pChunk)
+{
+	pChunk->Put(&kStateVersion);
+	pChunk->PutStr(mInterface->GetProgramText());
+	int watchNum = kWatchNum;
+	pChunk->Put(&watchNum);
+	for (int i = 0; i < watchNum; ++i)
+	{
+		pChunk->PutStr(mInterface->GetWatch(i));
+	}
 }
 
 // this over-ridden method is called when the host is trying to store the plug-in state and needs to get the current data from your algorithm
@@ -284,8 +318,8 @@ bool Evaluator::SerializeState(ByteChunk* pChunk)
 {
   TRACE;
   IMutexLock lock(this);
-  
-  pChunk->PutStr(mInterface->GetProgramText());
+
+  SerializeOurState(pChunk);
   
   return IPlugBase::SerializeParams(pChunk); // must remember to call SerializeParams at the end
 }
@@ -295,12 +329,50 @@ int Evaluator::UnserializeState(ByteChunk* pChunk, int startPos)
 {
   TRACE;
   IMutexLock lock(this);
+
+  int version = 0;
+  int nextPos = pChunk->Get(&version, startPos);
+  // if it's not a valid version number, then we need to read our expression from the startPos
+  if (version >= kStateFirstVersion)
+  {
+	  startPos = nextPos;
+  }
   
   // initialize from empty string in case the get fails
-  WDL_String expression("");
-  startPos = pChunk->GetStr(&expression, startPos);
+  WDL_String stringData("");
+  nextPos = pChunk->GetStr(&stringData, startPos);
 
-  mInterface->SetProgramText(expression.Get());
+  if (nextPos > startPos)
+  {
+	  mInterface->SetProgramText(stringData.Get());
+  }
+  else
+  {
+	  mInterface->SetProgramText("");
+  }
+
+  startPos = nextPos;
+
+  if (version >= kStateFirstVersion)
+  {
+	  int watchNum = 0;
+	  nextPos = pChunk->Get(&watchNum, startPos);
+	  for (int i = 0; i < watchNum; ++i)
+	  {
+		  nextPos = pChunk->GetStr(&stringData, nextPos);
+		  if (nextPos > startPos)
+		  {
+			  mInterface->SetWatch(i, stringData.Get());
+		  }
+		  else
+		  {
+			  mInterface->SetWatch(i, "");
+		  }
+		  startPos = nextPos;
+	  }
+  }
+
+  startPos = nextPos;
   
   return IPlugBase::UnserializeParams(pChunk, startPos); // must remember to call UnserializeParams at the end
 }
@@ -310,11 +382,11 @@ bool Evaluator::CompareState(const unsigned char* incomingState, int startPos)
   bool isEqual = true;
   // create serialized representation of our string
   ByteChunk chunk;
-  chunk.PutStr(mInterface->GetProgramText());
+  SerializeOurState(&chunk);
   // see if it's the same as the incoming state
-  startPos = chunk.Size();
-  isEqual = (memcmp(incomingState, chunk.GetBytes(), startPos) == 0);
-  isEqual &= IPlugBase::CompareState(incomingState, startPos); // fuzzy compare regular params
+  int stateSize = chunk.Size();
+  isEqual = (memcmp(incomingState + startPos, chunk.GetBytes(), stateSize) == 0);
+  isEqual &= IPlugBase::CompareState(incomingState, startPos + stateSize); // fuzzy compare regular params
   
   return isEqual;
 }
@@ -339,4 +411,80 @@ const char * Evaluator::GetProgramState() const
 	);
 
 	return state;
+}
+
+void Evaluator::SetWatchText(Interface* forInterface) const
+{
+	static const int max_text = 1024;
+	static char text[max_text];
+
+	char* printTo = text;
+	for (int i = 0; i < kWatchNum; ++i)
+	{
+		const char * watch = forInterface->GetWatch(i);
+		size_t len = strlen(watch);
+		switch (len)
+		{
+		case 1:
+		{
+			char var = *watch;
+			if (isalpha(var) && islower(var))
+			{
+				printTo += sprintf(printTo, "%llu\n", mProgram->Get(var));
+			}
+			else
+			{
+				goto nan;
+			}
+		}
+			break;
+
+		default:
+			if (watch[0] == '@')
+			{
+				char var = watch[1];
+				Program::Value addr = 0;
+				if (isalpha(var) && islower(var))
+				{
+					addr = mProgram->Get(var);
+				}
+				else // try to parse the number
+				{
+					const Program::Char* startPtr = watch + 1;
+					Program::Char* endPtr = nullptr;
+					addr = (Program::Value)strtoull(startPtr, &endPtr, 10);
+					// failed to parse a number
+					if (endPtr == startPtr)
+					{
+						goto nan;
+					}
+				}
+				printTo += sprintf(printTo, "%llu\n", mProgram->Peek(addr));
+			}
+			else if (watch[0] == 'C')
+			{
+				// try to parse the number
+				const Program::Char* startPtr = watch + 1;
+				Program::Char* endPtr = nullptr;
+				Program::Value ccNum = (Program::Value)strtoull(startPtr, &endPtr, 10);
+				// failed to parse a number
+				if (endPtr == startPtr)
+				{
+					goto nan;
+				}
+				printTo += sprintf(printTo, "%llu\n", mProgram->GetCC(ccNum));
+			}
+			else
+			{
+				goto nan;
+			}
+			break;
+
+		nan:
+		case 0:
+			printTo += sprintf(printTo, "NaN\n"); 
+			break;
+		}
+	}
+	forInterface->SetWatchText(text);
 }
