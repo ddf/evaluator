@@ -359,7 +359,10 @@ int Evaluator::UnserializeState(ByteChunk* pChunk, int startPos)
 	  nextPos = pChunk->Get(&watchNum, startPos);
 	  for (int i = 0; i < watchNum; ++i)
 	  {
-		  nextPos = pChunk->GetStr(&stringData, nextPos);
+		  // clear the string cuz if there is a zero length string in the chunk it won't clear it.
+		  stringData.Set("");
+		  startPos = nextPos;
+		  nextPos = pChunk->GetStr(&stringData, startPos);
 		  if (nextPos > startPos)
 		  {
 			  mInterface->SetWatch(i, stringData.Get());
@@ -368,7 +371,6 @@ int Evaluator::UnserializeState(ByteChunk* pChunk, int startPos)
 		  {
 			  mInterface->SetWatch(i, "");
 		  }
-		  startPos = nextPos;
 	  }
   }
 
