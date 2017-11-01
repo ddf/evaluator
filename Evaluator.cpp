@@ -427,6 +427,10 @@ void Evaluator::SetWatchText(Interface* forInterface) const
 		size_t len = strlen(watch);
 		switch (len)
 		{
+		case 0:
+			printTo += sprintf(printTo, "\n");
+			break;
+
 		case 1:
 		{
 			char var = *watch;
@@ -436,7 +440,8 @@ void Evaluator::SetWatchText(Interface* forInterface) const
 			}
 			else
 			{
-				goto nan;
+				printTo += sprintf(printTo, "'%s' is not a variable\n", watch);
+				//goto nan;
 			}
 		}
 			break;
@@ -458,33 +463,40 @@ void Evaluator::SetWatchText(Interface* forInterface) const
 					// failed to parse a number
 					if (endPtr == startPtr)
 					{
-						goto nan;
+						//goto nan;
+						printTo += sprintf(printTo, "unknown address\n");
+						break;
 					}
 				}
 				printTo += sprintf(printTo, "%llu\n", mProgram->Peek(addr));
 			}
 			else if (watch[0] == 'C')
 			{
-				// try to parse the number
-				const Program::Char* startPtr = watch + 1;
-				Program::Char* endPtr = nullptr;
-				Program::Value ccNum = (Program::Value)strtoull(startPtr, &endPtr, 10);
-				// failed to parse a number
-				if (endPtr == startPtr)
+				char var = watch[1];
+				Program::Value cc = 0;
+				if (isalpha(var) && islower(var))
 				{
-					goto nan;
+					cc = mProgram->Get(var);
 				}
-				printTo += sprintf(printTo, "%llu\n", mProgram->GetCC(ccNum));
+				else // try to parse the number
+				{
+					const Program::Char* startPtr = watch + 1;
+					Program::Char* endPtr = nullptr;
+					cc = (Program::Value)strtoull(startPtr, &endPtr, 10);
+					// failed to parse a number
+					if (endPtr == startPtr)
+					{
+						//goto nan;
+						printTo += sprintf(printTo, "unknown MIDI CC\n");
+						break;
+					}
+				}
+				printTo += sprintf(printTo, "%llu\n", mProgram->GetCC(cc));
 			}
 			else
 			{
-				goto nan;
+				printTo += sprintf(printTo, "unknown watch string\n");
 			}
-			break;
-
-		nan:
-		case 0:
-			printTo += sprintf(printTo, "NaN\n"); 
 			break;
 		}
 	}
