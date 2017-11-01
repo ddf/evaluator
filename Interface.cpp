@@ -30,7 +30,7 @@ enum ELayout
 	kProgramLabel_X = 10,
 	kProgramLabel_Y = kVolumeKnob_Y + kVolumeKnob_H + 5,
 	kProgramLabel_W = 75,
-	kProgramLabel_H = 15,
+	kProgramLabel_H = 17,
 
 	kProgramText_X = 10,
 	kProgramText_Y = kProgramLabel_Y + kProgramLabel_H,
@@ -268,6 +268,8 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 		IRECT captionRect = MakeIRect(kProgramLabel);
 		captionRect.L += kProgramLabel_W;
 		captionRect.R += kProgramLabel_W;
+		// some fudge to the top of the rect so this smaller text looks vertically centered on the bigger PROGRAM: label
+		captionRect.T += 2; 
 		ITextControl* caption = new ICaptionControl(mPlug, captionRect, kTimeType, &textStyle);
 
 		buttonRect.T = kVolumeKnob_Y;
