@@ -15,19 +15,19 @@ Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
   TRACE;
 
   //arguments are: name, defaultVal, minVal, maxVal, step, label
-  GetParam(kGain)->InitDouble("Gain", 50., 0., 100.0, 1, "%");
+  GetParam(kGain)->InitDouble("gain", 50., 0., 100.0, 1, "%");
   
-  GetParam(kBitDepth)->InitInt("Bit Depth", 15, kBitDepthMin, kBitDepthMax);
+  GetParam(kBitDepth)->InitInt("bit depth", 15, kBitDepthMin, kBitDepthMax);
 
-  GetParam(kTimeType)->InitEnum("t Mode", 0, TTCount);
-  GetParam(kTimeType)->SetDisplayText(TTAlways, "increment 't' always");
-  GetParam(kTimeType)->SetDisplayText(TTWithNoteContinuous, "increment 't' while note on");
-  GetParam(kTimeType)->SetDisplayText(TTWithNoteResetting, "increment 't' while note on, reset 't' every note on");
+  GetParam(kTimeType)->InitEnum("t-mode", 0, TTCount);
+  GetParam(kTimeType)->SetDisplayText(TTAlways, "always");
+  GetParam(kTimeType)->SetDisplayText(TTWithNoteContinuous, "with note on (continuous)");
+  GetParam(kTimeType)->SetDisplayText(TTWithNoteResetting, "with note on (resetting)");
 #if !SA_API
-  GetParam(kTimeType)->SetDisplayText(TTProjectTime, "set 't' to project time");
+  GetParam(kTimeType)->SetDisplayText(TTProjectTime, "follow project time");
 #endif
   
-  GetParam(kScopeWindow)->InitDouble("Scope Window Size", 0.5, (double)kScopeWindowMin/1000.0, (double)kScopeWindowMax/1000.0, 0.05, "s");
+  GetParam(kScopeWindow)->InitDouble("scope window size", 0.5, (double)kScopeWindowMin/1000.0, (double)kScopeWindowMax/1000.0, 0.05, "s");
 
   for (int i = 0; i < Presets::Count(); ++i)
   {
@@ -231,6 +231,7 @@ void Evaluator::OnParamChange(int paramIdx)
 
 	case kTimeType:
 		mTimeType = (TimeType)GetParam(kTimeType)->Int();
+		mInterface->SetDirty(kTimeType, false);
 		break;
       
     case kExpression:

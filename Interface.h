@@ -3,6 +3,7 @@
 class Evaluator;
 class IGraphics;
 class ITextEdit;
+class ITextControl;
 class ConsoleText;
 class IControl;
 class Oscilloscope;
@@ -32,6 +33,7 @@ private:
 	Evaluator* mPlug;
 
 	ITextEdit*		textEdit;
+	ITextControl*   tmodeText;
 	ConsoleText*	consoleTextControl;
 	ITextEdit**		watches;
 	ConsoleText*	watchConsole;

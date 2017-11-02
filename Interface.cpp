@@ -154,6 +154,13 @@ IText kTitleTextStyle(16,
                       0, // orientation
                       IText::kQualityDefault);
 
+static const char* kTModeDescription[] = {
+	"increment 't' always",
+	"increment 't' while note on",
+	"increment 't' while note on, reset 't' every note on",
+	"set 't' to project time"
+};
+
 Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 : mPlug(plug)
 {
@@ -270,16 +277,15 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 		captionRect.R += kProgramLabel_W;
 		// some fudge to the top of the rect so this smaller text looks vertically centered on the bigger PROGRAM: label
 		captionRect.T += 2; 
-		ITextControl* caption = new ICaptionControl(mPlug, captionRect, kTimeType, &textStyle);
+		tmodeText = new ITextControl(mPlug, captionRect, &textStyle);
 
 		buttonRect.T = kVolumeKnob_Y;
 		buttonRect.B = kVolumeKnob_Y + kVolumeKnob_H;
 		IRadioButtonsControl* radios = new IRadioButtonsControl(mPlug, buttonRect, kTimeType, TTCount, &radioButton, kHorizontal);
-		radios->SetValDisplayControl(caption);
 
 		pGraphics->AttachControl(label);
 		pGraphics->AttachControl(radios);
-		pGraphics->AttachControl(caption);
+		pGraphics->AttachControl(tmodeText);
 	}
 }
 
@@ -297,6 +303,14 @@ void Interface::SetDirty(int paramIdx, bool pushToPlug)
 		if (bitDepthControl)
 		{
 			bitDepthControl->SetDirty(pushToPlug);
+		}
+		break;
+
+	case kTimeType:
+		if (tmodeText)
+		{
+			int tmodeIdx = mPlug->GetParam(kTimeType)->Int();
+			tmodeText->SetTextFromPlug(const_cast<char*>(kTModeDescription[tmodeIdx]));
 		}
 		break;
 	}
