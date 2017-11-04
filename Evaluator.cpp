@@ -56,7 +56,7 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 {
 	// Mutex is already locked for us.
 
-	const Program::Value range = 1 << mBitDepth;
+	const Program::Value range = (Program::Value)1 << mBitDepth;
 	const uint64_t mdenom = (uint64_t)(GetSampleRate() / 1000);
 	const uint64_t qdenom = (uint64_t)(GetSampleRate() / (GetTempo() / 60.0)) / 128;
 
@@ -147,8 +147,8 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 			mProgram->Set('t', mTick);
 			mProgram->Set('m', mTick / mdenom);
 			mProgram->Set('q', mTick / qdenom);
-			results[0] = (*in1 + 1) * (range / 2);
-			results[1] = (*in2 + 1) * (range / 2);
+			results[0] = (Program::Value)((*in1 + 1) * (range / 2));
+			results[1] = (Program::Value)((*in2 + 1) * (range / 2));
 			error = mProgram->Run(results, 2);
 			left = mGain * (-1.0 + 2.0*((double)(results[0] % range) / (range - 1)));
 			right = mGain * (-1.0 + 2.0*((double)(results[1] % range) / (range - 1)));

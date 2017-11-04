@@ -107,7 +107,7 @@ void IIncrementControl::OnMouseUp(int x, int y, IMouseMod* pMod)
 //
 KnobLineCoronaControl::KnobLineCoronaControl(IPlugBase* pPlug, IRECT pR, int paramIdx,
 	const IColor* pColor, const IColor* pCoronaColor,
-	double coronaThickness,
+	float coronaThickness,
 	double innerRadius, double outerRadius,
 	double minAngle, double maxAngle,
 	EDirection direction, double gearing)
@@ -120,7 +120,7 @@ KnobLineCoronaControl::KnobLineCoronaControl(IPlugBase* pPlug, IRECT pR, int par
 bool KnobLineCoronaControl::Draw(IGraphics* pGraphics)
 {
 	float cx = mRECT.MW(), cy = mRECT.MH();
-	double v = mMinAngle + mValue * (mMaxAngle - mMinAngle);
+	float v = mMinAngle + (float)mValue * (mMaxAngle - mMinAngle);
 	for (int i = 0; i <= mCoronaBlend.mWeight; ++i)
 	{
 		IColor color = mCoronaColor;
@@ -160,29 +160,30 @@ bool Oscilloscope::Draw(IGraphics* pGraphics)
 
 	const float midY = mRECT.MH();
 	const float halfH = mRECT.H()*0.5f;
-	float px1 = mRECT.L;
+	float px1 = (float)mRECT.L;
 	float pyl1 = midY;
 	float pyr1 = midY;
 
-	pGraphics->DrawLine(&COLOR_GRAY, mRECT.L, midY, mRECT.R, midY);
+	pGraphics->DrawLine(&COLOR_GRAY, (float)mRECT.L, midY, (float)mRECT.R, midY);
 	IChannelBlend lineBlend = IChannelBlend(IChannelBlend::kBlendAdd);
-	IColor lineGhostLeft(mLineColorLeft);
 	const float fade = 0.25f;
-	lineGhostLeft.R *= fade;
-	lineGhostLeft.G *= fade;
-	lineGhostLeft.B *= fade;
-	IColor lineGhostRight(mLineColorRight);
-	lineGhostRight.R *= fade;
-	lineGhostRight.G *= fade;
-	lineGhostRight.B *= fade;
+	IColor lineGhostLeft(mLineColorLeft.A, 
+		(int)((float)mLineColorLeft.R*fade),
+		(int)((float)mLineColorLeft.G*fade),
+		(int)((float)mLineColorLeft.B*fade));
+
+	IColor lineGhostRight(mLineColorRight.A, 
+		(int)((float)mLineColorRight.R*fade),
+		(int)((float)mLineColorRight.G*fade),
+		(int)((float)mLineColorRight.B*fade));
 
 	for (int x = 0; x < mRECT.W(); x++)
 	{
 		const int lidx = (mBufferBegin + x * 2) % mBufferSize;
 		const int ridx = lidx + 1;
-		const float px2 = mRECT.L + x;
-		const float pyl2 = midY - mBuffer[lidx] * halfH;
-		const float pyr2 = midY - mBuffer[ridx] * halfH;
+		const float px2 = (float)(mRECT.L + x);
+		const float pyl2 = midY - (float)mBuffer[lidx] * halfH;
+		const float pyr2 = midY - (float)mBuffer[ridx] * halfH;
 
 		pGraphics->DrawLine(&lineGhostLeft, px2, midY, px2, pyl2, &lineBlend);
 		pGraphics->DrawLine(&lineGhostRight, px2, midY, px2, pyr2, &lineBlend);

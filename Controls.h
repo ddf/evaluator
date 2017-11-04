@@ -74,7 +74,7 @@ class KnobLineCoronaControl : public IKnobLineControl
 public:
 	KnobLineCoronaControl(IPlugBase* pPlug, IRECT pR, int paramIdx,
 		const IColor* pLineColor, const IColor* pCoronaColor,
-		double coronaThickness, double innerRadius = 0.0, double outerRadius = 0.0,
+		float coronaThickness, double innerRadius = 0.0, double outerRadius = 0.0,
 		double minAngle = -0.75 * PI, double maxAngle = 0.75 * PI,
 		EDirection direction = kVertical, double gearing = DEFAULT_GEARING);
 

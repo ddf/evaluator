@@ -583,7 +583,7 @@ Program::RuntimeError Program::Run(Value* results, const size_t size)
 		Value stackResult = 0;
 		bool  didPut = false;
 
-		for (uint64_t i = 0; i < icount && error == RE_NONE; ++i)
+		for (int i = 0; i < icount && error == RE_NONE; ++i)
 		{
 			if (ops[i].code == Op::POP)
 			{
