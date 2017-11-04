@@ -28,7 +28,7 @@ public:
 		CE_ILLEGAL_VARIABLE_NAME, // found an uppercase letter where we expected a lowercase one
 	};
 
-	enum RuntimeError 
+	enum RuntimeError
 	{
 		RE_NONE,
 		RE_DIVIDE_BY_ZERO,
@@ -69,10 +69,10 @@ public:
 			AND,
 			OR,
 			XOR,
-            CLT, // compare <
-            CGT, // compare >
-            TRN, // ternary operator - ?:
-            POP, // ;
+			CLT, // compare <
+			CGT, // compare >
+			TRN, // ternary operator - ?:
+			POP, // ;
 			GET, // get the the current value of a result. eg [0] or [1].
 			PUT, // assign to an output result using [0] = expression.
 			RND, // random number operator - operand is used to wrap value returned by rand() - so like Random.Range(0, operand)
@@ -97,7 +97,7 @@ public:
 
 	// get human-readable descriptions of errors
 	static const char * GetErrorString(CompileError error);
-    static const char * GetErrorString(RuntimeError error);
+	static const char * GetErrorString(RuntimeError error);
 
 	Program(const std::vector<Op>& inOps, const size_t userMemorySize);
 	~Program();

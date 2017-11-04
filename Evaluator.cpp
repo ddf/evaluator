@@ -5,246 +5,246 @@
 #include "resource.h"
 
 Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
-: IPLUG_CTOR(kNumParams, Presets::Count(), instanceInfo)
-, mProgram(0)
-, mProgramMemorySize(0)
-, mProgramIsValid(false)
-, mGain(1.)
-, mBitDepth(15)
-, mScopeUpdate(0)
-, mTimeType(TTAlways)
+	: IPLUG_CTOR(kNumParams, Presets::Count(), instanceInfo)
+	, mProgram(0)
+	, mProgramMemorySize(0)
+	, mProgramIsValid(false)
+	, mGain(1.)
+	, mBitDepth(15)
+	, mScopeUpdate(0)
+	, mTimeType(TTAlways)
 {
-  TRACE;
+	TRACE;
 
-  //arguments are: name, defaultVal, minVal, maxVal, step, label
-  GetParam(kGain)->InitDouble("gain", 50., 0., 100.0, 1, "%");
-  
-  GetParam(kBitDepth)->InitInt("bit depth", 15, kBitDepthMin, kBitDepthMax);
+	//arguments are: name, defaultVal, minVal, maxVal, step, label
+	GetParam(kGain)->InitDouble("gain", 50., 0., 100.0, 1, "%");
 
-  GetParam(kTimeType)->InitEnum("t-mode", 0, TTCount);
-  GetParam(kTimeType)->SetDisplayText(TTAlways, "always");
-  GetParam(kTimeType)->SetDisplayText(TTWithNoteContinuous, "with note on (continuous)");
-  GetParam(kTimeType)->SetDisplayText(TTWithNoteResetting, "with note on (resetting)");
+	GetParam(kBitDepth)->InitInt("bit depth", 15, kBitDepthMin, kBitDepthMax);
+
+	GetParam(kTimeType)->InitEnum("t-mode", 0, TTCount);
+	GetParam(kTimeType)->SetDisplayText(TTAlways, "always");
+	GetParam(kTimeType)->SetDisplayText(TTWithNoteContinuous, "with note on (continuous)");
+	GetParam(kTimeType)->SetDisplayText(TTWithNoteResetting, "with note on (resetting)");
 #if !SA_API
-  GetParam(kTimeType)->SetDisplayText(TTProjectTime, "follow project time");
+	GetParam(kTimeType)->SetDisplayText(TTProjectTime, "follow project time");
 #endif
-  
-  GetParam(kScopeWindow)->InitDouble("scope window size", 0.5, (double)kScopeWindowMin/1000.0, (double)kScopeWindowMax/1000.0, 0.05, "s");
 
-  char vcName[3];
-  for (int paramIdx = kVControl0; paramIdx <= kVControl7; ++paramIdx)
-  {
-	  sprintf(vcName, "V%d", paramIdx - kVControl0);
-	  GetParam(paramIdx)->InitInt(vcName, kVControlMin, kVControlMin, kVControlMax);
-  }
+	GetParam(kScopeWindow)->InitDouble("scope window size", 0.5, (double)kScopeWindowMin / 1000.0, (double)kScopeWindowMax / 1000.0, 0.05, "s");
 
-  for (int i = 0; i < Presets::Count(); ++i)
-  {
-	  MakePresetFromData(Presets::Get(i));
-  }
-  IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT);
-  mInterface = new Interface(this, pGraphics);
-  AttachGraphics(pGraphics);
+	char vcName[3];
+	for (int paramIdx = kVControl0; paramIdx <= kVControl7; ++paramIdx)
+	{
+		sprintf(vcName, "V%d", paramIdx - kVControl0);
+		GetParam(paramIdx)->InitInt(vcName, kVControlMin, kVControlMin, kVControlMax);
+	}
+
+	for (int i = 0; i < Presets::Count(); ++i)
+	{
+		MakePresetFromData(Presets::Get(i));
+	}
+	IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT);
+	mInterface = new Interface(this, pGraphics);
+	AttachGraphics(pGraphics);
 }
 
-Evaluator::~Evaluator() 
+Evaluator::~Evaluator()
 {
 	delete mInterface;
 }
 
 void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nFrames)
 {
-  // Mutex is already locked for us.
+	// Mutex is already locked for us.
 
-  const Program::Value range = 1<<mBitDepth;
-  const uint64_t mdenom = (uint64_t)(GetSampleRate()/1000);
-  const uint64_t qdenom = (uint64_t)(GetSampleRate()/(GetTempo()/60.0))/128;
-  
-  mProgram->Set('w', range);
-  mProgram->Set('~', (Program::Value)GetSampleRate());
+	const Program::Value range = 1 << mBitDepth;
+	const uint64_t mdenom = (uint64_t)(GetSampleRate() / 1000);
+	const uint64_t qdenom = (uint64_t)(GetSampleRate() / (GetTempo() / 60.0)) / 128;
 
-  double* in1 = inputs[0];
-  double* in2 = inputs[1];
-  double* out1 = outputs[0];
-  double* out2 = outputs[1];
-  
-  Program::RuntimeError error = Program::RE_NONE;
-  ITimeInfo timeInfo;
-  GetTime(&timeInfo);
-  Program::Value results[2];
-  double left = 0;
-  double right = 0;
-  for (int s = 0; s < nFrames; ++s, ++in1, ++in2, ++out1, ++out2)
-  {
-    while (!mMidiQueue.Empty())
-    {
-      IMidiMsg* pMsg = mMidiQueue.Peek();
-      if (pMsg->mOffset > s) break;
-      
-      // To-do: Handle the MIDI message
-      switch(pMsg->StatusMsg())
-      {
-        case IMidiMsg::kNoteOn:
-          if (mTimeType == TTWithNoteResetting)
-          {
-            mTick = 0;
-          }
-          mNotes.push_back(*pMsg);
-          mProgram->Set('n', pMsg->NoteNumber());
-		  mProgram->Set('v', pMsg->Velocity());
-          break;
-          
-        case IMidiMsg::kNoteOff:
-          for (auto iter = mNotes.crbegin(); iter != mNotes.crend(); ++iter)
-          {
-            // remove the most recent note on with the same pitch
-            if (pMsg->NoteNumber() == iter->NoteNumber())
-            {
-              mNotes.erase((iter+1).base());
-              break;
-            }
-          }
-          
-          if (mNotes.empty())
-          {
-			  mProgram->Set('n', 0);
-			  mProgram->Set('v', 0);
-          }
-          else
-          {
-            mProgram->Set('n', mNotes.back().NoteNumber());
-			mProgram->Set('v', mNotes.back().Velocity());
-          }
-          break;
+	mProgram->Set('w', range);
+	mProgram->Set('~', (Program::Value)GetSampleRate());
 
-		case IMidiMsg::kControlChange:
-			mProgram->SetCC(pMsg->mData1, pMsg->mData2);
-			break;
-          
-        default:
-          break;
-      }
-      
-      mMidiQueue.Remove();
-    }
+	double* in1 = inputs[0];
+	double* in2 = inputs[1];
+	double* out1 = outputs[0];
+	double* out2 = outputs[1];
 
-	bool run = true;
-
-	switch (mTimeType)
+	Program::RuntimeError error = Program::RE_NONE;
+	ITimeInfo timeInfo;
+	GetTime(&timeInfo);
+	Program::Value results[2];
+	double left = 0;
+	double right = 0;
+	for (int s = 0; s < nFrames; ++s, ++in1, ++in2, ++out1, ++out2)
 	{
-	case TTWithNoteContinuous:
-	case TTWithNoteResetting:
-		run = !mNotes.empty(); break;
+		while (!mMidiQueue.Empty())
+		{
+			IMidiMsg* pMsg = mMidiQueue.Peek();
+			if (pMsg->mOffset > s) break;
+
+			// To-do: Handle the MIDI message
+			switch (pMsg->StatusMsg())
+			{
+			case IMidiMsg::kNoteOn:
+				if (mTimeType == TTWithNoteResetting)
+				{
+					mTick = 0;
+				}
+				mNotes.push_back(*pMsg);
+				mProgram->Set('n', pMsg->NoteNumber());
+				mProgram->Set('v', pMsg->Velocity());
+				break;
+
+			case IMidiMsg::kNoteOff:
+				for (auto iter = mNotes.crbegin(); iter != mNotes.crend(); ++iter)
+				{
+					// remove the most recent note on with the same pitch
+					if (pMsg->NoteNumber() == iter->NoteNumber())
+					{
+						mNotes.erase((iter + 1).base());
+						break;
+					}
+				}
+
+				if (mNotes.empty())
+				{
+					mProgram->Set('n', 0);
+					mProgram->Set('v', 0);
+				}
+				else
+				{
+					mProgram->Set('n', mNotes.back().NoteNumber());
+					mProgram->Set('v', mNotes.back().Velocity());
+				}
+				break;
+
+			case IMidiMsg::kControlChange:
+				mProgram->SetCC(pMsg->mData1, pMsg->mData2);
+				break;
+
+			default:
+				break;
+			}
+
+			mMidiQueue.Remove();
+		}
+
+		bool run = true;
+
+		switch (mTimeType)
+		{
+		case TTWithNoteContinuous:
+		case TTWithNoteResetting:
+			run = !mNotes.empty(); break;
 #if !SA_API
-	case TTProjectTime:
-		if ((run = timeInfo.mTransportIsRunning)) mTick = timeInfo.mSamplePos + s; break;
+		case TTProjectTime:
+			if ((run = timeInfo.mTransportIsRunning)) mTick = timeInfo.mSamplePos + s; break;
 #endif
-    default: break;
+		default: break;
+		}
+
+		if (run)
+		{
+			mProgram->Set('t', mTick);
+			mProgram->Set('m', mTick / mdenom);
+			mProgram->Set('q', mTick / qdenom);
+			results[0] = (*in1 + 1) * (range / 2);
+			results[1] = (*in2 + 1) * (range / 2);
+			error = mProgram->Run(results, 2);
+			left = mGain * (-1.0 + 2.0*((double)(results[0] % range) / (range - 1)));
+			right = mGain * (-1.0 + 2.0*((double)(results[1] % range) / (range - 1)));
+			++mTick;
+		}
+		else
+		{
+			left = 0;
+			right = 0;
+		}
+
+		*out1 = left;
+		*out2 = right;
+
+		if (mScopeUpdate == 0)
+		{
+			mInterface->UpdateOscilloscope(left, right);
+			// we need to update the oscilloscope this many times every updateSeconds
+			const int samplesPerInterval = mInterface->GetOscilloscopeWidth();
+			const double updateInterval = GetParam(kScopeWindow)->Value();
+			mScopeUpdate = (int)(GetSampleRate()*updateInterval / samplesPerInterval);
+		}
+		else
+		{
+			--mScopeUpdate;
+		}
 	}
 
-	if (run)
+	mMidiQueue.Flush(nFrames);
+
+	if (mProgramIsValid && mInterface != nullptr)
 	{
-		mProgram->Set('t', mTick);
-		mProgram->Set('m', mTick / mdenom);
-		mProgram->Set('q', mTick / qdenom);
-		results[0] = (*in1 + 1) * (range / 2);
-		results[1] = (*in2 + 1) * (range / 2);
-		error = mProgram->Run(results, 2);
-		left = mGain * (-1.0 + 2.0*((double)(results[0]%range) / (range - 1)));
-		right = mGain * (-1.0 + 2.0*((double)(results[1]%range) / (range - 1)));
-		++mTick;
+		if (error == Program::RE_NONE)
+		{
+			mInterface->SetConsoleText(GetProgramState());
+		}
+		else
+		{
+			static const int maxError = 1024;
+			static char errorDesc[maxError];
+			snprintf(errorDesc, maxError,
+				"Runtime Error: %s",
+				Program::GetErrorString(error));
+			mInterface->SetConsoleText(errorDesc);
+		}
+
+		SetWatchText(mInterface);
 	}
-	else
-	{
-		left = 0;
-		right = 0;
-	}
-
-	*out1 = left;
-	*out2 = right;
-    
-    if (mScopeUpdate == 0)
-    {
-      mInterface->UpdateOscilloscope(left, right);
-      // we need to update the oscilloscope this many times every updateSeconds
-      const int samplesPerInterval = mInterface->GetOscilloscopeWidth();
-      const double updateInterval = GetParam(kScopeWindow)->Value();
-      mScopeUpdate = (int)(GetSampleRate()*updateInterval/samplesPerInterval);
-    }
-    else
-    {
-      --mScopeUpdate;
-    }
-  }
-  
-  mMidiQueue.Flush(nFrames);
-
-  if (mProgramIsValid && mInterface != nullptr)
-  {
-    if ( error == Program::RE_NONE )
-    {
-      mInterface->SetConsoleText(GetProgramState());
-    }
-    else
-    {
-      static const int maxError = 1024;
-      static char errorDesc[maxError];
-      snprintf(errorDesc, maxError,
-               "Runtime Error: %s",
-               Program::GetErrorString(error));
-      mInterface->SetConsoleText(errorDesc);
-    }
-
-	SetWatchText(mInterface);
-  }
 }
 
 void Evaluator::Reset()
 {
-  TRACE;
-  IMutexLock lock(this);
-  
-  // re-init vars
-  if (mProgram != nullptr)
-  {
-	  delete mProgram;
-	  mProgram = nullptr;
-	  mProgramIsValid = false;
-  }
-  // force recompile
-  OnParamChange(kExpression);
- 
-  mMidiQueue.Resize(GetBlockSize());
-  mNotes.clear();
-  mScopeUpdate = 0;
+	TRACE;
+	IMutexLock lock(this);
+
+	// re-init vars
+	if (mProgram != nullptr)
+	{
+		delete mProgram;
+		mProgram = nullptr;
+		mProgramIsValid = false;
+	}
+	// force recompile
+	OnParamChange(kExpression);
+
+	mMidiQueue.Resize(GetBlockSize());
+	mNotes.clear();
+	mScopeUpdate = 0;
 }
 
 void Evaluator::ProcessMidiMsg(IMidiMsg *pMsg)
 {
-  mMidiQueue.Add(pMsg);
+	mMidiQueue.Add(pMsg);
 }
 
 void Evaluator::OnParamChange(int paramIdx)
 {
-  IMutexLock lock(this);
+	IMutexLock lock(this);
 
-  switch (paramIdx)
-  {
-    case kGain:
-      mGain = GetParam(kGain)->Value() / 100.;
-      break;
-      
-    case kBitDepth:
-      mBitDepth = GetParam(kBitDepth)->Int();
-	  mInterface->SetDirty(kBitDepth, false);
-      break;
+	switch (paramIdx)
+	{
+	case kGain:
+		mGain = GetParam(kGain)->Value() / 100.;
+		break;
+
+	case kBitDepth:
+		mBitDepth = GetParam(kBitDepth)->Int();
+		mInterface->SetDirty(kBitDepth, false);
+		break;
 
 	case kTimeType:
 		mTimeType = (TimeType)GetParam(kTimeType)->Int();
 		mInterface->SetDirty(kTimeType, false);
 		break;
-      
-    case kExpression:
+
+	case kExpression:
 	{
 		Program::CompileError error;
 		int errorPosition;
@@ -277,9 +277,9 @@ void Evaluator::OnParamChange(int paramIdx)
 		}
 		DirtyParameters();
 	}
-      break;
-      
-    default:
+	break;
+
+	default:
 		if (paramIdx >= kWatch && paramIdx < kWatch + kWatchNum && mInterface != nullptr)
 		{
 			SetWatchText(mInterface);
@@ -290,8 +290,8 @@ void Evaluator::OnParamChange(int paramIdx)
 			Program::Value vidx = paramIdx - kVControl0;
 			mProgram->SetVC(vidx, GetParam(paramIdx)->Int());
 		}
-      break;
-  }
+		break;
+	}
 }
 
 // need to start the version at a really high number cuz
@@ -339,90 +339,90 @@ void Evaluator::SerializeOurState(ByteChunk* pChunk)
 // this over-ridden method is called when the host is trying to store the plug-in state and needs to get the current data from your algorithm
 bool Evaluator::SerializeState(ByteChunk* pChunk)
 {
-  TRACE;
-  IMutexLock lock(this);
+	TRACE;
+	IMutexLock lock(this);
 
-  SerializeOurState(pChunk);
-  
-  return IPlugBase::SerializeParams(pChunk); // must remember to call SerializeParams at the end
+	SerializeOurState(pChunk);
+
+	return IPlugBase::SerializeParams(pChunk); // must remember to call SerializeParams at the end
 }
 
 // this over-ridden method is called when the host is trying to load the plug-in state and you need to unpack the data into your algorithm
 int Evaluator::UnserializeState(ByteChunk* pChunk, int startPos)
 {
-  TRACE;
-  IMutexLock lock(this);
+	TRACE;
+	IMutexLock lock(this);
 
-  int version = 0;
-  int nextPos = pChunk->Get(&version, startPos);
-  // if it's not a valid version number, then we need to read our expression from the startPos
-  if (version >= kStateFirstVersion)
-  {
-	  startPos = nextPos;
-  }
-  
-  // initialize from empty string in case the get fails
-  WDL_String stringData("");
-  nextPos = pChunk->GetStr(&stringData, startPos);
+	int version = 0;
+	int nextPos = pChunk->Get(&version, startPos);
+	// if it's not a valid version number, then we need to read our expression from the startPos
+	if (version >= kStateFirstVersion)
+	{
+		startPos = nextPos;
+	}
 
-  if (nextPos > startPos)
-  {
-	  mInterface->SetProgramText(stringData.Get());
-  }
-  else
-  {
-	  mInterface->SetProgramText("");
-  }
+	// initialize from empty string in case the get fails
+	WDL_String stringData("");
+	nextPos = pChunk->GetStr(&stringData, startPos);
 
-  startPos = nextPos;
+	if (nextPos > startPos)
+	{
+		mInterface->SetProgramText(stringData.Get());
+	}
+	else
+	{
+		mInterface->SetProgramText("");
+	}
 
-  if (version >= kStateFirstVersion)
-  {
-	  int watchNum = 0;
-	  nextPos = pChunk->Get(&watchNum, startPos);
-	  for (int i = 0; i < watchNum; ++i)
-	  {
-		  // clear the string cuz if there is a zero length string in the chunk it won't clear it.
-		  stringData.Set("");
-		  startPos = nextPos;
-		  nextPos = pChunk->GetStr(&stringData, startPos);
-		  if (nextPos > startPos)
-		  {
-			  mInterface->SetWatch(i, stringData.Get());
-		  }
-		  else
-		  {
-			  mInterface->SetWatch(i, "");
-		  }
-	  }
-  }
-  else
-  {
-	  for (int i = 0; i < kWatchNum; ++i)
-	  {
-		  mInterface->SetWatch(i, "");
-	  }
-  }
+	startPos = nextPos;
 
-  startPos = nextPos;
+	if (version >= kStateFirstVersion)
+	{
+		int watchNum = 0;
+		nextPos = pChunk->Get(&watchNum, startPos);
+		for (int i = 0; i < watchNum; ++i)
+		{
+			// clear the string cuz if there is a zero length string in the chunk it won't clear it.
+			stringData.Set("");
+			startPos = nextPos;
+			nextPos = pChunk->GetStr(&stringData, startPos);
+			if (nextPos > startPos)
+			{
+				mInterface->SetWatch(i, stringData.Get());
+			}
+			else
+			{
+				mInterface->SetWatch(i, "");
+			}
+		}
+	}
+	else
+	{
+		for (int i = 0; i < kWatchNum; ++i)
+		{
+			mInterface->SetWatch(i, "");
+		}
+	}
 
-  const int numParams = version < kStateVCParams ? kScopeWindow + 1 : kNumParams;
-  
-  return IPlugBase::UnserializeParams(pChunk, startPos, numParams); // must remember to call UnserializeParams at the end
+	startPos = nextPos;
+
+	const int numParams = version < kStateVCParams ? kScopeWindow + 1 : kNumParams;
+
+	return IPlugBase::UnserializeParams(pChunk, startPos, numParams); // must remember to call UnserializeParams at the end
 }
 
 bool Evaluator::CompareState(const unsigned char* incomingState, int startPos)
 {
-  bool isEqual = true;
-  // create serialized representation of our string
-  ByteChunk chunk;
-  SerializeOurState(&chunk);
-  // see if it's the same as the incoming state
-  int stateSize = chunk.Size();
-  isEqual = (memcmp(incomingState + startPos, chunk.GetBytes(), stateSize) == 0);
-  isEqual &= IPlugBase::CompareState(incomingState, startPos + stateSize); // fuzzy compare regular params
-  
-  return isEqual;
+	bool isEqual = true;
+	// create serialized representation of our string
+	ByteChunk chunk;
+	SerializeOurState(&chunk);
+	// see if it's the same as the incoming state
+	int stateSize = chunk.Size();
+	isEqual = (memcmp(incomingState + startPos, chunk.GetBytes(), stateSize) == 0);
+	isEqual &= IPlugBase::CompareState(incomingState, startPos + stateSize); // fuzzy compare regular params
+
+	return isEqual;
 }
 
 const char * Evaluator::GetProgramState() const
@@ -442,7 +442,7 @@ const char * Evaluator::GetProgramState() const
 		mProgram->Get('n'),
 		mProgram->Get('q'),
 		mProgram->Get('v')
-	);
+		);
 
 	return state;
 }
@@ -476,7 +476,7 @@ void Evaluator::SetWatchText(Interface* forInterface) const
 				//goto nan;
 			}
 		}
-			break;
+		break;
 
 		default:
 			if (watch[0] == '@')

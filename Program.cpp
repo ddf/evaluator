@@ -296,27 +296,27 @@ static int ParseCmpOrShift(CompilationState& state)
 		}
 		state.parsePos++;
 		Program::Char op2 = *state;
-        // not a bitshift, so do compare
+		// not a bitshift, so do compare
 		if (op2 != op)
 		{
-            if (ParseSummands(state)) return 1;
-			switch(op)
-            {
-                case '<': state.Push(Program::Op::CLT); break;
-                case '>': state.Push(Program::Op::CGT); break;
-            }
+			if (ParseSummands(state)) return 1;
+			switch (op)
+			{
+			case '<': state.Push(Program::Op::CLT); break;
+			case '>': state.Push(Program::Op::CGT); break;
+			}
 		}
-        else
-        {
-            // is a bitshift, so eat it and continue
-            state.parsePos++;
-            if (ParseSummands(state)) return 1;
-            switch (op)
-            {
-            case '<': state.Push(Program::Op::BSL); break;
-            case '>': state.Push(Program::Op::BSR); break;
-            }
-        }
+		else
+		{
+			// is a bitshift, so eat it and continue
+			state.parsePos++;
+			if (ParseSummands(state)) return 1;
+			switch (op)
+			{
+			case '<': state.Push(Program::Op::BSL); break;
+			case '>': state.Push(Program::Op::BSR); break;
+			}
+		}
 	}
 }
 
@@ -373,30 +373,30 @@ static int ParseOR(CompilationState& state)
 
 static int ParseTRN(CompilationState& state)
 {
-    if(ParseOR(state)) return 1;
-    for(;;)
-    {
+	if (ParseOR(state)) return 1;
+	for (;;)
+	{
 		state.SkipWhitespace();
-        Program::Char op = *state;
-        if ( op != '?' )
-        {
-            return 0;
-        }
-        state.parsePos++;
-        if(Parse(state)) return 1;
+		Program::Char op = *state;
+		if (op != '?')
+		{
+			return 0;
+		}
+		state.parsePos++;
+		if (Parse(state)) return 1;
 		state.SkipWhitespace();
-        op = *state;
-        if ( op != ':' )
-        {
+		op = *state;
+		if (op != ':')
+		{
 			state.error = Program::CE_MISSING_COLON_IN_TERNARY;
-            return 1;
-        }
-        state.parsePos++;
+			return 1;
+		}
+		state.parsePos++;
 		// when parsing what follows the colon, we decrement parse depth before recursing to Parse.
 		// this is so that if the line terminates with a semi-colon, we won't get an
 		// illegal statement termination error, unless we were already within parens.
 		state.parseDepth--;
-        if (Parse(state)) return 1;
+		if (Parse(state)) return 1;
 		state.parseDepth++;
 		// if the statement terminated in a semi-colon we will have a POP on the end of the list.
 		// we need that stack value to be able to evaluate the ternary statement,
@@ -411,7 +411,7 @@ static int ParseTRN(CompilationState& state)
 		{
 			state.Push(Program::Op::TRN);
 		}
-    }
+	}
 }
 
 static int ParsePOK(CompilationState& state)
@@ -457,12 +457,12 @@ static int ParsePOK(CompilationState& state)
 		}
 		switch (code)
 		{
-		case Program::Op::PEK: 
+		case Program::Op::PEK:
 			state.Push(Program::Op::POK);
 			break;
 
-		case Program::Op::GET: 
-			state.Push(Program::Op::PUT); 
+		case Program::Op::GET:
+			state.Push(Program::Op::PUT);
 			break;
 		}
 		if (hasPOP)
@@ -476,9 +476,9 @@ static int ParsePOK(CompilationState& state)
 static int Parse(CompilationState& state)
 {
 	state.parseDepth++;
-    {
-        if (ParsePOK(state)) return 1;
-        // check for statement termination
+	{
+		if (ParsePOK(state)) return 1;
+		// check for statement termination
 		state.SkipWhitespace();
 		if (*state == ';')
 		{
@@ -498,9 +498,9 @@ static int Parse(CompilationState& state)
 			// in case this is the last symbol of the program but there is trailing whitespace
 			state.SkipWhitespace();
 		}
-    }    
+	}
 	state.parseDepth--;
-    return 0;
+	return 0;
 }
 
 Program* Program::Compile(const Char* source, const size_t userMemorySize, CompileError& outError, int& outErrorPosition)
@@ -585,40 +585,40 @@ Program::RuntimeError Program::Run(Value* results, const size_t size)
 
 		for (uint64_t i = 0; i < icount && error == RE_NONE; ++i)
 		{
-            if ( ops[i].code == Op::POP )
-            {
-                if ( stack.size() > 0 )
-                {
+			if (ops[i].code == Op::POP)
+			{
+				if (stack.size() > 0)
+				{
 					stackResult = stack.top();
-                    stack.pop();
-                }
-                else
-                {
-                    error = RE_INCONSISTENT_STACK;
-                }
-            }
-            else
-            {
+					stack.pop();
+				}
+				else
+				{
+					error = RE_INCONSISTENT_STACK;
+				}
+			}
+			else
+			{
 				didPut = didPut || ops[i].code == Op::PUT;
-                error = Exec(ops[i], results, size);
-            }
+				error = Exec(ops[i], results, size);
+			}
 		}
 
-        // under error-free execution we should have either 1 or 0 values in the stack.
-        // 1 when a program terminates with the result of an expression (eg: t*Fn)
-        // 0 when a program terminates with a POP (eg: t*Fn;)
-        // in the case of the POP, the value of the expression will already be in result.
+		// under error-free execution we should have either 1 or 0 values in the stack.
+		// 1 when a program terminates with the result of an expression (eg: t*Fn)
+		// 0 when a program terminates with a POP (eg: t*Fn;)
+		// in the case of the POP, the value of the expression will already be in result.
 		if (error == RE_NONE)
 		{
-            if ( stack.size() == 1 )
-            {
+			if (stack.size() == 1)
+			{
 				stackResult = stack.top();
-                stack.pop();
-            }
-            else if ( stack.size() > 1 )
-            {
-                error = RE_INCONSISTENT_STACK;
-            }
+				stack.pop();
+			}
+			else if (stack.size() > 1)
+			{
+				error = RE_INCONSISTENT_STACK;
+			}
 
 			// implicitly output to all channels if they did not explicitly put somewhere
 			if (!didPut)
@@ -629,11 +629,11 @@ Program::RuntimeError Program::Run(Value* results, const size_t size)
 				}
 			}
 		}
-		
-        // clear the stack so it doesn't explode in size due to continual runtime errors
-        while( stack.size() > 1 )
+
+		// clear the stack so it doesn't explode in size due to continual runtime errors
+		while (stack.size() > 1)
 		{
-            stack.pop();
+			stack.pop();
 		}
 	}
 	else
@@ -655,247 +655,247 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 	switch (op.code)
 	{
 		// no operands - result is pushed to the stack
-		case Op::NUM: 
-			stack.push(op.val); 
-			break;		
+	case Op::NUM:
+		stack.push(op.val);
+		break;
 
 		// one operand - operand value is popped from the stack, result is pushed back on 
-		case Op::PEK:
-		{
-			POP1;
-			stack.push(Peek(a));
-		}
-		break;
+	case Op::PEK:
+	{
+		POP1;
+		stack.push(Peek(a));
+	}
+	break;
 
-		case Op::GET:
+	case Op::GET:
+	{
+		POP1;
+		Value v = 0;
+		if (a < size)
 		{
-			POP1;
-			Value v = 0;
-			if (a < size)
+			v = results[a];
+		}
+		else
+		{
+			error = RE_GET_OUT_OF_BOUNDS;
+		}
+		stack.push(v);
+	}
+	break;
+
+	case Op::NEG:
+	{
+		POP1;
+		stack.push(-a);
+	}
+	break;
+
+	case Op::SIN:
+	{
+		POP1;
+		Value r = Get('w');
+		Value hr = r / 2;
+		r += 1;
+		double s = sin(2 * M_PI * ((double)(a%r) / r));
+		stack.push(Value(s*hr + hr));
+	}
+	break;
+
+	case Op::SQR:
+	{
+		POP1;
+		const Value r = Get('w');
+		const Value v = a%r < r / 2 ? 0 : r - 1;
+		stack.push(v);
+	}
+	break;
+
+	case Op::FRQ:
+	{
+		POP1;
+		if (a == 0)
+		{
+			stack.push(0);
+		}
+		else
+		{
+			double f = round(3 * pow(2.0, (double)a / 12.0) * (44100.0 / Get('~')));
+			stack.push((Value)f);
+		}
+	}
+	break;
+
+	case Op::TRI:
+	{
+		POP1;
+		a *= 2;
+		const Value r = Get('w');
+		const Value v = a*((a / r) % 2) + (r - a - 1)*(1 - (a / r) % 2);
+		stack.push(v);
+	}
+	break;
+
+	case Op::RND:
+	{
+		POP1;
+		stack.push(rand() % a);
+	}
+	break;
+
+	case Op::CCV:
+	{
+		POP1;
+		stack.push(GetCC(a));
+	}
+	break;
+
+	case Op::VCV:
+	{
+		POP1;
+		stack.push(GetVC(a));
+	}
+	break;
+
+	// two operands - both are popped from the stack, result is pushed back on
+	case Op::POK:
+	{
+		POP2;
+		Poke(a, b);
+		stack.push(b);
+	}
+	break;
+
+	case Op::PUT:
+	{
+		POP2;
+		if (a == -1)
+		{
+			for (int i = 0; i < size; ++i)
 			{
-				v = results[a];
-			}
-			else
-			{
-				error = RE_GET_OUT_OF_BOUNDS;
-			}
-			stack.push(v);
-		}
-		break;
-
-		case Op::NEG:
-		{
-			POP1;
-			stack.push(-a);
-		}
-		break;
-
-		case Op::SIN:
-		{
-			POP1;
-			Value r = Get('w');
-			Value hr = r / 2;
-			r += 1;
-			double s = sin(2 * M_PI * ((double)(a%r) / r));
-			stack.push(Value(s*hr + hr));
-		}
-		break;
-
-		case Op::SQR:
-		{
-			POP1;
-			const Value r = Get('w');
-			const Value v = a%r < r / 2 ? 0 : r - 1;
-			stack.push(v);
-		}
-		break;
-
-		case Op::FRQ:
-		{
-			POP1;
-			if (a == 0)
-			{
-				stack.push(0);
-			}
-			else
-			{
-				double f = round(3 * pow(2.0, (double)a / 12.0) * (44100.0 / Get('~')));
-				stack.push((Value)f);
+				results[i] = b;
 			}
 		}
-		break;
-
-		case Op::TRI:
+		else if (a < size)
 		{
-			POP1;
-			a *= 2;
-			const Value r = Get('w');			
-			const Value v = a*((a / r) % 2) + (r - a - 1)*(1 - (a / r) % 2);
-			stack.push(v);
+			results[a] = b;
 		}
-		break;
-
-		case Op::RND:
+		else
 		{
-			POP1;
-			stack.push(rand()%a);
+			error = RE_PUT_OUT_OF_BOUNDS;
 		}
-		break;
+		stack.push(b);
+	}
+	break;
 
-		case Op::CCV:
-		{
-			POP1;
-			stack.push(GetCC(a));
-		}
-		break;
+	case Op::MUL:
+	{
+		POP2;
+		stack.push(a*b);
+	}
+	break;
 
-		case Op::VCV:
-		{
-			POP1;
-			stack.push(GetVC(a));
-		}
-		break;
+	case Op::DIV:
+	{
+		POP2;
+		Value v = 0;
+		if (b) { v = a / b; }
+		else { error = RE_DIVIDE_BY_ZERO; }
+		stack.push(v);
+	}
+	break;
 
-		// two operands - both are popped from the stack, result is pushed back on
-		case Op::POK:
-		{
-			POP2;
-			Poke(a, b);
-			stack.push(b);
-		}
-		break;
+	case Op::MOD:
+	{
+		POP2;
+		Value v = 0;
+		if (b) { v = a%b; }
+		else { error = RE_DIVIDE_BY_ZERO; }
+		stack.push(v);
+	}
+	break;
 
-		case Op::PUT:
-		{
-			POP2;
-			if (a == -1)
-			{
-				for (int i = 0; i < size; ++i)
-				{
-					results[i] = b;
-				}
-			}
-			else if (a < size)
-			{
-				results[a] = b;
-			}
-			else
-			{
-				error = RE_PUT_OUT_OF_BOUNDS;
-			}
-			stack.push(b);
-		}
-		break;
+	case Op::ADD:
+	{
+		POP2;
+		stack.push(a + b);
+	}
+	break;
 
-		case Op::MUL: 
-		{
-			POP2;
-			stack.push(a*b);
-		}
-		break;
+	case Op::SUB:
+	{
+		POP2;
+		stack.push(a - b);
+	}
+	break;
 
-		case Op::DIV:
-		{
-			POP2;
-			Value v = 0;
-			if (b) { v = a / b; }
-			else { error = RE_DIVIDE_BY_ZERO; }
-			stack.push(v);
-		}
-		break;
+	case Op::BSL:
+	{
+		POP2;
+		stack.push(a << b);
+	}
+	break;
 
-		case Op::MOD: 
-		{
-			POP2;
-			Value v = 0;
-			if (b) { v = a%b; }
-			else { error = RE_DIVIDE_BY_ZERO; }
-			stack.push(v);
-		}
-		break;
+	case Op::BSR:
+	{
+		POP2;
+		stack.push(a >> (b % 64));
+	}
+	break;
 
-		case Op::ADD: 
-		{
-			POP2;
-			stack.push(a + b);
-		}
-		break;
+	case Op::AND:
+	{
+		POP2;
+		stack.push(a&b);
+	}
+	break;
 
-		case Op::SUB: 
-		{
-			POP2;
-			stack.push(a - b);
-		}
-		break;
+	case Op::OR:
+	{
+		POP2;
+		stack.push(a | b);
+	}
+	break;
 
-		case Op::BSL: 
-		{
-			POP2;
-			stack.push(a << b);
-		}
-		break;
+	case Op::XOR:
+	{
+		POP2;
+		stack.push(a^b);
+	}
+	break;
 
-		case Op::BSR: 
-		{
-			POP2;
-			stack.push(a >> (b % 64));
-		}
-		break;
+	case Op::CLT:
+	{
+		POP2;
+		stack.push(a < b);
+	}
+	break;
 
-		case Op::AND: 
-		{
-			POP2;
-			stack.push(a&b);
-		}
-		break;
+	case Op::CGT:
+	{
+		POP2;
+		stack.push(a > b);
+	}
+	break;
 
-		case Op::OR: 
-		{
-			POP2;
-			stack.push(a | b);
-		}
-		break;
+	case Op::TRN:
+	{
+		POP3;
+		stack.push(a ? b : c);
+	}
+	break;
 
-		case Op::XOR: 
-		{
-			POP2;
-			stack.push(a^b);
-		}
-		break;
-            
-        case Op::CLT:
-        {
-            POP2;
-            stack.push(a<b);
-        }
-        break;
-            
-        case Op::CGT:
-        {
-            POP2;
-            stack.push(a>b);
-        }
-        break;
-            
-        case Op::TRN:
-        {
-            POP3;
-            stack.push(a ? b : c);
-        }
-        break;
+	// perform a no-op, but set the error as a result
+	default:
+	{
+		error = RE_MISSING_OPCODE;
+	}
+	break;
 
-		// perform a no-op, but set the error as a result
-		default:
-		{
-			error = RE_MISSING_OPCODE;
-		}
-		break;
-
-		bad_stack:
-		{
-			error = RE_MISSING_OPERAND;
-		}
-		break;
+bad_stack:
+	{
+		error = RE_MISSING_OPERAND;
+	}
+	break;
 	}
 
 	return error;

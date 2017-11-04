@@ -29,7 +29,7 @@ public:
 	const char * GetWatch(int idx) const;
 	void SetWatch(int idx, const char * text);
 
-private:	
+private:
 
 	Evaluator* mPlug;
 

@@ -9,7 +9,7 @@ enum ELayout
 	kEditorHeight = GUI_HEIGHT,
 	kEditorMargin = 10,
 
-	kVolumeLabel_X = kEditorMargin*2,
+	kVolumeLabel_X = kEditorMargin * 2,
 	kVolumeLabel_Y = 10,
 	kVolumeLabel_W = 30,
 	kVolumeLabel_H = 15,
@@ -32,7 +32,7 @@ enum ELayout
 	kVControl_H = 30,
 	kVControl_S = kVControl_W + 10,
 	// x coord of the *first* knob on the left
-	kVControl_X = kEditorWidth - kEditorMargin*2 - kVControl_S*(kVControl7 - kVControl0) - kVControl_W,
+	kVControl_X = kEditorWidth - kEditorMargin * 2 - kVControl_S*(kVControl7 - kVControl0) - kVControl_W,
 	kVControl_Y = kVolumeKnob_Y,
 
 	kProgramLabel_X = kEditorMargin,
@@ -42,7 +42,7 @@ enum ELayout
 
 	kProgramText_X = kEditorMargin,
 	kProgramText_Y = kProgramLabel_Y + kProgramLabel_H,
-	kProgramText_W = kEditorWidth - kEditorMargin*2,
+	kProgramText_W = kEditorWidth - kEditorMargin * 2,
 	kProgramText_H = 200,
 
 	kConsoleTitle_X = kProgramText_X,
@@ -77,21 +77,21 @@ enum ELayout
 	kWatchWindow_Y = kConsole_Y,
 	kWatchWindow_W = kEditorWidth - 10 - kWatchWindow_X,
 	kWatchWindow_H = kConsole_H,
-  
-  kScopeTitle_X = kConsoleTitle_X,
-  kScopeTitle_Y = kConsole_Y + kConsole_H + 10,
-  kScopeTitle_W = 60,
-  kScopeTitle_H = 15,
-  
-  kScopeWindowLabel_X = kScopeTitle_X + kScopeTitle_W,
-  kScopeWindowLabel_Y = kScopeTitle_Y + 2,
-  kScopeWindowLabel_W = 52,
-  kScopeWindowLabel_H = 15,
-  
-  kScopeWindow_X = kScopeWindowLabel_X + kScopeWindowLabel_W,
-  kScopeWindow_Y = kScopeWindowLabel_Y - 3,
-  kScopeWindow_W = 15,
-  kScopeWindow_H = 15,
+
+	kScopeTitle_X = kConsoleTitle_X,
+	kScopeTitle_Y = kConsole_Y + kConsole_H + 10,
+	kScopeTitle_W = 60,
+	kScopeTitle_H = 15,
+
+	kScopeWindowLabel_X = kScopeTitle_X + kScopeTitle_W,
+	kScopeWindowLabel_Y = kScopeTitle_Y + 2,
+	kScopeWindowLabel_W = 52,
+	kScopeWindowLabel_H = 15,
+
+	kScopeWindow_X = kScopeWindowLabel_X + kScopeWindowLabel_W,
+	kScopeWindow_Y = kScopeWindowLabel_Y - 3,
+	kScopeWindow_W = 15,
+	kScopeWindow_H = 15,
 
 	kScope_X = kScopeTitle_X,
 	kScope_Y = kScopeTitle_Y + kScopeTitle_H,
@@ -111,56 +111,56 @@ const IColor kScopeLineColorLeft(255, 194, 218, 150);
 const IColor kScopeLineColorRight(255, 60, 169, 198);
 
 IText  kExpressionTextStyle(11,
-							&kGreenColor,
-							"Courier",
-							IText::kStyleNormal,
-							IText::kAlignNear,
-							0, // orientation
-							IText::kQualityDefault,
-							&kExprBackgroundColor,
-							&kGreenColor);
+	&kGreenColor,
+	"Courier",
+	IText::kStyleNormal,
+	IText::kAlignNear,
+	0, // orientation
+	IText::kQualityDefault,
+	&kExprBackgroundColor,
+	&kGreenColor);
 
 IText  kExprMsgTextStyle(11,
-						&kTextColor,
-						"Arial",
-						IText::kStyleBold,
-						IText::kAlignNear,
-						0, // orientation
-						IText::kQualityDefault);
+	&kTextColor,
+	"Arial",
+	IText::kStyleBold,
+	IText::kAlignNear,
+	0, // orientation
+	IText::kQualityDefault);
 
 IText  kConsoleTextStyle(11,
-						&kGreenColor,
-						"Courier",
-						IText::kStyleNormal,
-						IText::kAlignNear,
-						0, // orientation
-						IText::kQualityDefault);
+	&kGreenColor,
+	"Courier",
+	IText::kStyleNormal,
+	IText::kAlignNear,
+	0, // orientation
+	IText::kQualityDefault);
 
 IText  kWatchTextStyle(11,
-						&kGreenColor,
-						"Courier",
-						IText::kStyleNormal,
-						IText::kAlignNear,
-						0, // orientation
-						IText::kQualityDefault,
-						&kExprBackgroundColor,
-						&kGreenColor);
+	&kGreenColor,
+	"Courier",
+	IText::kStyleNormal,
+	IText::kAlignNear,
+	0, // orientation
+	IText::kQualityDefault,
+	&kExprBackgroundColor,
+	&kGreenColor);
 
 IText kLabelTextStyle(12,
-					&kTextColor,
-					"Arial",
-					IText::kStyleBold,
-					IText::kAlignCenter,
-					0, // orientation
-					IText::kQualityDefault);
+	&kTextColor,
+	"Arial",
+	IText::kStyleBold,
+	IText::kAlignCenter,
+	0, // orientation
+	IText::kQualityDefault);
 
 IText kTitleTextStyle(16,
-                      &kTextColor,
-                      "Arial",
-                      IText::kStyleBold,
-                      IText::kAlignNear,
-                      0, // orientation
-                      IText::kQualityDefault);
+	&kTextColor,
+	"Arial",
+	IText::kStyleBold,
+	IText::kAlignNear,
+	0, // orientation
+	IText::kQualityDefault);
 
 static const char* kTModeDescription[] = {
 	"increment 't' always",
@@ -170,7 +170,7 @@ static const char* kTModeDescription[] = {
 };
 
 Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
-: mPlug(plug)
+	: mPlug(plug)
 {
 	pGraphics->AttachPanelBackground(&kBackgroundColor);
 
@@ -207,13 +207,13 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 		watchConsole = new ConsoleText(mPlug, MakeIRect(kWatchWindow), &kConsoleTextStyle, &kConsoleBackgroundColor, kConsole_M);
 		pGraphics->AttachControl(watchConsole);
 	}
-	
+
 	// -- Oscilloscope display
 	{
 		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kScopeTitle), &kTitleTextStyle, "SCOPE"));
 		oscilloscope = new Oscilloscope(mPlug, MakeIRect(kScope), &kScopeBackgroundColor, &kScopeLineColorLeft, &kScopeLineColorRight);
 		pGraphics->AttachControl(oscilloscope);
-    
+
 		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kScopeWindowLabel), &kLabelTextStyle, "WINDOW"));
 
 		IRECT updateRect = MakeIRect(kScopeWindow);
@@ -232,11 +232,11 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 
 	//---Volume--------------------
 	{
-    //---Volume Label--------
-    pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kVolumeLabel), &kLabelTextStyle, "VOL"));
-    
+		//---Volume Label--------
+		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kVolumeLabel), &kLabelTextStyle, "VOL"));
+
 		//---Volume Knob-------
-    IColor coronaColor(kGreenColor);
+		IColor coronaColor(kGreenColor);
 		pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, MakeIRect(kVolumeKnob), kGain, &kGreenColor, &coronaColor, 1.5, 0, 14));
 	}
 
@@ -284,7 +284,7 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 		captionRect.L += kProgramLabel_W;
 		captionRect.R += kProgramLabel_W;
 		// some fudge to the top of the rect so this smaller text looks vertically centered on the bigger PROGRAM: label
-		captionRect.T += 2; 
+		captionRect.T += 2;
 		tmodeText = new ITextControl(mPlug, captionRect, &textStyle);
 
 		buttonRect.T = kVolumeKnob_Y;
@@ -376,7 +376,7 @@ void Interface::UpdateOscilloscope(double left, double right)
 
 int Interface::GetOscilloscopeWidth() const
 {
-  return oscilloscope->GetRECT()->W();
+	return oscilloscope->GetRECT()->W();
 }
 
 const char * Interface::GetWatch(int idx) const
@@ -384,7 +384,7 @@ const char * Interface::GetWatch(int idx) const
 	return watches[idx]->GetText();
 }
 
-void Interface::SetWatch(int idx, const char * text) 
+void Interface::SetWatch(int idx, const char * text)
 {
 	if (idx >= 0 && idx < kWatchNum)
 	{

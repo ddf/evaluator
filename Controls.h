@@ -13,76 +13,76 @@
 class ITextEdit : public IControl
 {
 public:
-  ITextEdit(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, const char* str, ETextEntryOptions textEntryOptions);
-  ~ITextEdit();
-  
-// IControl overrides
-  bool Draw(IGraphics* pGraphics) override;
-  void OnMouseDown(int x, int y, IMouseMod* pMod) override;
-  void TextFromTextEntry(const char* txt) override;
-  
-// text accessss
-  const char * GetText() const
-  {
-    return mStr.Get();
-  }
+	ITextEdit(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, const char* str, ETextEntryOptions textEntryOptions);
+	~ITextEdit();
 
-  void SetTextFromPlug(const char * text)
-  {
-	  mStr.Set(text);
-  }
-  
-  int GetTextLength() const
-  {
-    return mStr.GetLength();
-  }
-  
+	// IControl overrides
+	bool Draw(IGraphics* pGraphics) override;
+	void OnMouseDown(int x, int y, IMouseMod* pMod) override;
+	void TextFromTextEntry(const char* txt) override;
+
+	// text accessss
+	const char * GetText() const
+	{
+		return mStr.Get();
+	}
+
+	void SetTextFromPlug(const char * text)
+	{
+		mStr.Set(text);
+	}
+
+	int GetTextLength() const
+	{
+		return mStr.GetLength();
+	}
+
 protected:
-  int        mIdx;
-  WDL_String mStr;
+	int        mIdx;
+	WDL_String mStr;
 };
 
 class ConsoleText : public IControl
 {
 public:
-  ConsoleText(IPlugBase* plug, IRECT pR, IText* textStyle, const IColor* backgroundColor, int margin);
-  
-  bool Draw(IGraphics* pGraphics) override;
-  void SetTextFromPlug(const char * text);
+	ConsoleText(IPlugBase* plug, IRECT pR, IText* textStyle, const IColor* backgroundColor, int margin);
+
+	bool Draw(IGraphics* pGraphics) override;
+	void SetTextFromPlug(const char * text);
 
 private:
-  IPanelControl mPanel;
-  ITextControl  mText;
+	IPanelControl mPanel;
+	ITextControl  mText;
 };
 
 class IIncrementControl : public IBitmapControl
 {
 public:
-  IIncrementControl(IPlugBase* pPlug, int x, int y, int paramIdx, IBitmap* pBitmap, int direction);
-  
-  bool Draw(IGraphics* pGraphics) override;
-  void OnMouseDown(int x, int y, IMouseMod* pMod) override;
-  void OnMouseUp(int x, int y, IMouseMod* pMod) override;
-  
+	IIncrementControl(IPlugBase* pPlug, int x, int y, int paramIdx, IBitmap* pBitmap, int direction);
+
+	bool Draw(IGraphics* pGraphics) override;
+	void OnMouseDown(int x, int y, IMouseMod* pMod) override;
+	void OnMouseUp(int x, int y, IMouseMod* pMod) override;
+
 private:
-  double mInc;
-  int   mPressed;
+	double mInc;
+	int   mPressed;
 };
 
 class KnobLineCoronaControl : public IKnobLineControl
 {
 public:
-  KnobLineCoronaControl(IPlugBase* pPlug, IRECT pR, int paramIdx,
-                   const IColor* pLineColor, const IColor* pCoronaColor,
-                   double coronaThickness, double innerRadius = 0.0, double outerRadius = 0.0,
-                   double minAngle = -0.75 * PI, double maxAngle = 0.75 * PI,
-                   EDirection direction = kVertical, double gearing = DEFAULT_GEARING);
-  
-  bool Draw(IGraphics* pGraphics) override;
-  
+	KnobLineCoronaControl(IPlugBase* pPlug, IRECT pR, int paramIdx,
+		const IColor* pLineColor, const IColor* pCoronaColor,
+		double coronaThickness, double innerRadius = 0.0, double outerRadius = 0.0,
+		double minAngle = -0.75 * PI, double maxAngle = 0.75 * PI,
+		EDirection direction = kVertical, double gearing = DEFAULT_GEARING);
+
+	bool Draw(IGraphics* pGraphics) override;
+
 private:
-  IColor        mCoronaColor;
-  IChannelBlend mCoronaBlend;
+	IColor        mCoronaColor;
+	IChannelBlend mCoronaBlend;
 };
 
 class Oscilloscope : public IControl

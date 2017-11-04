@@ -15,7 +15,7 @@ namespace Presets
 	const TimeType TTProjectTime = TTAlways;
 #endif
 
-	const Data kPresets[] = 
+	const Data kPresets[] =
 	{
 		// name, expression, volume, bit depth
 		//{ "test", "a = n<60 ? t*Fn : #(t*Fn); [0] = [1] = a;", 50, 15, TTWithNoteResetting },
@@ -23,8 +23,8 @@ namespace Presets
 		{ "square wave", "#(t*Fn)", 50, 15, TTWithNoteResetting },
 		{ "sine wave", "$(t*Fn)", 50, 15, TTWithNoteResetting },
 		{ "triangle wave", "T(t*Fn)", 50, 13, TTWithNoteResetting },
-        { "pulse wave", "(w-1)*((t*Fn)%r < 8800)", 50, 15, TTWithNoteResetting },
-        { "ternary arp", "q%64/32 ? t*Fn : t*F(n+12) * (n>0)", 50, 15, TTWithNoteResetting },
+		{ "pulse wave", "(w-1)*((t*Fn)%r < 8800)", 50, 15, TTWithNoteResetting },
+		{ "ternary arp", "q%64/32 ? t*Fn : t*F(n+12) * (n>0)", 50, 15, TTWithNoteResetting },
 		{ "amplitude modulation", "t*Fn | $(t)", 50, 15, TTWithNoteResetting },
 		{ "frequency modulation", "t*Fn + $(t*2)", 50, 15, TTWithNoteResetting },
 		{ "bouncing balls", "$(t*(1000 - m%500))", 50, 15, TTAlways },
