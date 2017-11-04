@@ -80,12 +80,13 @@ private:
   
   // plug state
   Program*				mProgram;
+  int					mProgramMemorySize;
   // will be false if user input produced a compilation error.
   // we want to keep track of this so we don't update the UI in ProcessDoubleReplacing.
   bool					mProgramIsValid;
   double				mGain;
   int					mBitDepth;
-  int           mScopeUpdate;
+  int					mScopeUpdate;
   TimeType				mTimeType;
   Program::Value		mTick;
   IMidiQueue			mMidiQueue;

@@ -15,17 +15,31 @@
 #include <math.h>
 #include <stdlib.h>
 
-Program::Program(const std::vector<Op>& inOps)
+Program::Program(const std::vector<Op>& inOps, const size_t userMemorySize)
 	: ops(inOps)
+	, userMemSize(userMemorySize)
+	, memSize(userMemorySize + 256) // 256 to enough room for all possible values of Char
 {
+	mem = new Value[memSize];
+	memset(mem, 0, sizeof(Value)*memSize);
 	// initialize cc memory space - we want to accurately represent the midi device
 	memset(cc, 0, sizeof(cc));
+	memset(vc, 0, sizeof(vc));
 	// default sample rate so the F operator will function
 	Set('~', 44100);
 }
 
 Program::~Program()
 {
+	delete[] mem;
+}
+
+// static
+Program::Value Program::GetAddress(const Char var, const size_t userMemorySize)
+{
+	// we static cast to unsigned char because we want to convert the variable
+	// to a memory offset that begins at 0.
+	return userMemorySize + static_cast<unsigned char>(var);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -64,6 +78,7 @@ const char * Program::GetErrorString(Program::CompileError error)
 struct CompilationState
 {
 	const Program::Char* const source;
+	const size_t userMemSize;
 	int parsePos;
 	int parenCount;
 	int bracketCount;
@@ -71,8 +86,9 @@ struct CompilationState
 	Program::CompileError error;
 	std::vector<Program::Op> ops;
 
-	CompilationState(const Program::Char* inSource)
+	CompilationState(const Program::Char* inSource, const size_t userMemorySize)
 		: source(inSource)
+		, userMemSize(userMemorySize)
 		, parsePos(0)
 		, parenCount(0)
 		, bracketCount(0)
@@ -94,6 +110,7 @@ struct CompilationState
 	}
 };
 
+// forward declare Parse so that we can recurse back to it from anywhere.
 static int Parse(CompilationState& state);
 
 static int ParseAtom(CompilationState& state)
@@ -178,7 +195,8 @@ static int ParseAtom(CompilationState& state)
 		{
 			const Program::Char var = *state;
 			// push the address of the variable, which peek will need
-			state.Push(Program::Op::NUM, var + 128);
+			const Program::Value varAddress = Program::GetAddress(var, state.userMemSize);
+			state.Push(Program::Op::NUM, varAddress);
 			state.Push(Program::Op::PEK);
 			state.parsePos++;
 		}
@@ -485,10 +503,10 @@ static int Parse(CompilationState& state)
     return 0;
 }
 
-Program* Program::Compile(const Char* source, CompileError& outError, int& outErrorPosition)
+Program* Program::Compile(const Char* source, const size_t userMemorySize, CompileError& outError, int& outErrorPosition)
 {
 	Program* program = nullptr;
-	CompilationState state(source);
+	CompilationState state(source, userMemorySize);
 
 	while (*state != '\0')
 	{
@@ -514,7 +532,7 @@ Program* Program::Compile(const Char* source, CompileError& outError, int& outEr
 	{
 		outError = Program::CE_NONE;
 		outErrorPosition = -1;
-		program = new Program(state.ops);
+		program = new Program(state.ops, userMemorySize);
 	}
 	else
 	{
@@ -885,12 +903,12 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 
 Program::Value Program::Get(const Char var) const
 {
-	return Peek((Value)var + 128);
+	return Peek(GetAddress(var, userMemSize));
 }
 
 void Program::Set(const Char var, const Value value)
 {
-	Poke((Value)var + 128, value);
+	Poke(GetAddress(var, userMemSize), value);
 }
 
 Program::Value Program::GetCC(const Value idx) const
@@ -917,14 +935,14 @@ void Program::SetVC(const Value idx, const Value value)
 Program::Value Program::Peek(const Value address) const
 {
 	// peeks wrap around so we never go outside of our memory space
-	return mem[address%kMemorySize];
+	return mem[address%memSize];
 }
 
 
 void Program::Poke(const Value address, const Value value)
 {
 	// pokes wrap around so we never go outside of our memory space
-	mem[address%kMemorySize] = value;
+	mem[address%memSize] = value;
 }
 
 #pragma endregion

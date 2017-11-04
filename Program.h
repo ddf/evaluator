@@ -88,15 +88,18 @@ public:
 		const Value val;
 	};
 
-	static const uint32_t kMemorySize = 1024 * 4;
-	static const size_t kCCSize = 128;
-	static const size_t kVCSize = 16;
+	// userMemorySize is used to determine the size of read/write memory used by the program.
+	// "user" memory is memory that is accessible only via the @ operator and is otherwise 
+	// not modified by the program (but can be externally modified from C++ by calling Peek).
+	static Program* Compile(const Char* source, const size_t userMemorySize, CompileError& outError, int& outErrorPosition);
+	// get the address in memory of a variable declared in a program with a particular userMemorySize.
+	static Value GetAddress(const Char var, size_t userMemorySize);
 
-	static Program* Compile(const Char* source, CompileError& outError, int& outErrorPosition);
+	// get human-readable descriptions of errors
 	static const char * GetErrorString(CompileError error);
     static const char * GetErrorString(RuntimeError error);
 
-	Program(const std::vector<Op>& inOps);
+	Program(const std::vector<Op>& inOps, const size_t userMemorySize);
 	~Program();
 
 	uint64_t GetInstructionCount() const { return ops.size(); }
@@ -127,13 +130,22 @@ private:
 
 	RuntimeError Exec(const Op& op, Value* results, size_t size);
 
+	static const size_t kCCSize = 128;
+	static const size_t kVCSize = 16;
+
 	// the compiled code
 	std::vector<Op> ops;
-	// the memory space
-	Value mem[kMemorySize];
-	// memory for storing MIDI CC values
+	const size_t userMemSize; // how much of mem is "user" memory
+	const size_t memSize; // the actual size of mem
+	// the memory space - read/write memory for the program (use Peek/Poke from C++)
+	// this includes "user" memory accessible with @, where @0 maps to mem[0]
+	// and also includes "variable" memory accessible with lowercase letters like 'a', 'b', 'c', etc.
+	// it is also possible to access variable values with @ if you know the address of the variable.
+	// for safety, we always wrap the address to the size of the array to prevent invalid access.
+	Value* mem;
+	// memory for storing MIDI CC values - readonly from within a program
 	Value cc[kCCSize];
-	// memory for storing VC values
+	// memory for storing VC values = readonly from within a program
 	Value vc[kVCSize];
 	// the execution stack (reused each time Run is called)
 	std::stack<Value> stack;

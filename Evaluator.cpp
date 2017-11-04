@@ -7,6 +7,7 @@
 Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
 : IPLUG_CTOR(kNumParams, Presets::Count(), instanceInfo)
 , mProgram(0)
+, mProgramMemorySize(0)
 , mProgramIsValid(false)
 , mGain(1.)
 , mBitDepth(15)
@@ -248,9 +249,12 @@ void Evaluator::OnParamChange(int paramIdx)
 		Program::CompileError error;
 		int errorPosition;
 		const char* programText = mInterface->GetProgramText();
-		mProgram = Program::Compile(programText, error, errorPosition);
+		// we get the memory size from the interface because we *might* expose this in the UI.
+		// but I'm not totally convinced there is much utility in doing so.
+		mProgramMemorySize = mInterface->GetProgramMemorySize();
+		mProgram = Program::Compile(programText, mProgramMemorySize, error, errorPosition);
 		// we want to always have a program we can run,
-		// so if compilation fails, we create one that simply evaluates to 0.
+		// so if compilation fails, we create one that simply evaluates to silence.
 		mProgramIsValid = error == Program::CE_NONE;
 		if (!mProgramIsValid)
 		{
@@ -261,13 +265,11 @@ void Evaluator::OnParamChange(int paramIdx)
 				Program::GetErrorString(error),
 				programText + errorPosition);
 			mInterface->SetConsoleText(errorDesc);
-			mProgram = Program::Compile("r/2", error, errorPosition);
+			mProgram = Program::Compile("w/2", 0, error, errorPosition);
 		}
 
 		// initializeeeee
 		mTick = 0;
-		mProgram->Set('n', 0);
-		mProgram->Set('v', 0);
 		for (paramIdx = kVControl0; paramIdx <= kVControl7; ++paramIdx)
 		{
 			Program::Value vidx = paramIdx - kVControl0;

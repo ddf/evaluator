@@ -17,6 +17,7 @@ public:
 	void SetDirty(int paramIdx, bool pushToPlug);
 
 	const char * GetProgramText() const;
+	size_t GetProgramMemorySize() const;
 
 	void SetProgramText(const char * programText);
 	void SetConsoleText(const char * consoleText);

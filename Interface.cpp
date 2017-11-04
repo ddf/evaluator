@@ -349,6 +349,11 @@ const char * Interface::GetProgramText() const
 	return textEdit->GetText();
 }
 
+size_t Interface::GetProgramMemorySize() const
+{
+	return 1024 * 64;
+}
+
 void Interface::SetProgramText(const char * programText)
 {
 	textEdit->TextFromTextEntry(programText);
