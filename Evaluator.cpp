@@ -7,6 +7,7 @@
 Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
 : IPLUG_CTOR(kNumParams, Presets::Count(), instanceInfo)
 , mProgram(0)
+, mProgramIsValid(false)
 , mGain(1.)
 , mBitDepth(15)
 , mScopeUpdate(0)
@@ -28,6 +29,13 @@ Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
 #endif
   
   GetParam(kScopeWindow)->InitDouble("scope window size", 0.5, (double)kScopeWindowMin/1000.0, (double)kScopeWindowMax/1000.0, 0.05, "s");
+
+  char vcName[3];
+  for (int paramIdx = kVControl0; paramIdx <= kVControl7; ++paramIdx)
+  {
+	  sprintf(vcName, "V%d", paramIdx - kVControl0);
+	  GetParam(paramIdx)->InitInt(vcName, kVControlMin, kVControlMin, kVControlMax);
+  }
 
   for (int i = 0; i < Presets::Count(); ++i)
   {
@@ -200,6 +208,7 @@ void Evaluator::Reset()
   {
 	  delete mProgram;
 	  mProgram = nullptr;
+	  mProgramIsValid = false;
   }
   // force recompile
   OnParamChange(kExpression);
@@ -259,6 +268,11 @@ void Evaluator::OnParamChange(int paramIdx)
 		mTick = 0;
 		mProgram->Set('n', 0);
 		mProgram->Set('v', 0);
+		for (paramIdx = kVControl0; paramIdx <= kVControl7; ++paramIdx)
+		{
+			Program::Value vidx = paramIdx - kVControl0;
+			mProgram->SetVC(vidx, GetParam(paramIdx)->Int());
+		}
 		DirtyParameters();
 	}
       break;
@@ -269,6 +283,11 @@ void Evaluator::OnParamChange(int paramIdx)
 			SetWatchText(mInterface);
 			DirtyParameters();
 		}
+		else if (paramIdx >= kVControl0 && paramIdx <= kVControl7 && mProgramIsValid)
+		{
+			Program::Value vidx = paramIdx - kVControl0;
+			mProgram->SetVC(vidx, GetParam(paramIdx)->Int());
+		}
       break;
   }
 }
@@ -277,7 +296,8 @@ void Evaluator::OnParamChange(int paramIdx)
 // i didn't include it at first so unversioned data will have length 
 // of the expression string as the first bit of data.
 static const int kStateFirstVersion = 100000; // add the watch strings to the serialized state
-static const int kStateVersion = kStateFirstVersion;
+static const int kStateVCParams = kStateFirstVersion + 1;
+static const int kStateVersion = kStateVCParams;
 
 void Evaluator::MakePresetFromData(const Presets::Data& data)
 {
@@ -374,10 +394,19 @@ int Evaluator::UnserializeState(ByteChunk* pChunk, int startPos)
 		  }
 	  }
   }
+  else
+  {
+	  for (int i = 0; i < kWatchNum; ++i)
+	  {
+		  mInterface->SetWatch(i, "");
+	  }
+  }
 
   startPos = nextPos;
+
+  const int numParams = version < kStateVCParams ? kScopeWindow + 1 : kNumParams;
   
-  return IPlugBase::UnserializeParams(pChunk, startPos); // must remember to call UnserializeParams at the end
+  return IPlugBase::UnserializeParams(pChunk, startPos, numParams); // must remember to call UnserializeParams at the end
 }
 
 bool Evaluator::CompareState(const unsigned char* incomingState, int startPos)
@@ -493,6 +522,29 @@ void Evaluator::SetWatchText(Interface* forInterface) const
 					}
 				}
 				printTo += sprintf(printTo, "%llu\n", mProgram->GetCC(cc));
+			}
+			else if (watch[0] == 'V')
+			{
+				char var = watch[1];
+				Program::Value vc = 0;
+				if (isalpha(var) && islower(var))
+				{
+					vc = mProgram->Get(var);
+				}
+				else // try to parse the number
+				{
+					const Program::Char* startPtr = watch + 1;
+					Program::Char* endPtr = nullptr;
+					vc = (Program::Value)strtoull(startPtr, &endPtr, 10);
+					// failed to parse a number
+					if (endPtr == startPtr)
+					{
+						//goto nan;
+						printTo += sprintf(printTo, "unknown V control\n");
+						break;
+					}
+				}
+				printTo += sprintf(printTo, "%llu\n", mProgram->GetVC(vc));
 			}
 			else
 			{

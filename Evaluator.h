@@ -14,7 +14,9 @@ enum EParams
 	kGain = 0,
 	kBitDepth = 1,
 	kTimeType = 2, // enumeration to control how we advance 't' in the program
-  kScopeWindow = 3, // amount of time in seconds that the scope window represents
+	kScopeWindow = 3, // amount of time in seconds that the scope window represents
+	kVControl0 = 4,
+	kVControl7 = kVControl0 + 7,
 	kNumParams,
 
 	// used for text edit fields so the UI can call OnParamChange
@@ -27,9 +29,12 @@ enum EParams
 	kBitDepthMin = 1,
 	kBitDepthMax = 24,
   
-  // these are in milliseconds
-  kScopeWindowMin = 1,
-  kScopeWindowMax = 2000
+	// these are in milliseconds
+	kScopeWindowMin = 1,
+	kScopeWindowMax = 2000,
+
+	kVControlMin = 0,
+	kVControlMax = 256
 };
 
 enum TimeType : uint8_t

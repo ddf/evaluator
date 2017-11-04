@@ -76,7 +76,8 @@ public:
 			GET, // get the the current value of a result. eg [0] or [1].
 			PUT, // assign to an output result using [0] = expression.
 			RND, // random number operator - operand is used to wrap value returned by rand() - so like Random.Range(0, operand)
-			CCV, // use the operand to look up the current value of a midi control change
+			CCV, // use the operand to look up the current value of a midi control change value, eg 'a = C1'
+			VCV, // use the operand to look up the current value of a "voltage" control value, eg 'a = V5'
 		};
 
 		// need default constructor or we can't use vector
@@ -88,6 +89,8 @@ public:
 	};
 
 	static const uint32_t kMemorySize = 1024 * 4;
+	static const size_t kCCSize = 128;
+	static const size_t kVCSize = 16;
 
 	static Program* Compile(const Char* source, CompileError& outError, int& outErrorPosition);
 	static const char * GetErrorString(CompileError error);
@@ -109,10 +112,16 @@ public:
 
 	// get the value at this memory address
 	Value Peek(const Value address) const;
+	// set the value at this memory address
 	void  Poke(const Value address, const Value value);
 
+	// get/set a control change. these are accessible in the program with the 'C' operator
 	Value GetCC(const Value idx) const;
 	void  SetCC(const Value idx, const Value value);
+
+	// get/set a "voltage" change. these are accessible in the program with the 'V' operator
+	Value GetVC(const Value idx) const;
+	void  SetVC(const Value idx, const Value value);
 
 private:
 
@@ -123,7 +132,9 @@ private:
 	// the memory space
 	Value mem[kMemorySize];
 	// memory for storing MIDI CC values
-	Value cc[128];
+	Value cc[kCCSize];
+	// memory for storing VC values
+	Value vc[kVCSize];
 	// the execution stack (reused each time Run is called)
 	std::stack<Value> stack;
 };

@@ -104,7 +104,7 @@ static int ParseAtom(CompilationState& state)
 	std::stack<Program::Op::Code> unaryOps;
 
 	Program::Char op = *state;
-	while (op == '-' || op == '+' || op == '$' || op == '#' || op == 'F' || op == 'T' || op == '@' || op == 'R' || op == 'C')
+	while (op == '-' || op == '+' || op == '$' || op == '#' || op == 'F' || op == 'T' || op == '@' || op == 'R' || op == 'C' || op == 'V')
 	{
 		switch (op)
 		{
@@ -117,6 +117,7 @@ static int ParseAtom(CompilationState& state)
 		case '@': unaryOps.push(Program::Op::PEK); break;
 		case 'R': unaryOps.push(Program::Op::RND); break;
 		case 'C': unaryOps.push(Program::Op::CCV); break;
+		case 'V': unaryOps.push(Program::Op::VCV); break;
 		}
 		state.parsePos++;
 		op = *state;
@@ -730,6 +731,13 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 		}
 		break;
 
+		case Op::VCV:
+		{
+			POP1;
+			stack.push(GetVC(a));
+		}
+		break;
+
 		// two operands - both are popped from the stack, result is pushed back on
 		case Op::POK:
 		{
@@ -888,12 +896,22 @@ void Program::Set(const Char var, const Value value)
 Program::Value Program::GetCC(const Value idx) const
 {
 	// prevent array reading overrun by wrapping around, since this is how accessing memory works
-	return cc[idx % 128];
+	return cc[idx % kCCSize];
 }
 
 void Program::SetCC(const Value idx, const Value value)
 {
-	cc[idx % 128] = value;
+	cc[idx % kCCSize] = value;
+}
+
+Program::Value Program::GetVC(const Value idx) const
+{
+	return vc[idx % kVCSize];
+}
+
+void Program::SetVC(const Value idx, const Value value)
+{
+	vc[idx % kVCSize] = value;
 }
 
 Program::Value Program::Peek(const Value address) const

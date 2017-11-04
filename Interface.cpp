@@ -7,8 +7,9 @@ enum ELayout
 {
 	kEditorWidth = GUI_WIDTH,
 	kEditorHeight = GUI_HEIGHT,
+	kEditorMargin = 10,
 
-	kVolumeLabel_X = 10,
+	kVolumeLabel_X = kEditorMargin*2,
 	kVolumeLabel_Y = 10,
 	kVolumeLabel_W = 30,
 	kVolumeLabel_H = 15,
@@ -27,14 +28,21 @@ enum ELayout
 	kTimeType_W = 27 * TTCount,
 	kTimeType_H = kVolumeKnob_H + kVolumeLabel_H,
 
-	kProgramLabel_X = 10,
+	kVControl_W = 30,
+	kVControl_H = 30,
+	kVControl_S = kVControl_W + 10,
+	// x coord of the *first* knob on the left
+	kVControl_X = kEditorWidth - kEditorMargin*2 - kVControl_S*(kVControl7 - kVControl0) - kVControl_W,
+	kVControl_Y = kVolumeKnob_Y,
+
+	kProgramLabel_X = kEditorMargin,
 	kProgramLabel_Y = kVolumeKnob_Y + kVolumeKnob_H + 5,
 	kProgramLabel_W = 75,
 	kProgramLabel_H = 17,
 
-	kProgramText_X = 10,
+	kProgramText_X = kEditorMargin,
 	kProgramText_Y = kProgramLabel_Y + kProgramLabel_H,
-	kProgramText_W = kEditorWidth - 20,
+	kProgramText_W = kEditorWidth - kEditorMargin*2,
 	kProgramText_H = 200,
 
 	kConsoleTitle_X = kProgramText_X,
@@ -209,7 +217,7 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kScopeWindowLabel), &kLabelTextStyle, "WINDOW"));
 
 		IRECT updateRect = MakeIRect(kScopeWindow);
-		IControl* updateControl = new KnobLineCoronaControl(mPlug, updateRect, kScopeWindow, &kGreenColor, &kGreenColor, 1);
+		IControl* updateControl = new KnobLineCoronaControl(mPlug, updateRect, kScopeWindow, &kGreenColor, &kGreenColor, 0.5);
 
 		int w = updateRect.W() + 15;
 		updateRect.L += w;
@@ -229,7 +237,7 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
     
 		//---Volume Knob-------
     IColor coronaColor(kGreenColor);
-		pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, MakeIRect(kVolumeKnob), kGain, &kGreenColor, &coronaColor, 1.5));
+		pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, MakeIRect(kVolumeKnob), kGain, &kGreenColor, &coronaColor, 1.5, 0, 14));
 	}
 
 	//---Bit Depth--------------
@@ -286,6 +294,26 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 		pGraphics->AttachControl(label);
 		pGraphics->AttachControl(radios);
 		pGraphics->AttachControl(tmodeText);
+	}
+
+	// ---V Control Knobs-------------------------
+	{
+		IRECT knobRect = MakeIRect(kVControl);
+		IRECT labelRect = MakeIRect(kVolumeLabel);
+		for (int paramIdx = kVControl0; paramIdx <= kVControl7; ++paramIdx)
+		{
+			labelRect.L = knobRect.L;
+			labelRect.R = knobRect.R;
+
+			ITextControl* label = new ITextControl(mPlug, labelRect, &kLabelTextStyle, mPlug->GetParam(paramIdx)->GetNameForHost());
+			KnobLineCoronaControl* knob = new KnobLineCoronaControl(mPlug, knobRect, paramIdx, &kGreenColor, &kGreenColor, 1.5, 0, 14);
+
+			pGraphics->AttachControl(label);
+			pGraphics->AttachControl(knob);
+
+			knobRect.L += kVControl_S;
+			knobRect.R += kVControl_S;
+		}
 	}
 }
 
