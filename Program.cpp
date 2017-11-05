@@ -511,6 +511,12 @@ Program* Program::Compile(const Char* source, const size_t userMemorySize, Compi
 	while (*state != '\0')
 	{
 		if (Parse(state)) break;
+		// if we aren't at the end yet, we should have a POP as the last op.
+		if (*state != '\0' && state.ops.back().code != Op::POP)
+		{
+			state.error = CE_UNEXPECTED_CHAR;
+			break;
+		}
 	}
 
 	// final error checking
@@ -519,18 +525,18 @@ Program* Program::Compile(const Char* source, const size_t userMemorySize, Compi
 		// Now, expr should point to '\0', and _paren_count should be zero
 		if (state.parenCount != 0 || *state == ')')
 		{
-			state.error = Program::CE_MISSING_PAREN;
+			state.error = CE_MISSING_PAREN;
 		}
 		else if (*state != '\0')
 		{
-			state.error = Program::CE_UNEXPECTED_CHAR;
+			state.error = CE_UNEXPECTED_CHAR;
 		}
 	}
 
 	// now create a program or don't
 	if (state.error == CE_NONE)
 	{
-		outError = Program::CE_NONE;
+		outError = CE_NONE;
 		outErrorPosition = -1;
 		program = new Program(state.ops, userMemorySize);
 	}
