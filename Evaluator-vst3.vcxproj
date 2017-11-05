@@ -163,7 +163,7 @@
     </Link>
     <PostBuildEvent>
       <Command>echo Post-Build: copy 32bit binary to 32bit VST3 Plugins folder ... ...
-copy /y "$(TargetPath)" "$(VST3_32_PATH)\Evaluator.vst3"</Command>
+copy /y "$(TargetPath)" "S:\VST\Evaluator.vst3"</Command>
       <Message>Copy VST3 Binary to VST3 Plugins folder</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -184,7 +184,7 @@ copy /y "$(TargetPath)" "$(VST3_32_PATH)\Evaluator.vst3"</Command>
     </Link>
     <PostBuildEvent>
       <Command>echo Post-Build: copy 64bit binary to 64bit VST3 Plugins folder ...
-if exist "%programfiles(x86)%" (copy /y "$(TargetPath)" "$(VST3_64_PATH)\Evaluator.vst3") else (echo Not copying 64bit binary - 32bit OS detected)</Command>
+copy /y "$(TargetPath)" "S:\VST\x64\Evaluator.vst3"</Command>
       <Message>Copy VST3 Binary to VST3 Plugins folder</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -210,7 +210,7 @@ if exist "%programfiles(x86)%" (copy /y "$(TargetPath)" "$(VST3_64_PATH)\Evaluat
     </Link>
     <PostBuildEvent>
       <Command>echo Post-Build: copy 32bit binary to 32bit VST3 Plugins folder ... ...
-copy /y "$(TargetPath)" "$(VST3_32_PATH)\Evaluator.vst3"</Command>
+copy /y "$(TargetPath)" "S:\VST\Evaluator.vst3"</Command>
       <Message>Copy VST3 Binary to VST3 Plugins folder</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -236,7 +236,7 @@ copy /y "$(TargetPath)" "$(VST3_32_PATH)\Evaluator.vst3"</Command>
     </Link>
     <PostBuildEvent>
       <Command>echo Post-Build: copy 64bit binary to 64bit VST3 Plugins folder ...
-if exist "%programfiles(x86)%" (copy /y "$(TargetPath)" "$(VST3_64_PATH)\Evaluator.vst3") else (echo Not copying 64bit binary - 32bit OS detected)</Command>
+copy /y "$(TargetPath)" "S:\VST\x64\Evaluator.vst3"</Command>
       <Message>Copy VST3 Binary to VST3 Plugins folder</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -261,7 +261,7 @@ if exist "%programfiles(x86)%" (copy /y "$(TargetPath)" "$(VST3_64_PATH)\Evaluat
     </Link>
     <PostBuildEvent>
       <Command>echo Post-Build: copy 32bit binary to 32bit VST3 Plugins folder ... ...
-copy /y "$(TargetPath)" "$(VST3_32_PATH)\Evaluator.vst3"</Command>
+copy /y "$(TargetPath)" "S:\VST\Evaluator.vst3"</Command>
       <Message>Copy VST3 Binary to VST3 Plugins folder</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -286,7 +286,7 @@ copy /y "$(TargetPath)" "$(VST3_32_PATH)\Evaluator.vst3"</Command>
     </Link>
     <PostBuildEvent>
       <Command>echo Post-Build: copy 64bit binary to 64bit VST3 Plugins folder ...
-if exist "%programfiles(x86)%" (copy /y "$(TargetPath)" "$(VST3_64_PATH)\Evaluator.vst3") else (echo Not copying 64bit binary - 32bit OS detected)</Command>
+copy /y "$(TargetPath)" "S:\VST\x64\Evaluator.vst3"</Command>
       <Message>Copy VST3 Binary to VST3 Plugins folder</Message>
     </PostBuildEvent>
   </ItemDefinitionGroup>
@@ -323,7 +323,11 @@ if exist "%programfiles(x86)%" (copy /y "$(TargetPath)" "$(VST3_64_PATH)\Evaluat
     <ClInclude Include="..\..\VST3_SDK\public.sdk\source\vst\vstparameters.h" />
     <ClInclude Include="..\..\VST3_SDK\public.sdk\source\vst\vstsinglecomponenteffect.h" />
     <ClInclude Include="..\..\WDL\IPlug\IPlugVST3.h" />
+    <ClInclude Include="Controls.h" />
     <ClInclude Include="Evaluator.h" />
+    <ClInclude Include="Interface.h" />
+    <ClInclude Include="Presets.h" />
+    <ClInclude Include="Program.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
@@ -340,7 +344,11 @@ if exist "%programfiles(x86)%" (copy /y "$(TargetPath)" "$(VST3_64_PATH)\Evaluat
     <ClCompile Include="..\..\VST3_SDK\public.sdk\source\vst\vstparameters.cpp" />
     <ClCompile Include="..\..\VST3_SDK\public.sdk\source\vst\vstsinglecomponenteffect.cpp" />
     <ClCompile Include="..\..\WDL\IPlug\IPlugVST3.cpp" />
+    <ClCompile Include="Controls.cpp" />
     <ClCompile Include="Evaluator.cpp" />
+    <ClCompile Include="Interface.cpp" />
+    <ClCompile Include="Presets.cpp" />
+    <ClCompile Include="Program.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Evaluator.rc" />

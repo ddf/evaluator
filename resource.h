@@ -83,7 +83,7 @@ instrument determined by PLUG _IS _INST
 // vst3 stuff
 #define MFR_URL "www.compartmental.net"
 #define MFR_EMAIL "info@compartmental.net"
-#define EFFECT_TYPE_VST3 "Fx|Instrument"
+#define EFFECT_TYPE_VST3 "Fx|Generator"
 
 /* "Fx|Analyzer"", "Fx|Delay", "Fx|Distortion", "Fx|Dynamics", "Fx|EQ", "Fx|Filter",
 "Fx", "Fx|Instrument", "Fx|InstrumentExternal", "Fx|Spatial", "Fx|Generator",

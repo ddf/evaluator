@@ -308,9 +308,14 @@ void Evaluator::MakePresetFromData(const Presets::Data& data)
 	GetParam(kBitDepth)->Set(data.bitDepth);
 	GetParam(kTimeType)->Set(data.timeType);
 
+	for (int paramIdx = kVControl0; paramIdx <= kVControl7; ++paramIdx)
+	{
+		GetParam(paramIdx)->Set(0);
+	}
+
 	// create serialized version
 	ByteChunk chunk;
-	chunk.Put(&kStateFirstVersion);
+	chunk.Put(&kStateVersion);
 	chunk.PutStr(data.program);
 	int watchNum = kWatchNum;
 	chunk.Put(&watchNum);
