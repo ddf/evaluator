@@ -243,7 +243,9 @@ LoadButton::LoadButton(IPlugBase* pPlug, int x, int y, IBitmap* pButtonBack, ITe
 bool LoadButton::Draw(IGraphics* pGraphics)
 {
 	pGraphics->DrawBitmap(&mBitmap, &mButtonRect, 1, &mBlend);
-	pGraphics->DrawIText(&mButtonText, "LOAD...", &mButtonRect);
+	IRECT textRect(mButtonRect);
+	textRect.T += 2; // fudge so the text looks vertically centered
+	pGraphics->DrawIText(&mButtonText, "LOAD...", &textRect);
 
 	if (mState == kOpen)
 	{

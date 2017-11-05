@@ -9,8 +9,13 @@ enum ELayout
 	kEditorHeight = GUI_HEIGHT,
 	kEditorMargin = 10,
 
+	kPlugName_X = kEditorMargin,
+	kPlugName_Y = 10,
+	kPlugName_W = 100,
+	kPlugName_H = 25,
+
 	kVolumeLabel_X = kEditorMargin * 2,
-	kVolumeLabel_Y = 10,
+	kVolumeLabel_Y = kPlugName_Y + kPlugName_H,
 	kVolumeLabel_W = 30,
 	kVolumeLabel_H = 15,
 
@@ -102,7 +107,7 @@ enum ELayout
 	kScope_X = kScopeTitle_X,
 	kScope_Y = kScopeTitle_Y + kScopeTitle_H,
 	kScope_W = kProgramText_W,
-	kScope_H = 150,
+	kScope_H = 125,
 
 	kPresetPopup_X = 30,
 	kPresetPopup_Y = kProgramText_Y,
@@ -115,6 +120,7 @@ const IColor kBackgroundColor(255, 19, 44, 34);
 const IColor kExprBackgroundColor(255, 32, 56, 59);
 const IColor kTextColor(255, 218, 228, 226);
 const IColor kGreenColor(255, 52, 209, 112);
+const IColor kPlugNameColor(255, 62, 86, 89);
 const IColor kConsoleBackgroundColor(255, 11, 26, 19);
 const IColor kScopeBackgroundColor(255, 14, 21, 26);
 const IColor kScopeLineColorLeft(255, 194, 218, 150);
@@ -183,6 +189,12 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 	: mPlug(plug)
 {
 	pGraphics->AttachPanelBackground(&kBackgroundColor);
+
+	//--  Name of the plug and version
+	{
+		IText titleStyle(20, &kPlugNameColor, "Arial", IText::kStyleBold, IText::kAlignNear, 0, IText::kQualityDefault);
+		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kPlugName), &titleStyle, PLUG_NAME " " VST3_VER_STR));
+	}
 
 	//--- Text input for the expression ------
 	{
