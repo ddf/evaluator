@@ -40,8 +40,14 @@ enum ELayout
 	kProgramLabel_W = 75,
 	kProgramLabel_H = 17,
 
+	// additional T-MODE label that appears under PROGRAM and will be followed by a description of the current mode
+	kTModeLabel_X = kEditorMargin,
+	kTModeLabel_Y = kProgramLabel_Y + kProgramLabel_H,
+	kTModeLabel_H = kProgramLabel_H,
+	kTModeLabel_W = 45,
+
 	kProgramText_X = kEditorMargin,
-	kProgramText_Y = kProgramLabel_Y + kProgramLabel_H,
+	kProgramText_Y = kTModeLabel_Y + kTModeLabel_H,
 	kProgramText_W = kEditorWidth - kEditorMargin * 2,
 	kProgramText_H = 200,
 
@@ -181,7 +187,18 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 	//--- Text input for the expression ------
 	{
 		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kProgramLabel), &kTitleTextStyle, "PROGRAM:"));
-		textEdit = new ITextEdit(mPlug, MakeIRect(kProgramText), kExpression, &kExpressionTextStyle, "t*128", ETextEntryOptions(kTextEntryMultiline | kTextEntryEnterKeyInsertsCR));
+
+		IRECT captionRect = MakeIRect(kProgramLabel);
+		captionRect.L += kProgramLabel_W;
+		captionRect.R += kProgramLabel_W;
+		// some fudge to the top of the rect so this smaller text looks vertically centered on the bigger PROGRAM: label
+		captionRect.T += 2;
+		IText textStyle = kLabelTextStyle;
+		textStyle.mAlign = IText::kAlignNear;
+		programName = new ITextControl(mPlug, captionRect, &textStyle);
+		pGraphics->AttachControl(programName);
+
+		textEdit = new ITextEdit(mPlug, MakeIRect(kProgramText), kExpression, &kExpressionTextStyle, "", ETextEntryOptions(kTextEntryMultiline | kTextEntryEnterKeyInsertsCR));
 		pGraphics->AttachControl(textEdit);
 	}
 
@@ -279,17 +296,8 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 	{
 		IBitmap radioButton = pGraphics->LoadIBitmap(RADIO_BUTTON_ID, RADIO_BUTTON_FN, 2);
 		IRECT buttonRect = MakeIRect(kTimeType);
-		IText textStyle = kLabelTextStyle;
-		textStyle.mAlign = IText::kAlignNear;
 
 		ITextControl* label = new ITextControl(mPlug, buttonRect, &kLabelTextStyle, "T-MODE");
-
-		IRECT captionRect = MakeIRect(kProgramLabel);
-		captionRect.L += kProgramLabel_W;
-		captionRect.R += kProgramLabel_W;
-		// some fudge to the top of the rect so this smaller text looks vertically centered on the bigger PROGRAM: label
-		captionRect.T += 2;
-		tmodeText = new ITextControl(mPlug, captionRect, &textStyle);
 
 		buttonRect.T = kVolumeKnob_Y;
 		buttonRect.B = kVolumeKnob_Y + kVolumeKnob_H;
@@ -297,6 +305,20 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 
 		pGraphics->AttachControl(label);
 		pGraphics->AttachControl(radios);
+	}
+
+	// ---T-MODE label
+	{
+		IText textStyle = kLabelTextStyle;
+		textStyle.mAlign = IText::kAlignNear;
+
+		IRECT captionRect = MakeIRect(kTModeLabel);
+		pGraphics->AttachControl(new ITextControl(mPlug, captionRect, &textStyle, "T-MODE:"));
+
+		captionRect.L += kTModeLabel_W;
+		captionRect.R += kTModeLabel_W;
+		tmodeText = new ITextControl(mPlug, captionRect, &textStyle);
+
 		pGraphics->AttachControl(tmodeText);
 	}
 
@@ -325,7 +347,7 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 		IBitmap loadButton = pGraphics->LoadIBitmap(BUTTON_BACK_ID, BUTTON_BACK_FN);
 		const int buttonX = kEditorWidth - kEditorMargin - loadButton.W;
 		const int buttonY = kProgramText_Y - loadButton.H - 5;
-		pGraphics->AttachControl(new LoadButton(mPlug, buttonX, buttonY, &loadButton, &kLabelTextStyle, MakeIRect(kPresetPopup), &kConsoleTextStyle, textEdit));
+		pGraphics->AttachControl(new LoadButton(mPlug, buttonX, buttonY, &loadButton, &kLabelTextStyle, MakeIRect(kPresetPopup), &kConsoleTextStyle, this));
 	}
 }
 
@@ -366,6 +388,16 @@ size_t Interface::GetProgramMemorySize() const
 	return 1024 * 64;
 }
 
+void Interface::SetProgramName(const char* name)
+{
+	programName->SetTextFromPlug(const_cast<char*>(name));
+}
+
+const char * Interface::GetProgramName() const
+{
+	return programName->GetText();
+}
+
 void Interface::SetProgramText(const char * programText)
 {
 	textEdit->TextFromTextEntry(programText);
@@ -402,4 +434,10 @@ void Interface::SetWatch(int idx, const char * text)
 	{
 		watches[idx]->SetTextFromPlug(text);
 	}
+}
+
+void Interface::LoadPreset(int idx)
+{
+	mPlug->RestorePreset(idx);
+	mPlug->InformHostOfProgramChange();
 }

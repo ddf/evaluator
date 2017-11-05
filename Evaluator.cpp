@@ -300,7 +300,8 @@ void Evaluator::OnParamChange(int paramIdx)
 // of the expression string as the first bit of data.
 static const int kStateFirstVersion = 100000; // add the watch strings to the serialized state
 static const int kStateVCParams = kStateFirstVersion + 1;
-static const int kStateVersion = kStateVCParams;
+static const int kStateProgramName = kStateVCParams + 1;
+static const int kStateVersion = kStateProgramName;
 
 void Evaluator::MakePresetFromData(const Presets::Data& data)
 {
@@ -324,6 +325,7 @@ void Evaluator::MakePresetFromData(const Presets::Data& data)
 	{
 		chunk.PutStr("");
 	}
+	chunk.PutStr(data.name);
 	IPlugBase::SerializeParams(&chunk);
 
 	// create it - const cast on data.name because this method take char*, even though it doesn't change it
@@ -340,6 +342,7 @@ void Evaluator::SerializeOurState(ByteChunk* pChunk)
 	{
 		pChunk->PutStr(mInterface->GetWatch(i));
 	}
+	pChunk->PutStr(mInterface->GetProgramName());
 }
 
 // this over-ridden method is called when the host is trying to store the plug-in state and needs to get the current data from your algorithm
@@ -407,6 +410,22 @@ int Evaluator::UnserializeState(ByteChunk* pChunk, int startPos)
 		for (int i = 0; i < kWatchNum; ++i)
 		{
 			mInterface->SetWatch(i, "");
+		}
+	}
+
+	startPos = nextPos;
+
+	if (version >= kStateProgramName)
+	{
+		stringData.Set("");
+		nextPos = pChunk->GetStr(&stringData, startPos);
+		if (nextPos > startPos)
+		{
+			mInterface->SetProgramName(stringData.Get());
+		}
+		else
+		{
+			mInterface->SetProgramName("");
 		}
 	}
 

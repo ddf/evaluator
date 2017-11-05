@@ -19,6 +19,9 @@ public:
 	const char * GetProgramText() const;
 	size_t GetProgramMemorySize() const;
 
+	void SetProgramName(const char * programName);
+	const char * GetProgramName() const;
+
 	void SetProgramText(const char * programText);
 	void SetConsoleText(const char * consoleText);
 	void SetWatchText(const char* watchText);
@@ -29,11 +32,15 @@ public:
 	const char * GetWatch(int idx) const;
 	void SetWatch(int idx, const char * text);
 
+	// made this so that the interface can update the program name when we load a preset
+	void LoadPreset(int idx);
+
 private:
 
 	Evaluator* mPlug;
 
 	ITextEdit*		textEdit;
+	ITextControl*	programName;
 	ITextControl*   tmodeText;
 	ConsoleText*	consoleTextControl;
 	ITextEdit**		watches;

@@ -9,6 +9,8 @@
 
 #include "IControl.h"
 
+class Interface;
+
 // originally cribbed from the IPlugEEL example
 class ITextEdit : public IControl
 {
@@ -108,7 +110,7 @@ private:
 class LoadButton : public IBitmapControl
 {
 public:
-	LoadButton(IPlugBase* pPlug, int x, int y, IBitmap* pButtonBack, IText* pButtonTextStyle, IRECT menuRect, IText* pMenuTextStyle, ITextEdit* pFileTarget);
+	LoadButton(IPlugBase* pPlug, int x, int y, IBitmap* pButtonBack, IText* pButtonTextStyle, IRECT menuRect, IText* pMenuTextStyle, Interface* pInterface);
 
 	bool Draw(IGraphics* pGraphics) override;
 	void OnMouseDown(int x, int y, IMouseMod* pMod) override;
@@ -123,7 +125,7 @@ private:
 	} 
 	mState;
 
-	ITextEdit* mFileTarget;
+	Interface* mInterface;
 	IRECT mButtonRect; // where the button goes
 	IRECT mMenuRect; // where the menu goes
 	// rects for all the selections in the menu

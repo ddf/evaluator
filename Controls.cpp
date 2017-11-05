@@ -8,6 +8,7 @@
 #include "Controls.h"
 
 #include "Evaluator.h"
+#include "Interface.h"
 #include "Presets.h"
 
 ////////////////////////////////////////////
@@ -213,14 +214,14 @@ void Oscilloscope::AddSample(double left, double right)
 //////////////////////////////////////////
 // Load Button
 static const int kMenuPadding = 5;
-LoadButton::LoadButton(IPlugBase* pPlug, int x, int y, IBitmap* pButtonBack, IText* pButtonTextStyle, IRECT menuRect, IText* pMenuTextStyle, ITextEdit* pFileTarget)
+LoadButton::LoadButton(IPlugBase* pPlug, int x, int y, IBitmap* pButtonBack, IText* pButtonTextStyle, IRECT menuRect, IText* pMenuTextStyle, Interface* pInterface)
 	: IBitmapControl(pPlug, x, y, -1, pButtonBack)
 	, mState(kClosed)
 	, mButtonRect(x,y,pButtonBack)
 	, mMenuRect(menuRect.GetPadded(kMenuPadding))
 	, mButtonText(*pButtonTextStyle)
 	, mMenuText(*pMenuTextStyle)
-	, mFileTarget(pFileTarget)
+	, mInterface(pInterface)
 {
 	// we make the entire window our rect, otherwise our background fade doesn't render correctly
 	mRECT = IRECT(0, 0, GUI_WIDTH, GUI_HEIGHT);
@@ -298,7 +299,7 @@ void LoadButton::OnMouseDown(int x, int y, IMouseMod* pMod)
 		{
 			if (mSelection < Presets::Count())
 			{
-				mPlug->RestorePreset(mSelection);
+				mInterface->LoadPreset(mSelection);
 			}
 			else
 			{
@@ -323,8 +324,11 @@ void LoadButton::OnMouseDown(int x, int y, IMouseMod* pMod)
 						fclose(fp);
 
 						contents[fileSize] = 0;
-
-						mFileTarget->TextFromTextEntry(contents);
+						
+						mInterface->SetProgramName(fileName.get_filepart());
+						mInterface->SetProgramText(contents);
+						// note: for some reason this doesn't set the Reaper project as modified in this case.
+						mPlug->DirtyParameters();
 						delete[] contents;
 					}
 				}
