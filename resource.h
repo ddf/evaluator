@@ -61,6 +61,7 @@ instrument determined by PLUG _IS _INST
 #define NUMBERBOX_ARROW_DOWN_ID 105
 #define NUMBERBOX_BACK_ID 106
 #define RADIO_BUTTON_ID 107
+#define BUTTON_BACK_ID 108
 
 // Image resource locations for this plug.
 #define BACKGROUND_FN "resources/img/background.png"
@@ -70,6 +71,7 @@ instrument determined by PLUG _IS _INST
 #define NUMBERBOX_ARROW_DOWN_FN "resources/img/numberbox_arrow_down.png"
 #define NUMBERBOX_BACK_FN "resources/img/numberbox_background.png"
 #define RADIO_BUTTON_FN "resources/img/radio_button.png"
+#define BUTTON_BACK_FN "resources/img/button_background.png"
 
 // GUI default dimensions
 #define GUI_WIDTH 640

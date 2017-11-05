@@ -91,7 +91,7 @@ public:
 	Oscilloscope(IPlugBase* pPlug, IRECT pR, const IColor* backgroundColor, const IColor* lineColorLeft, const IColor* lineColorRight);
 	~Oscilloscope();
 
-	bool Draw(IGraphics* PGraphics) override;
+	bool Draw(IGraphics* pGraphics) override;
 
 	void AddSample(double left, double right);
 
@@ -103,4 +103,32 @@ private:
 	double* mBuffer;
 	int		mBufferSize;
 	int		mBufferBegin;
+};
+
+class LoadButton : public IBitmapControl
+{
+public:
+	LoadButton(IPlugBase* pPlug, int x, int y, IBitmap* pButtonBack, IText* pButtonTextStyle, IRECT menuRect, IText* pMenuTextStyle, ITextEdit* pFileTarget);
+
+	bool Draw(IGraphics* pGraphics) override;
+	void OnMouseDown(int x, int y, IMouseMod* pMod) override;
+	void OnMouseOver(int x, int y, IMouseMod* pMod) override;
+
+private:
+
+	enum
+	{
+		kClosed,
+		kOpen,
+	} 
+	mState;
+
+	ITextEdit* mFileTarget;
+	IRECT mButtonRect; // where the button goes
+	IRECT mMenuRect; // where the menu goes
+	// rects for all the selections in the menu
+	WDL_TypedBuf<IRECT> mRECTs;
+	IText mButtonText;
+	IText mMenuText;
+	int mSelection;
 };

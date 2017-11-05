@@ -98,6 +98,10 @@ enum ELayout
 	kScope_W = kProgramText_W,
 	kScope_H = 150,
 
+	kPresetPopup_X = 30,
+	kPresetPopup_Y = kProgramText_Y,
+	kPresetPopup_W = kEditorWidth - kPresetPopup_X * 2,
+	kPresetPopup_H = kProgramText_H + kConsole_H,
 };
 
 // note: ICOLOR is ARGB
@@ -314,6 +318,14 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 			knobRect.L += kVControl_S;
 			knobRect.R += kVControl_S;
 		}
+	}
+
+	// --- Load Button ---------------------------
+	{
+		IBitmap loadButton = pGraphics->LoadIBitmap(BUTTON_BACK_ID, BUTTON_BACK_FN);
+		const int buttonX = kEditorWidth - kEditorMargin - loadButton.W;
+		const int buttonY = kProgramText_Y - loadButton.H - 5;
+		pGraphics->AttachControl(new LoadButton(mPlug, buttonX, buttonY, &loadButton, &kLabelTextStyle, MakeIRect(kPresetPopup), &kConsoleTextStyle, textEdit));
 	}
 }
 

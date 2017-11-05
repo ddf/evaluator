@@ -26,6 +26,8 @@ enum EParams
 	kWatch = 202, // starting paramIdx for watches
 	kWatchNum = 10, // total number of watches available
 
+	kPresetPopup = 303, // used for the preset popup menu
+
 	kBitDepthMin = 1,
 	kBitDepthMax = 24,
 

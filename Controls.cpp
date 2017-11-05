@@ -8,6 +8,7 @@
 #include "Controls.h"
 
 #include "Evaluator.h"
+#include "Presets.h"
 
 ////////////////////////////////////////////
 // ITextEdit
@@ -206,3 +207,147 @@ void Oscilloscope::AddSample(double left, double right)
 	mBufferBegin = (mBufferBegin + 2) % mBufferSize;
 	SetDirty(false);
 }
+//
+//////////////////////////////////////////
+
+//////////////////////////////////////////
+// Load Button
+static const int kMenuPadding = 5;
+LoadButton::LoadButton(IPlugBase* pPlug, int x, int y, IBitmap* pButtonBack, IText* pButtonTextStyle, IRECT menuRect, IText* pMenuTextStyle, ITextEdit* pFileTarget)
+	: IBitmapControl(pPlug, x, y, -1, pButtonBack)
+	, mState(kClosed)
+	, mButtonRect(x,y,pButtonBack)
+	, mMenuRect(menuRect.GetPadded(kMenuPadding))
+	, mButtonText(*pButtonTextStyle)
+	, mMenuText(*pMenuTextStyle)
+	, mFileTarget(pFileTarget)
+{
+	// we make the entire window our rect, otherwise our background fade doesn't render correctly
+	mRECT = IRECT(0, 0, GUI_WIDTH, GUI_HEIGHT);
+	// but only our button should get mouse clicks to begin with
+	SetTargetArea(mButtonRect);
+	mMenuRect.T += kMenuPadding;
+	mMenuRect.B += kMenuPadding;
+	mDisablePrompt = true;
+	const int selectionCount = Presets::Count() + 1;
+	const int selectionHeight = menuRect.H() / selectionCount;
+	for (int i = 0; i < selectionCount; ++i)
+	{
+		const int T = mMenuRect.T + kMenuPadding + i*selectionHeight;
+		IRECT rect = IRECT(menuRect.L + kMenuPadding, T, menuRect.R - kMenuPadding, T + selectionHeight);
+		mRECTs.Add(rect);
+	}
+}
+
+bool LoadButton::Draw(IGraphics* pGraphics)
+{
+	pGraphics->DrawBitmap(&mBitmap, &mButtonRect, 1, &mBlend);
+	pGraphics->DrawIText(&mButtonText, "LOAD...", &mButtonRect);
+
+	if (mState == kOpen)
+	{
+		IColor fadeColor(128, 0, 0, 0);
+		pGraphics->FillIRect(&fadeColor, &mTargetRECT);
+		pGraphics->FillIRect(&COLOR_BLACK, &mMenuRect);
+		pGraphics->DrawRect(&mMenuText.mColor, &mMenuRect);
+		IColor selectionColor(255, 30, 30, 30);
+		for (int i = 0; i < mRECTs.GetSize(); ++i)
+		{
+			IRECT itemRect = mRECTs.Get()[i];
+			if (i == mSelection)
+			{
+				IRECT itemBack(itemRect);
+				itemBack.L -= 2;
+				itemBack.R += 2;
+				pGraphics->FillIRect(&selectionColor, &itemBack);
+			}
+			if (i < Presets::Count())
+			{
+				pGraphics->DrawIText(&mMenuText, const_cast<char*>(Presets::Get(i).name), &itemRect);
+			}
+			else
+			{
+				pGraphics->DrawIText(&mMenuText, "load from file...", &itemRect);
+			}
+		}
+
+		Redraw();
+	}
+
+	return true;
+}
+
+void LoadButton::OnMouseDown(int x, int y, IMouseMod* pMod)
+{
+	switch (mState)
+	{
+	case kClosed:
+		mState = kOpen;
+		// now we want to capture the mouse in the entire window
+		SetTargetArea(mRECT);
+		mSelection = -1;
+		SetDirty(false);
+		mPlug->GetGUI()->HandleMouseOver(true);
+		break;
+
+	case kOpen:
+		mState = kClosed;
+		SetTargetArea(mButtonRect);
+		SetDirty(false);
+		if (mSelection >= 0 )
+		{
+			if (mSelection < Presets::Count())
+			{
+				mPlug->RestorePreset(mSelection);
+			}
+			else
+			{
+				WDL_String fileName("");
+				WDL_String directory("");
+				mPlug->GetGUI()->PromptForFile(&fileName, kFileOpen, &directory, "txt");
+				if (fileName.GetLength() > 0)
+				{
+					FILE* fp = fopen(fileName.Get(), "rb");
+
+					if (fp)
+					{
+						long fileSize;
+
+						fseek(fp, 0, SEEK_END);
+						fileSize = ftell(fp);
+						rewind(fp);
+
+						char* contents = new char[fileSize+1];
+						fread(contents, fileSize, 1, fp);
+
+						fclose(fp);
+
+						contents[fileSize] = 0;
+
+						mFileTarget->TextFromTextEntry(contents);
+						delete[] contents;
+					}
+				}
+			}
+		}
+		mPlug->GetGUI()->HandleMouseOver(false);
+		break;
+	}
+}
+
+void LoadButton::OnMouseOver(int x, int y, IMouseMod* pMod)
+{
+	if (mState == kOpen)
+	{
+		mSelection = -1;
+		for (int i = 0; i < mRECTs.GetSize(); ++i)
+		{
+			if (mRECTs.Get()[i].Contains(x, y))
+			{
+				mSelection = i;
+			}
+		}
+	}
+}
+//
+//////////////////////////////////////////
