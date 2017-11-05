@@ -275,7 +275,7 @@ void Evaluator::OnParamChange(int paramIdx)
 			Program::Value vidx = paramIdx - kVControl0;
 			mProgram->SetVC(vidx, GetParam(paramIdx)->Int());
 		}
-		DirtyParameters();
+		RedrawParamControls();
 	}
 	break;
 
@@ -283,12 +283,13 @@ void Evaluator::OnParamChange(int paramIdx)
 		if (paramIdx >= kWatch && paramIdx < kWatch + kWatchNum && mInterface != nullptr)
 		{
 			SetWatchText(mInterface);
-			DirtyParameters();
+			RedrawParamControls();
 		}
 		else if (paramIdx >= kVControl0 && paramIdx <= kVControl7 && mProgramIsValid)
 		{
 			Program::Value vidx = paramIdx - kVControl0;
 			mProgram->SetVC(vidx, GetParam(paramIdx)->Int());
+			RedrawParamControls();
 		}
 		break;
 	}
