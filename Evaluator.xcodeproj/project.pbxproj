@@ -180,7 +180,7 @@
 		4F9828D4140A9EB700F3FCC1 /* conststringtable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4AD016140996A10068A6D4 /* conststringtable.cpp */; };
 		4F9828D5140A9EB700F3FCC1 /* funknown.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4AD01D140996A10068A6D4 /* funknown.cpp */; };
 		4F9828D6140A9EB700F3FCC1 /* ustring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4AD028140996A10068A6D4 /* ustring.cpp */; };
-		4F9828D8140A9EB700F3FCC1 /* libbase.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F4AD1F61409A56A0068A6D4 /* libbase.a */; };
+		4F9828D8140A9EB700F3FCC1 /* libbase_stdc++.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F4AD1F61409A56A0068A6D4 /* libbase_stdc++.a */; };
 		4F9828DA140A9EB700F3FCC1 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		4F9828DB140A9EB700F3FCC1 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52C4DB180D0E51270007A920 /* Carbon.framework */; };
 		4F9828F6140A9EEE00F3FCC1 /* lice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F8D4BCC13E97664004F7633 /* lice.a */; };
@@ -228,6 +228,10 @@
 		771CF5451F8D44A3000F34E2 /* Program.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 771CF5211F8D4480000F34E2 /* Program.cpp */; };
 		771CF5461F8D44AB000F34E2 /* Interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 771CF5251F8D4481000F34E2 /* Interface.cpp */; };
 		771CF5471F8D44AC000F34E2 /* Interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 771CF5251F8D4481000F34E2 /* Interface.cpp */; };
+		772929E81FB0D005001F4C63 /* button_background.png in Resources */ = {isa = PBXBuildFile; fileRef = 772929D91FB0CFFF001F4C63 /* button_background.png */; };
+		772929E91FB0D005001F4C63 /* button_background.png in Resources */ = {isa = PBXBuildFile; fileRef = 772929D91FB0CFFF001F4C63 /* button_background.png */; };
+		772929EA1FB0D006001F4C63 /* button_background.png in Resources */ = {isa = PBXBuildFile; fileRef = 772929D91FB0CFFF001F4C63 /* button_background.png */; };
+		772929EB1FB0D006001F4C63 /* button_background.png in Resources */ = {isa = PBXBuildFile; fileRef = 772929D91FB0CFFF001F4C63 /* button_background.png */; };
 		774C73A81F9EA91800E2EFC9 /* Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = 774C73A71F9EA91800E2EFC9 /* Controls.h */; };
 		774C73A91F9EA91800E2EFC9 /* Controls.h in Headers */ = {isa = PBXBuildFile; fileRef = 774C73A71F9EA91800E2EFC9 /* Controls.h */; };
 		774C73AE1F9EA93F00E2EFC9 /* Controls.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 774C73AD1F9EA93F00E2EFC9 /* Controls.cpp */; };
@@ -370,12 +374,33 @@
 			remoteGlobalIDString = 4F9828AA140A9EB700F3FCC1;
 			remoteInfo = "VST3_32&64_intel";
 		};
-		4FA708BE158B47F000BFC572 /* PBXContainerItemProxy */ = {
+		772929DE1FB0CFFF001F4C63 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4F4AD1F11409A56A0068A6D4 /* base.xcodeproj */;
 			proxyType = 2;
-			remoteGlobalIDString = 4FA708BC158B47D200BFC572;
-			remoteInfo = base_32;
+			remoteGlobalIDString = F4306DEB17DDC8800075E8C4;
+			remoteInfo = "base_libc++";
+		};
+		772929E01FB0CFFF001F4C63 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4F4AD1F11409A56A0068A6D4 /* base.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F4128A5417EB4B0B00114E59;
+			remoteInfo = base_ios;
+		};
+		772929E21FB0CFFF001F4C63 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4F4AD1F11409A56A0068A6D4 /* base.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F412026A14C41F68008F9C84;
+			remoteInfo = base_codecoverage;
+		};
+		772929E41FB0CFFF001F4C63 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4F4AD1F11409A56A0068A6D4 /* base.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F41CC3ED180C210300D209D0;
+			remoteInfo = "base_codecoverage_libc++";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -595,6 +620,7 @@
 		771CF5241F8D4481000F34E2 /* Interface.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Interface.h; sourceTree = "<group>"; };
 		771CF5251F8D4481000F34E2 /* Interface.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Interface.cpp; sourceTree = "<group>"; };
 		771CF5261F8D4481000F34E2 /* Presets.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Presets.h; sourceTree = "<group>"; };
+		772929D91FB0CFFF001F4C63 /* button_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = button_background.png; path = resources/img/button_background.png; sourceTree = "<group>"; };
 		774C73A71F9EA91800E2EFC9 /* Controls.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Controls.h; sourceTree = "<group>"; };
 		774C73AD1F9EA93F00E2EFC9 /* Controls.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = Controls.cpp; sourceTree = "<group>"; };
 		77CB0C9B1F8178FC0034E05D /* background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = background.png; path = resources/img/background.png; sourceTree = "<group>"; };
@@ -637,7 +663,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4F9828F6140A9EEE00F3FCC1 /* lice.a in Frameworks */,
-				4F9828D8140A9EB700F3FCC1 /* libbase.a in Frameworks */,
+				4F9828D8140A9EB700F3FCC1 /* libbase_stdc++.a in Frameworks */,
 				4F9828DA140A9EB700F3FCC1 /* Cocoa.framework in Frameworks */,
 				4F9828DB140A9EB700F3FCC1 /* Carbon.framework in Frameworks */,
 			);
@@ -936,8 +962,11 @@
 		4F4AD1F21409A56A0068A6D4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				4F4AD1F61409A56A0068A6D4 /* libbase.a */,
-				4FA708BF158B47F000BFC572 /* libbase32.a */,
+				4F4AD1F61409A56A0068A6D4 /* libbase_stdc++.a */,
+				772929DF1FB0CFFF001F4C63 /* libbase_libc++.a */,
+				772929E11FB0CFFF001F4C63 /* libbase_ios.a */,
+				772929E31FB0CFFF001F4C63 /* libbase_codecoverage_stdc++.a */,
+				772929E51FB0CFFF001F4C63 /* libbase_codecoverage_libc++.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1188,6 +1217,7 @@
 		4FD16A0213B6303B001D0217 /* img */ = {
 			isa = PBXGroup;
 			children = (
+				772929D91FB0CFFF001F4C63 /* button_background.png */,
 				77CB8CC71FA811DD006734F0 /* radio_button.png */,
 				77CB0C9B1F8178FC0034E05D /* background.png */,
 				77CB0C9D1F8178FD0034E05D /* numberbox_arrow_down.png */,
@@ -1494,10 +1524,10 @@
 /* End PBXProject section */
 
 /* Begin PBXReferenceProxy section */
-		4F4AD1F61409A56A0068A6D4 /* libbase.a */ = {
+		4F4AD1F61409A56A0068A6D4 /* libbase_stdc++.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libbase.a;
+			path = "libbase_stdc++.a";
 			remoteRef = 4F4AD1F51409A56A0068A6D4 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
@@ -1536,11 +1566,32 @@
 			remoteRef = 4F8D4C1613E976A7004F7633 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		4FA708BF158B47F000BFC572 /* libbase32.a */ = {
+		772929DF1FB0CFFF001F4C63 /* libbase_libc++.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
-			path = libbase32.a;
-			remoteRef = 4FA708BE158B47F000BFC572 /* PBXContainerItemProxy */;
+			path = "libbase_libc++.a";
+			remoteRef = 772929DE1FB0CFFF001F4C63 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		772929E11FB0CFFF001F4C63 /* libbase_ios.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libbase_ios.a;
+			remoteRef = 772929E01FB0CFFF001F4C63 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		772929E31FB0CFFF001F4C63 /* libbase_codecoverage_stdc++.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libbase_codecoverage_stdc++.a";
+			remoteRef = 772929E21FB0CFFF001F4C63 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		772929E51FB0CFFF001F4C63 /* libbase_codecoverage_libc++.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = "libbase_codecoverage_libc++.a";
+			remoteRef = 772929E41FB0CFFF001F4C63 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
@@ -1553,6 +1604,7 @@
 				77CB0CB41F819B8D0034E05D /* background.png in Resources */,
 				77CB0CBB1F819B990034E05D /* vslider_background.png in Resources */,
 				77CB0CBC1F819B9B0034E05D /* vslider_handle.png in Resources */,
+				772929E91FB0D005001F4C63 /* button_background.png in Resources */,
 				77CB8CCC1FA811E6006734F0 /* radio_button.png in Resources */,
 				77CB0CB91F819B900034E05D /* numberbox_arrow_up.png in Resources */,
 				77CB0CB81F819B8F0034E05D /* numberbox_arrow_down.png in Resources */,
@@ -1567,6 +1619,7 @@
 				77CB0CC71F819C8A0034E05D /* numberbox_background.png in Resources */,
 				77CB0CCE1F819C920034E05D /* vslider_handle.png in Resources */,
 				77CB0CC21F819C7F0034E05D /* numberbox_arrow_down.png in Resources */,
+				772929EB1FB0D006001F4C63 /* button_background.png in Resources */,
 				77CB8CCE1FA811E7006734F0 /* radio_button.png in Resources */,
 				77CB0CCB1F819C8F0034E05D /* vslider_background.png in Resources */,
 				77CB0CC51F819C830034E05D /* numberbox_arrow_up.png in Resources */,
@@ -1581,6 +1634,7 @@
 				77CB0CC61F819C890034E05D /* numberbox_background.png in Resources */,
 				77CB0CCD1F819C910034E05D /* vslider_handle.png in Resources */,
 				77CB0CC11F819C7E0034E05D /* numberbox_arrow_down.png in Resources */,
+				772929EA1FB0D006001F4C63 /* button_background.png in Resources */,
 				77CB8CCD1FA811E6006734F0 /* radio_button.png in Resources */,
 				77CB0CCA1F819C8E0034E05D /* vslider_background.png in Resources */,
 				77CB0CC41F819C830034E05D /* numberbox_arrow_up.png in Resources */,
@@ -1602,6 +1656,7 @@
 				4F78D89913B639100032E0F3 /* InfoPlist.strings in Resources */,
 				77CB0CC01F819C7E0034E05D /* numberbox_arrow_down.png in Resources */,
 				4F78D89A13B639100032E0F3 /* MainMenu.xib in Resources */,
+				772929E81FB0D005001F4C63 /* button_background.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
