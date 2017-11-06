@@ -3,6 +3,7 @@
 
 #define PLUG_CLASS_NAME Evaluator
 
+#define BUNDLE_DOMAIN "net"
 #define BUNDLE_MFR "compartmental"
 #define BUNDLE_NAME "Evaluator"
 
