@@ -21,7 +21,7 @@ GCC_CFLAGS = -Wno-write-strings
 // Preprocessor definitions for all VST builds
 VST_DEFS = VST_API VST_FORCE_DEPRECATED
 
-VST3_DEFS = VST3_API
+VST3_DEFS = VST3_API VST3_PRESET_LIST
 
 // Preprocessor definitions for all AU builds
 AU_DEFS = AU_API
