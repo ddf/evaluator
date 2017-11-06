@@ -23,7 +23,7 @@ namespace Presets
 		{ "square wave", "#(t*Fn)", 50, 15, TTWithNoteResetting },
 		{ "sine wave", "$(t*Fn)", 50, 15, TTWithNoteResetting },
 		{ "triangle wave", "T(t*Fn)", 50, 13, TTWithNoteResetting },
-		{ "pulse wave", "(w-1)*((t*Fn)%r < 8800)", 50, 15, TTWithNoteResetting },
+		{ "pulse wave", "(w-1)*((t*Fn)%w < 8800)", 50, 15, TTWithNoteResetting },
 		{ "ternary arp", "q%64/32 ? t*Fn : t*F(n+12) * (n>0)", 50, 15, TTWithNoteResetting },
 		{ "amplitude modulation", "t*Fn | $(t)", 50, 15, TTWithNoteResetting },
 		{ "frequency modulation", "t*Fn + $(t*2)", 50, 15, TTWithNoteResetting },
