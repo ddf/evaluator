@@ -464,6 +464,10 @@ static int ParsePOK(CompilationState& state)
 		case Program::Op::GET:
 			state.Push(Program::Op::PUT);
 			break;
+			
+		// fix warning in osx
+		default:
+			break;
 		}
 		if (hasPOP)
 		{
