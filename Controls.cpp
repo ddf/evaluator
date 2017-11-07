@@ -40,9 +40,16 @@ void ITextEdit::OnMouseDown(int x, int y, IMouseMod* pMod)
 
 void ITextEdit::TextFromTextEntry(const char* txt)
 {
-	mStr.Set(txt);
-	SetDirty(false);
-	mPlug->OnParamChange(mIdx);
+	// don't set if it is the same, we don't want the project to become modified in this case
+	if (strcmp(mStr.Get(), txt))
+	{
+		mStr.Set(txt);
+		SetDirty(false);
+	
+		mPlug->OnParamChange(mIdx);
+		// we have to call this or else the host will not mark the project as modified
+		mPlug->InformHostOfParamChange(mIdx, 0);
+	}
 }
 //
 /////////////////////////////////////
