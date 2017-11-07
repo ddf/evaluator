@@ -198,16 +198,18 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 
 	//--- Text input for the expression ------
 	{
-		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kProgramLabel), &kTitleTextStyle, "PROGRAM:"));
+		IRECT labelRect = MakeIRect(kProgramLabel);
+		pGraphics->MeasureIText(&kTitleTextStyle, "PROGRAM:", &labelRect);
+		pGraphics->AttachControl(new ITextControl(mPlug, labelRect, &kTitleTextStyle, "PROGRAM:"));
 
-		IRECT captionRect = MakeIRect(kProgramLabel);
-		captionRect.L += kProgramLabel_W;
-		captionRect.R += kProgramLabel_W;
+		const int labelWidth = labelRect.W() + 5;
+		labelRect.L += labelWidth;
+		labelRect.R += labelWidth;
 		// some fudge to the top of the rect so this smaller text looks vertically centered on the bigger PROGRAM: label
-		captionRect.T += 2;
+		labelRect.T += 2;
 		IText textStyle = kLabelTextStyle;
 		textStyle.mAlign = IText::kAlignNear;
-		programName = new ITextControl(mPlug, captionRect, &textStyle);
+		programName = new ITextControl(mPlug, labelRect, &textStyle);
 		pGraphics->AttachControl(programName);
 
 		textEdit = new ITextEdit(mPlug, MakeIRect(kProgramText), kExpression, &kExpressionTextStyle, "", ETextEntryOptions(kTextEntryMultiline | kTextEntryEnterKeyInsertsCR));
@@ -325,10 +327,12 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 		textStyle.mAlign = IText::kAlignNear;
 
 		IRECT captionRect = MakeIRect(kTModeLabel);
+		pGraphics->MeasureIText(&textStyle, "T-MODE:", &captionRect);
 		pGraphics->AttachControl(new ITextControl(mPlug, captionRect, &textStyle, "T-MODE:"));
 
-		captionRect.L += kTModeLabel_W;
-		captionRect.R += kTModeLabel_W;
+		const int width = captionRect.W() + 5;
+		captionRect.L += width;
+		captionRect.R += width;
 		tmodeText = new ITextControl(mPlug, captionRect, &textStyle);
 
 		pGraphics->AttachControl(tmodeText);
