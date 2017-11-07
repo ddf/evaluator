@@ -454,7 +454,7 @@ bool Evaluator::CompareState(const unsigned char* incomingState, int startPos)
 
 bool Evaluator::HostRequestingAboutBox()
 {
-#ifdef IPLUG_STANDALONE
+#if SA_API
 #ifdef OS_WIN
 	GetGUI()->ShowMessageBox(kAboutBoxText, BUNDLE_NAME, MB_OK);
 #else
