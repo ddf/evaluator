@@ -747,7 +747,10 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 		}
 		else
 		{
-			double f = round(3 * pow(2.0, (double)a / 12.0) * (44100.0 / Get('~')));
+			// 3.0945 is a magic number arrived at by comparing our output to the Saw Wave in ReaSynth.
+			// 3.0 is what we'd expect to see if we were operating in floating point,
+			// but if we use 3.0 here, the pitch winds up being a little bit flat.
+			double f = round(3.0945 * pow(2.0, (double)(a+12) / 12.0) * (44100.0 / Get('~')));
 			stack.push((Value)f);
 		}
 	}
