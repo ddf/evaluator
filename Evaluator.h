@@ -66,6 +66,9 @@ public:
 	int UnserializeState(ByteChunk* pChunk, int startPos) override;
 	bool CompareState(const unsigned char* incomingState, int startPos) override;
 
+	// catch the About menu item to display what we wants in a box
+	bool HostRequestingAboutBox() override;
+
 	// get a string that represents the internal state of the program we want to display in the UI
 	const char * GetProgramState() const;
 	void SetWatchText(Interface* forInterface) const;

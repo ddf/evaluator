@@ -4,6 +4,8 @@
 #include "IControl.h"
 #include "resource.h"
 
+static const char * kAboutBoxText = "Version " VST3_VER_STR "\nCreated by Damien Quartz\nBuilt on " __DATE__;
+
 Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
 	: IPLUG_CTOR(kNumParams, Presets::Count(), instanceInfo)
 	, mProgram(0)
@@ -448,6 +450,13 @@ bool Evaluator::CompareState(const unsigned char* incomingState, int startPos)
 	isEqual &= IPlugBase::CompareState(incomingState, startPos + stateSize); // fuzzy compare regular params
 
 	return isEqual;
+}
+
+bool Evaluator::HostRequestingAboutBox()
+{
+	GetGUI()->ShowMessageBox(kAboutBoxText, BUNDLE_NAME, MB_OK);
+
+	return true;
 }
 
 const char * Evaluator::GetProgramState() const
