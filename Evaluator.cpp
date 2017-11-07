@@ -454,9 +454,18 @@ bool Evaluator::CompareState(const unsigned char* incomingState, int startPos)
 
 bool Evaluator::HostRequestingAboutBox()
 {
+#ifdef IPLUG_STANDALONE
+#ifdef OS_WIN
 	GetGUI()->ShowMessageBox(kAboutBoxText, BUNDLE_NAME, MB_OK);
-
+#else
+  // sadly, on osx, ShowMessageBox uses an alert style box that does not show the app icon,
+  // which is different from the default About window that is shown.
+  // *that* code uses swell's MessageBox, so we use that directly on mac.
+  MessageBox(0, kAboutBoxText, BUNDLE_NAME, MB_OK);
+#endif
 	return true;
+#endif
+  return false;
 }
 
 const char * Evaluator::GetProgramState() const
