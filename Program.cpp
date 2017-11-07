@@ -107,6 +107,24 @@ struct CompilationState
 		{
 			++parsePos;
 		}
+
+		// also skip any commented text while we are at it
+		if (source[parsePos] == '/' && source[parsePos + 1] == '/')
+		{
+			parsePos += 2;
+			// read to the end of line or end of file
+			while (source[parsePos] != '\n' && source[parsePos] != '\0')
+			{
+				++parsePos;
+			}
+
+			// if we reached end of line and this is not end of file
+			// then we might have more whitespace to skip on the next line
+			if (source[parsePos] != '\0')
+			{
+				SkipWhitespace();
+			}
+		}
 	}
 };
 
