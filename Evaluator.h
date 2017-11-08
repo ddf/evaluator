@@ -21,7 +21,7 @@ enum EParams
 
 	// used for text edit fields so the UI can call OnParamChange
 	kExpression = 101,
-	kExpressionLengthMax = 256,
+	kExpressionLengthMax = 1024,
 
 	kWatch = 202, // starting paramIdx for watches
 	kWatchNum = 10, // total number of watches available
