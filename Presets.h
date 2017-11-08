@@ -12,10 +12,10 @@ namespace Presets
 	struct Data
 	{
 		const char * const name;
-		const char * const program;
 		const float volume;
 		const int   bitDepth;
 		const int   timeType;
+		const char * const program;
 	};
 
 	// how many pre-defined presets are there
