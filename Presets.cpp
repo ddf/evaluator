@@ -111,20 +111,21 @@ namespace Presets
 		{
 			"amplitude modulation",
 			50, 15, TTWithNoteResetting,
-			"// amplitude modulation is tricky because programs use unsigned integers" CR
-			"// we need to wrap on our oscillator before modifying it" CR
-			"a = (t*Fn) % w;" CR
-			"// we create the modulator using the $ operator and have to adjust" CR
-			"// the phase of the modulator so that when V0 is zero, m will equal 0" CR
-			"p = 3 * w / 4;" CR
-			"b = $(m*V0 + p);" CR
-			"// now we need to scale and offset the value of a to adjust the volume" CR
-			"// how much we scale depends on where we are in our sine wave" CR
-			"s = b / 4000 + 1;" CR
-			"// how much we offset can be calculated based on where the 'center'" CR
-			"// of the full size wave winds up with this value of s" CR
-			"o = s > 1 ? w / 2 - (w / 2 / s) : 0;" CR
-			"a = a / s + o;",
+			"// | (bitwise OR) can be used to modulate the amplitude of an oscillator" CR
+			"// it sounds best when used with a square wave oscillator" CR
+			"o = #(t*Fn);" CR
+			"// we want to set the phase of the modulator" CR
+			"// so that the amplitude will be zero when there is no note" CR
+			"p = n < 1 ? w + 4 : p;" CR
+			"// we step the phase forward every 8 milliseconds" CR
+			"// which lets us control the frequency of modulation with the V0 knob" CR
+			"p = m%8 ? p : p + V0;" CR
+			"a = $(p);" CR
+			"// we then OR the oscillator with the modulator to adjust the amplitude" CR
+			"o = (o | a);" CR
+			"// however, this scales the signal towards the top of the wave." CR
+			"// we can keep it center by subtracting half the value of the modulator" CR
+			"o = o - a / 2;" CR
 		},
 		
 		//{ "bouncing balls", "$(t*(1000 - m%500))", 50, 15, TTAlways },
