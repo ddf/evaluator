@@ -308,8 +308,22 @@ namespace Presets
 			// watches
 			"a", "b", "c", "s", "", "", "", "", "", "",
 		},
-		
-		//{ "oink oink ribbit", "p = (t*128 | t*17>>2) | ((t-4500)*64 | (t-4500)*5>>3) | p<<12", 30, 18, TTProjectTime },
+
+		{
+			"oink oink ribbit",
+			30, 18, TTProjectTime,
+			17, 2, 45, 5, 3, 0, 0, 0,
+			"// another example of using the previous value as part of the program" CR
+			"// with several V knobs incorporated" CR
+			"o = t*128;" CR
+			"a = t*V0 >> V1;" CR
+			"b = t - V2*100;" CR
+			"c = b*64 | b*V3>>V4;" CR
+			"p = (o | a) | c | p<<12",
+			// watches
+			"a", "b", "c", "p", "V0", "V1", "V2", "V3", "V4", "",
+		},
+
 		//{ "rhythmic glitch sine", "p = $(t*Fn) | t*n/10>>4 ^ p>>(m/250%12)", 15, 13, TTAlways }
 	};
 
