@@ -342,7 +342,23 @@ namespace Presets
 			"@p = n>0 ? $(t*Fn) + @r : w/2;",
 			// watches
 			"p", "r", "@p", "@r", "", "", "", "", "", "",
-		}
+		},
+
+		{
+			"midi pitch sweep",
+			15, 15, TTWithNoteResetting,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			"// the C operator allows us to access incoming midi control change values" CR
+			"// here we use the modwheel to control the pitch of an oscillator" CR
+			"// in order to have the pitch change smoothly, we step the phase explicitly" CR
+			"// instead of using a multiple of t as in other presets" CR
+			"// we want the modwheel to sweep up an octave so we add in" CR
+			"// a fraction of the distance to the note an octave above n" CR
+			"a = Fn + (F(n+12) - Fn)*C1/127;" CR
+			"o = n>0 ? o + a : w/2",
+			// watches
+			"a", "o", "C1", "", "", "", "", "", "", "",
+		},
 	};
 
 	const int kCount = sizeof(kPresets) / sizeof(Data);
