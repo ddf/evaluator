@@ -287,7 +287,27 @@ namespace Presets
 			"x", "f", "p", "", "", "", "", "", "", "",
 		},
 
-		//{ "ellipse", "(m/250+1)*$(t*128) | (m/500+1)*$((t+w/2*128))", 50, 12, TTAlways },
+		{
+			"ellipse",
+			50, 22, TTAlways,
+			20, 100, 0, 0, 0, 0, 0, 0,
+			"// this sonifies the parametric equations for an ellipse" CR
+			"// the x-coordinate is sent to the left channel" CR
+			"// the y-coordinate is sent to the right channel" CR
+			"// V0 and V1 can be used to control the radii of the ellipse" CR
+			"a = V0+1;" CR
+			"b = V1+1;" CR
+			"// cosine of t*128" CR
+			"c = $((t+w/2)*128);" CR
+			"// the sine of t*128;" CR
+			"s = $(t*128);" CR
+			"// assigning to [0] sets only the first output channel (left)" CR
+			"[0] = a*c;" CR
+			"// assigning to [1] sets only the second output channel (right)" CR
+			"[1] = b*s;",
+			// watches
+			"a", "b", "c", "s", "", "", "", "", "", "",
+		},
 		
 		//{ "oink oink ribbit", "p = (t*128 | t*17>>2) | ((t-4500)*64 | (t-4500)*5>>3) | p<<12", 30, 18, TTProjectTime },
 		//{ "rhythmic glitch sine", "p = $(t*Fn) | t*n/10>>4 ^ p>>(m/250%12)", 15, 13, TTAlways }
