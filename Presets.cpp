@@ -288,7 +288,7 @@ namespace Presets
 		},
 
 		{
-			"ellipse",
+			"stereo ellipse",
 			50, 22, TTAlways,
 			20, 100, 0, 0, 0, 0, 0, 0,
 			"// this sonifies the parametric equations for an ellipse" CR
