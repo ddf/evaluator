@@ -202,7 +202,19 @@ namespace Presets
 			"e/d * 32",
 		},
 
-		//{ "garbage trash", "(w/2 - (256*(m/16%16)) + (t*(m/16%16)%(512*(m/16%16)+1))) * (m/16)", 50, 15, TTAlways },
+		{
+			"garbage trash",
+			50, 15, TTAlways,
+			"// let this one run for a while, it subtly changes over time" CR
+			"// r will increase by one every V0+1 milliseconds" CR
+			"// we add one to V0 to prevent divide-by-zero" CR
+			"r = m/(V0+1);" CR
+			"// s will cycle through [0,15] at the same rate" CR
+			"s = r%16;" CR
+			"// note here that due to operator precedence" CR
+			"// t is multiplied by s and then the modulo is applied" CR
+			"(256*s + t*s%(512*s+1)) * r",
+		},
 		//{ "nonsense can", "p = (1 + $(m)%32) ^ (t*128 & t*64 & t*32) | (p/16)<<p%4 | $(p/128)>>p%4", 50, 15, TTAlways },
 		//{ "ellipse", "(m/250+1)*$(t*128) | (m/500+1)*$((t+w/2*128))", 50, 12, TTAlways },
 		//{ "moving average", "p = p + ( ((t+1)*256 ^ (t+1)*64 & (t+1)*32) - p)/(t+1)", 50, 15, TTAlways },
