@@ -862,14 +862,16 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 	case Op::BSL:
 	{
 		POP2;
-		stack.push(a << b);
+		const auto s = b % 64;
+		stack.push(a << s);
 	}
 	break;
 
 	case Op::BSR:
 	{
 		POP2;
-		stack.push(a >> (b % 64));
+		const auto s = b % 64;
+		stack.push(a >> s);
 	}
 	break;
 

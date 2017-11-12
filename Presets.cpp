@@ -185,7 +185,23 @@ namespace Presets
 			"(t*64 + a*s) | t*32"
 		},
 
-		//{ "blurp", "(t<<t/(1024*8) | t>>t/16 & t>>t/32) / (t%(t/512+1) + 1) * 32", 50, 15, TTAlways },
+		// this maybe takes too long to get interesting and is just unpleasant noise mostly, might want to ditch it.
+		{
+			"blurp",
+			50, 15, TTAlways,
+			"// << shifts the bits of the left hand side" CR 
+			"// by the number of the right hand side modulo 64" CR
+			"a = t<<t/(1024*8);" CR
+			"b = t>>t/16;" CR
+			"c = t>>t/32;" CR
+			"// & is bitwise AND" CR
+			"e = (a | b & c);" CR
+			"// we add 1 in two places here to prevent divide-by-zero errors" CR
+			"d = t%(t/512+1) + 1;" CR
+			"// remember that a is divided by d and then multiplied by 32" CR
+			"e/d * 32",
+		},
+
 		//{ "garbage trash", "(w/2 - (256*(m/16%16)) + (t*(m/16%16)%(512*(m/16%16)+1))) * (m/16)", 50, 15, TTAlways },
 		//{ "nonsense can", "p = (1 + $(m)%32) ^ (t*128 & t*64 & t*32) | (p/16)<<p%4 | $(p/128)>>p%4", 50, 15, TTAlways },
 		//{ "ellipse", "(m/250+1)*$(t*128) | (m/500+1)*$((t+w/2*128))", 50, 12, TTAlways },
