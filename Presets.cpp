@@ -100,9 +100,8 @@ namespace Presets
 		{
 			"frequency modulation",
 			50, 15, TTWithNoteResetting,
-			"// i don't really understand why," CR
-			"// but a saw wave can be smoothly frequency modulated" CR
-			"// if you add a sine wave to it" CR
+			"// a saw wave can be smoothly frequency modulated" CR
+			"// by adding a sine wave to it." CR
 			"// here we use the value of the V0 knob to control" CR
 			"// the speed of the frequency modulation" CR
 			"t*Fn + $(t*V0)",
@@ -110,22 +109,21 @@ namespace Presets
 
 		{
 			"amplitude modulation",
-			50, 15, TTWithNoteResetting,
-			"// | (bitwise OR) can be used to modulate the amplitude of an oscillator" CR
-			"// it sounds best when used with a square wave oscillator" CR
-			"o = #(t*Fn);" CR
-			"// we want to set the phase of the modulator" CR
-			"// so that the amplitude will be zero when there is no note" CR
-			"p = n < 1 ? w + 4 : p;" CR
-			"// we step the phase forward every 8 milliseconds" CR
-			"// which lets us control the frequency of modulation with the V0 knob" CR
-			"p = m%8 ? p : p + V0;" CR
-			"a = $(p);" CR
-			"// we then OR the oscillator with the modulator to adjust the amplitude" CR
-			"o = (o | a);" CR
-			"// however, this scales the signal towards the top of the wave." CR
-			"// we can keep it center by subtracting half the value of the modulator" CR
-			"o = o - a / 2;" CR
+			50, 15, TTAlways,
+			"// to amplitude modulate we need to scale the range up and down," CR 
+			"// but keep the values 'centered' around w/2." CR 
+			"// so we wrap to [0, w) before scaling with our modulator" CR
+			"o = (t*Fn) % w;" CR
+			"// we step the phase of our modulator forward every 8 milliseconds" CR
+			"// which lets us smoothly control the frequency with the V0 knob" CR
+			"p = m % 8 ? p : p + V0 * 2;" CR
+			"// if there is no note on, we reset the phase so that $p will be 0" CR
+			"p = n < 1 ? 3 * w / 4 : p;" CR
+			"m = $p;" CR
+			"// m is a [0,w) value, so we decrease o by that ratio" CR
+			"o = o * m/w;" CR
+			"// then to center, we offset by how much w/2 is changed by this ratio" CR
+			"o = o + ((w/2) - (w/2) * m/w);" CR
 		},
 		
 		//{ "bouncing balls", "$(t*(1000 - m%500))", 50, 15, TTAlways },
