@@ -160,8 +160,20 @@ namespace Presets
 			"a | b | c"
 		},
 
-		//{ "aggressive texture", "(t*64 + $(t^$(m/2000))*$(m/2000)) | t*32", 50, 15, TTProjectTime },		
-		//{ "computer music" , "$(t*F(n + 7*((m/125)%3) - 3*((m/125)%5) + 2*((m/125)%7)))", 50, 11, TTAlways },
+		{
+			"computer music" ,
+			50, 11, TTWithNoteResetting,
+			"// here we create a random sounding note sequence" CR
+			"// but based on the incoming MIDI note" CR
+			"// s is how often the note changes - every 125 milliseconds" CR
+			"s = m/125;" CR
+			"a = 7*(s%3); // 0, 7, 14, 21" CR
+			"b = 3*(s%5); // 0, 3, 6, 9, 12" CR
+			"c = 2*(s%7); // 0, 2, 4, 6, 8, 10, 12" CR
+			"$(t*F(n + a - b + c))"
+		},
+
+		//{ "aggressive texture", "(t*64 + $(t^$(m/2000))*$(m/2000)) | t*32", 50, 15, TTProjectTime },				
 		//{ "blurp", "(t<<t/(1024*8) | t>>t/16 & t>>t/32) / (t%(t/512+1) + 1) * 32", 50, 15, TTAlways },
 		//{ "garbage trash", "(w/2 - (256*(m/16%16)) + (t*(m/16%16)%(512*(m/16%16)+1))) * (m/16)", 50, 15, TTAlways },
 		//{ "nonsense can", "p = (1 + $(m)%32) ^ (t*128 & t*64 & t*32) | (p/16)<<p%4 | $(p/128)>>p%4", 50, 15, TTAlways },
