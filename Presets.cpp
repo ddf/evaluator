@@ -125,9 +125,26 @@ namespace Presets
 			"// then to center, we offset by how much w/2 is changed by this ratio" CR
 			"o = o + ((w/2) - (w/2) * m/w);" CR
 		},
-		
-		//{ "bouncing balls", "$(t*(1000 - m%500))", 50, 15, TTAlways },
-		//{ "little ditty", "(t*128 + $(t)) | t>>(t%(8*w))/w | t>>128", 50, 15, TTProjectTime },
+
+		{
+			"little ditty",
+			50, 15, TTProjectTime,
+			"// here we make a surprising rhythmic ditty by combining three signals:" CR
+			"// a frequency modulated saw wave (try changing the frequncy of modulation)" CR
+			"a = (t * 128 + $(t));" CR
+			"// >> is a bit-shift operator that shifts all bits to right" CR
+			"// the number of bits indicated by the right hand side." CR
+			"// the right hand side is wrapped to 64 before the shift," CR
+			"// which means you have very large values there and still get useful results." CR
+			"// try changing the hard-coded 8 in here." CR
+			"b = t >> (t % (8 * w)) / w;" CR
+			"// for example, this line is the same as c = t;" CR
+			"c = t >> 128;" CR
+			"// finally, we use bitwise OR to combine the three values." CR
+			"// this is similar to summing two floating point signals." CR
+			"a | b | c;" CR
+		},
+
 		//{ "aggressive texture", "(t*64 + $(t^$(m/2000))*$(m/2000)) | t*32", 50, 15, TTProjectTime },
 		//{ "overtone waterfall", "t*(128*(32-(m/50)%32)) | t*(128*((m/100)%64)) | t*128", 50, 17, TTAlways },
 		//{ "computer music" , "$(t*F(n + 7*((m/125)%3) - 3*((m/125)%5) + 2*((m/125)%7)))", 50, 11, TTAlways },
