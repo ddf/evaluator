@@ -173,7 +173,18 @@ namespace Presets
 			"$(t*F(n + a - b + c))"
 		},
 
-		//{ "aggressive texture", "(t*64 + $(t^$(m/2000))*$(m/2000)) | t*32", 50, 15, TTProjectTime },				
+		{
+			"aggressive texture",
+			50, 15, TTProjectTime,
+			"// a low frequency sine wave" CR
+			"s = $(m/2000);" CR
+			"// ^ is bitwise XOR" CR
+			"a = $(t^s);" CR
+			"// you can cleary hear the held low frequency t*32 here" CR
+			"// whereas the left side of the OR is sweeping wildly" CR
+			"(t*64 + a*s) | t*32"
+		},
+
 		//{ "blurp", "(t<<t/(1024*8) | t>>t/16 & t>>t/32) / (t%(t/512+1) + 1) * 32", 50, 15, TTAlways },
 		//{ "garbage trash", "(w/2 - (256*(m/16%16)) + (t*(m/16%16)%(512*(m/16%16)+1))) * (m/16)", 50, 15, TTAlways },
 		//{ "nonsense can", "p = (1 + $(m)%32) ^ (t*128 & t*64 & t*32) | (p/16)<<p%4 | $(p/128)>>p%4", 50, 15, TTAlways },
