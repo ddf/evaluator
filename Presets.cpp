@@ -257,7 +257,22 @@ namespace Presets
 			// watches
 			"r", "s", "", "", "", "", "", "", "", "",
 		},
-		//{ "nonsense can", "p = (1 + $(m)%32) ^ (t*128 & t*64 & t*32) | (p/16)<<p%4 | $(p/128)>>p%4", 50, 15, TTAlways },
+
+		{
+			"nonsense can",
+			50, 15, TTAlways,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			"// this demonstrates using the previous value of the program" CR
+			"// in the calculation for the current value" CR
+			"a = 1 + $(m)%32;" CR
+			"b = t*128 & t*64 & t*32;" CR
+			"c = (p/16) << p%4;" CR
+			"d = $(p/128) >> p%4;" CR
+			"p = a ^ b | c | d",
+			// watches
+			"a", "b", "c", "d", "p", "", "", "", "", "",
+		},
+
 		//{ "ellipse", "(m/250+1)*$(t*128) | (m/500+1)*$((t+w/2*128))", 50, 12, TTAlways },
 		//{ "moving average", "p = p + ( ((t+1)*256 ^ (t+1)*64 & (t+1)*32) - p)/(t+1)", 50, 15, TTAlways },
 		//{ "oink oink ribbit", "p = (t*128 | t*17>>2) | ((t-4500)*64 | (t-4500)*5>>3) | p<<12", 30, 18, TTProjectTime },
