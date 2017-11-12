@@ -312,9 +312,11 @@ void Evaluator::MakePresetFromData(const Presets::Data& data)
 	GetParam(kBitDepth)->Set(data.bitDepth);
 	GetParam(kTimeType)->Set(data.timeType);
 
+	const int* vc = &data.V0;
 	for (int paramIdx = kVControl0; paramIdx <= kVControl7; ++paramIdx)
 	{
-		GetParam(paramIdx)->Set(0);
+		const int vcIdx = paramIdx - kVControl0;
+		GetParam(paramIdx)->Set(vc[vcIdx]);
 	}
 
 	// create serialized version
@@ -323,9 +325,10 @@ void Evaluator::MakePresetFromData(const Presets::Data& data)
 	chunk.PutStr(data.program);
 	int watchNum = kWatchNum;
 	chunk.Put(&watchNum);
+	const char* const* watches = &data.W0;
 	for (int i = 0; i < kWatchNum; ++i)
 	{
-		chunk.PutStr("");
+		chunk.PutStr(watches[i]);
 	}
 	chunk.PutStr(data.name);
 	IPlugBase::SerializeParams(&chunk);
