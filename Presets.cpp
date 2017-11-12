@@ -273,8 +273,22 @@ namespace Presets
 			"a", "b", "c", "d", "p", "", "", "", "", "",
 		},
 
+		{
+			"moving average",
+			50, 15, TTAlways,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			"// this sonifies the cumulative moving average for the function" CR
+			"// f(x) = x*256 ^ x*64 & x*32" CR
+			"// see https://en.wikipedia.org/wiki/Moving_average" CR
+			"x = t+1;" CR
+			"f = x*256 ^ x*64 & x*32;" CR		
+			"p = p + (f - p)/x",
+			// watches
+			"x", "f", "p", "", "", "", "", "", "", "",
+		},
+
 		//{ "ellipse", "(m/250+1)*$(t*128) | (m/500+1)*$((t+w/2*128))", 50, 12, TTAlways },
-		//{ "moving average", "p = p + ( ((t+1)*256 ^ (t+1)*64 & (t+1)*32) - p)/(t+1)", 50, 15, TTAlways },
+		
 		//{ "oink oink ribbit", "p = (t*128 | t*17>>2) | ((t-4500)*64 | (t-4500)*5>>3) | p<<12", 30, 18, TTProjectTime },
 		//{ "rhythmic glitch sine", "p = $(t*Fn) | t*n/10>>4 ^ p>>(m/250%12)", 15, 13, TTAlways }
 	};
