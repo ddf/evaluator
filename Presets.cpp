@@ -324,7 +324,25 @@ namespace Presets
 			"a", "b", "c", "p", "V0", "V1", "V2", "V3", "V4", "",
 		},
 
-		//{ "rhythmic glitch sine", "p = $(t*Fn) | t*n/10>>4 ^ p>>(m/250%12)", 15, 13, TTAlways }
+		{
+			"rhythmic glitch sine",
+			15, 15, TTAlways,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			"// programs have a large 'user' memory space that can be accessed with @" CR
+			"// this allows us to store many previous values of the program" CR
+			"// c is how many values to store, try changing this number" CR
+			"c = 1024*4;" CR
+			"// p is where to save the current value" CR
+			"p = t%c;" CR
+			"// r is which previous value to read" CR
+			"r = (t+512)%c;" CR
+			"// we write into the address p and incorporate address r" CR
+			"// but only if there is an active midi note" CR
+			"// otherwise we 'reset' @p to w/2, which will produce silence" CR
+			"@p = n>0 ? $(t*Fn) + @r : w/2;",
+			// watches
+			"p", "r", "@p", "@r", "", "", "", "", "", "",
+		}
 	};
 
 	const int kCount = sizeof(kPresets) / sizeof(Data);
