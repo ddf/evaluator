@@ -130,7 +130,7 @@ namespace Presets
 			"little ditty",
 			50, 15, TTProjectTime,
 			"// here we make a surprising rhythmic ditty by combining three signals:" CR
-			"// a frequency modulated saw wave (try changing the frequncy of modulation)" CR
+			"// a frequency modulated saw wave (try changing the frequency of modulation)" CR
 			"a = (t * 128 + $(t));" CR
 			"// >> is a bit-shift operator that shifts all bits to right" CR
 			"// the number of bits indicated by the right hand side." CR
@@ -145,8 +145,22 @@ namespace Presets
 			"a | b | c;" CR
 		},
 
-		//{ "aggressive texture", "(t*64 + $(t^$(m/2000))*$(m/2000)) | t*32", 50, 15, TTProjectTime },
-		//{ "overtone waterfall", "t*(128*(32-(m/50)%32)) | t*(128*((m/100)%64)) | t*128", 50, 17, TTAlways },
+		{
+			"overtone waterfall",
+			50, 17, TTAlways,
+			"// another example of combining multiple signals with bitwise OR" CR
+			"// first a vanilla low frequency saw" CR
+			"a = t*128;" CR
+			"// then a saw that descends through the overtone series" CR
+			"// changing pitch every 50 milliseconds" CR
+			"b = a*(32-(m/50)%32);" CR
+			"// and then a saw that ascends through the overtone series" CR
+			"// changing pitch every 100 milliseconds" CR
+			"c = a*((m/100)%64);" CR
+			"a | b | c"
+		},
+
+		//{ "aggressive texture", "(t*64 + $(t^$(m/2000))*$(m/2000)) | t*32", 50, 15, TTProjectTime },		
 		//{ "computer music" , "$(t*F(n + 7*((m/125)%3) - 3*((m/125)%5) + 2*((m/125)%7)))", 50, 11, TTAlways },
 		//{ "blurp", "(t<<t/(1024*8) | t>>t/16 & t>>t/32) / (t%(t/512+1) + 1) * 32", 50, 15, TTAlways },
 		//{ "garbage trash", "(w/2 - (256*(m/16%16)) + (t*(m/16%16)%(512*(m/16%16)+1))) * (m/16)", 50, 15, TTAlways },
