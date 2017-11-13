@@ -659,7 +659,7 @@ Program::RuntimeError Program::Run(Value* results, const size_t size)
 		}
 
 		// clear the stack so it doesn't explode in size due to continual runtime errors
-		while (stack.size() > 1)
+		while (stack.size() > 0)
 		{
 			stack.pop();
 		}
