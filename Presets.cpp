@@ -312,6 +312,27 @@ namespace Presets
 		},
 
 		{
+			"sample and hold effect",
+			100, 15, TTAlways,
+			36, 0, 0, 0, 0, 0, 0, 0,
+			"// this modifies the audio coming into the program to create" CR
+			"// a sample and hold effect, which V0 controlling the intensity" CR
+			"// s is how many samples to wait before grabbing a new value from the input" CR
+			"s = V0 + 2;" CR
+			"// r holds a 'bool' to indicate whether or not we should sample the input" CR
+			"r = p<1 & p<t%s;" CR
+			"p = t%s;" CR
+			"// when r is 'true' we sample the input," CR
+			"// otherwise we keep the value we already have" CR
+			"a = r ? [0] : a;" CR
+			"b = r ? [1] : b;" CR
+			"// and now we output our result" CR
+			"[0] = a; [1] = b;",
+			// watches
+			"V0", "s", "r", "a", "b", "", "", "", "", "",
+		},
+
+		{
 			"oink oink ribbit",
 			30, 18, TTProjectTime,
 			17, 2, 45, 5, 3, 0, 0, 0,
