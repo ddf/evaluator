@@ -120,6 +120,15 @@ const IColor kBackgroundColor(255, 19, 44, 34);
 const IColor kExprBackgroundColor(255, 32, 56, 59);
 const IColor kTextColor(255, 218, 228, 226);
 const IColor kGreenColor(255, 52, 209, 112);
+// color of text set in the Text FG Color for expression text
+#ifdef OS_OSX
+// on OSX the text view text color winds up being brighter than
+// what is rendered by Lice, so we attempt to work around that
+// by putting a darker shader into the TextFGColor property.
+const IColor kTextEditColor(255, 32, 189, 92);
+#else
+const IColor kTextEditColor(kGreenColor);
+#endif
 const IColor kPlugNameColor(255, 62, 86, 89);
 const IColor kConsoleBackgroundColor(255, 11, 26, 19);
 const IColor kScopeBackgroundColor(255, 14, 21, 26);
@@ -134,7 +143,8 @@ IText  kExpressionTextStyle(11,
 	0, // orientation
 	IText::kQualityDefault,
 	&kExprBackgroundColor,
-	&kGreenColor);
+	&kTextEditColor
+);
 
 IText  kExprMsgTextStyle(11,
 	&kTextColor,
