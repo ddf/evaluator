@@ -314,31 +314,39 @@ void LoadButton::OnMouseDown(int x, int y, IMouseMod* pMod)
 			{
 				WDL_String fileName("");
 				WDL_String directory("");
-				mPlug->GetGUI()->PromptForFile(&fileName, kFileOpen, &directory, "txt");
+				mPlug->GetGUI()->PromptForFile(&fileName, kFileOpen, &directory, "txt fxp");
 				if (fileName.GetLength() > 0)
 				{
-					FILE* fp = fopen(fileName.Get(), "rb");
-
-					if (fp)
+					if (strcmp(fileName.get_fileext(), ".fxp") == 0)
 					{
-						long fileSize;
-
-						fseek(fp, 0, SEEK_END);
-						fileSize = ftell(fp);
-						rewind(fp);
-
-						char* contents = new char[fileSize+1];
-						fread(contents, fileSize, 1, fp);
-
-						fclose(fp);
-
-						contents[fileSize] = 0;
-						
+						mPlug->LoadProgramFromFXP(&fileName);
 						mInterface->SetProgramName(fileName.get_filepart());
-						mInterface->SetProgramText(contents);
-						// note: for some reason this doesn't set the Reaper project as modified in this case.
-						mPlug->DirtyParameters();
-						delete[] contents;
+					}
+					else
+					{
+						FILE* fp = fopen(fileName.Get(), "rb");
+
+						if (fp)
+						{
+							long fileSize;
+
+							fseek(fp, 0, SEEK_END);
+							fileSize = ftell(fp);
+							rewind(fp);
+
+							char* contents = new char[fileSize + 1];
+							fread(contents, fileSize, 1, fp);
+
+							fclose(fp);
+
+							contents[fileSize] = 0;
+
+							mInterface->SetProgramName(fileName.get_filepart());
+							mInterface->SetProgramText(contents);
+							// note: for some reason this doesn't set the Reaper project as modified in this case.
+							mPlug->DirtyParameters();
+							delete[] contents;
+						}
 					}
 				}
 			}
@@ -364,3 +372,32 @@ void LoadButton::OnMouseOver(int x, int y, IMouseMod* pMod)
 }
 //
 //////////////////////////////////////////
+
+SaveButton::SaveButton(IPlugBase* pPlug, int x, int y, IBitmap* pButtonBack, IText* pButtonTextStyle, Interface* pInterface)
+	: IBitmapControl(pPlug, x, y, -1, pButtonBack)
+	, mButtonText(*pButtonTextStyle)
+	, mInterface(pInterface)
+{
+
+}
+
+bool SaveButton::Draw(IGraphics* pGraphics)
+{
+	pGraphics->DrawBitmap(&mBitmap, &mRECT, 1, &mBlend);
+	IRECT textRect(mRECT);
+	textRect.T += 2; // fudge so the text looks vertically centered
+	pGraphics->DrawIText(&mButtonText, "SAVE...", &textRect);
+
+	return true;
+}
+
+void SaveButton::OnMouseDown(int x, int y, IMouseMod* pMod)
+{
+	WDL_String fileName("");
+	WDL_String directory("");
+	mPlug->GetGUI()->PromptForFile(&fileName, kFileSave, &directory, "fxp");
+	if (fileName.GetLength() > 0)
+	{
+		mPlug->SaveProgramAsFXP(&fileName);
+	}
+}

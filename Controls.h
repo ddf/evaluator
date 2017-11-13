@@ -134,3 +134,16 @@ private:
 	IText mMenuText;
 	int mSelection;
 };
+
+class SaveButton : public IBitmapControl
+{
+public:
+	SaveButton(IPlugBase* pPlug, int x, int y, IBitmap* pButtonBack, IText* pButtonTextStyle, Interface* pInterface);
+
+	bool Draw(IGraphics* pGraphics) override;
+	void OnMouseDown(int x, int y, IMouseMod* pMod) override;
+
+private:
+	Interface* mInterface;
+	IText mButtonText;
+};

@@ -368,12 +368,15 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 		}
 	}
 
-	// --- Load Button ---------------------------
+	// --- Load/Save Buttons ---------------------------
 	{
-		IBitmap loadButton = pGraphics->LoadIBitmap(BUTTON_BACK_ID, BUTTON_BACK_FN);
-		const int buttonX = kEditorWidth - kEditorMargin - loadButton.W;
-		const int buttonY = kProgramText_Y - loadButton.H - 5;
-		pGraphics->AttachControl(new LoadButton(mPlug, buttonX, buttonY, &loadButton, &kLabelTextStyle, MakeIRect(kPresetPopup), &kConsoleTextStyle, this));
+		IBitmap buttonBack = pGraphics->LoadIBitmap(BUTTON_BACK_ID, BUTTON_BACK_FN);
+		int buttonX = kEditorWidth - kEditorMargin - buttonBack.W;
+		const int buttonY = kProgramText_Y - buttonBack.H - 5;
+		pGraphics->AttachControl(new LoadButton(mPlug, buttonX, buttonY, &buttonBack, &kLabelTextStyle, MakeIRect(kPresetPopup), &kConsoleTextStyle, this));
+
+		buttonX -= buttonBack.W + 5;
+		pGraphics->AttachControl(new SaveButton(mPlug, buttonX, buttonY, &buttonBack, &kLabelTextStyle, this));
 	}
 }
 
