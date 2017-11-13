@@ -203,7 +203,7 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 	//--  Name of the plug and version
 	{
 		IText titleStyle(20, &kPlugNameColor, "Arial", IText::kStyleBold, IText::kAlignNear, 0, IText::kQualityDefault);
-		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kPlugName), &titleStyle, PLUG_NAME " " VST3_VER_STR));
+		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kPlugName), &titleStyle, "EVALUATOR" " " VST3_VER_STR));
 	}
 
 	//--- Text input for the expression ------
@@ -371,12 +371,13 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 	// --- Load/Save Buttons ---------------------------
 	{
 		IBitmap buttonBack = pGraphics->LoadIBitmap(BUTTON_BACK_ID, BUTTON_BACK_FN);
-		int buttonX = kEditorWidth - kEditorMargin - buttonBack.W;
+		int buttonX = kEditorWidth - kEditorMargin - buttonBack.W*2 - 10;
 		const int buttonY = kProgramText_Y - buttonBack.H - 5;
-		pGraphics->AttachControl(new LoadButton(mPlug, buttonX, buttonY, &buttonBack, &kLabelTextStyle, MakeIRect(kPresetPopup), &kConsoleTextStyle, this));
 
-		buttonX -= buttonBack.W + 5;
 		pGraphics->AttachControl(new SaveButton(mPlug, buttonX, buttonY, &buttonBack, &kLabelTextStyle, this));
+
+		buttonX += buttonBack.W + 5;
+		pGraphics->AttachControl(new LoadButton(mPlug, buttonX, buttonY, &buttonBack, &kLabelTextStyle, MakeIRect(kPresetPopup), &kConsoleTextStyle, this));		
 	}
 }
 
