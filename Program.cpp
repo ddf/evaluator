@@ -214,7 +214,7 @@ static int ParseAtom(CompilationState& state)
 			const Program::Char var = *state;
 			// push the address of the variable, which peek will need
 			const Program::Value varAddress = Program::GetAddress(var, state.userMemSize);
-			state.Push(Program::Op::NUM, varAddress);
+			state.Push(Program::Op::PSH, varAddress);
 			state.Push(Program::Op::PEK);
 			state.parsePos++;
 		}
@@ -235,7 +235,7 @@ static int ParseAtom(CompilationState& state)
 			state.error = Program::CE_FAILED_TO_PARSE_NUMBER;
 			return 1;
 		}
-		state.Push(Program::Op::NUM, res);
+		state.Push(Program::Op::PSH, res);
 		// advance our index based on where the end pointer wound up
 		state.parsePos += (endPtr - startPtr) / sizeof(Program::Char);
 	}
@@ -683,7 +683,7 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 	switch (op.code)
 	{
 		// no operands - result is pushed to the stack
-	case Op::NUM:
+	case Op::PSH:
 		stack.push(op.val);
 		break;
 

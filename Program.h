@@ -51,7 +51,7 @@ public:
 
 		enum Code
 		{
-			NUM,
+			PSH, // push a value onto the stack
 			PEK, // get the value at a memory address
 			POK, // set the value at a memory address
 			FRQ,
@@ -72,7 +72,7 @@ public:
 			CLT, // compare <
 			CGT, // compare >
 			TRN, // ternary operator - ?:
-			POP, // ;
+			POP, // ; (pop a value from the stack and do nothing with it)
 			GET, // get the the current value of a result. eg [0] or [1].
 			PUT, // assign to an output result using [0] = expression.
 			RND, // random number operator - operand is used to wrap value returned by rand() - so like Random.Range(0, operand)
@@ -81,7 +81,7 @@ public:
 		};
 
 		// need default constructor or we can't use vector
-		Op() : code(NUM), val(0) {}
+		Op() : code(PSH), val(0) {}
 		Op(Code _code, Value _val) : code(_code), val(_val) {}
 
 		const Code code;
