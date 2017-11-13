@@ -192,18 +192,20 @@ namespace Presets
 
 		{
 			"computer music" ,
-			50, 11, TTWithNoteResetting,
+			50, 15, TTWithNoteResetting,
 			0, 0, 0, 0, 0, 0, 0, 0,
-			"// here we create a random sounding note sequence" CR
+			"// here we create a random note sequence" CR
 			"// but based on the incoming MIDI note" CR
-			"// s is how often the note changes - every 125 milliseconds" CR
-			"s = m/125;" CR
-			"a = 7*(s%3); // 0, 7, 14, 21" CR
-			"b = 3*(s%5); // 0, 3, 6, 9, 12" CR
-			"c = 2*(s%7); // 0, 2, 4, 6, 8, 10, 12" CR
-			"$(t*F(n + a - b + c))",
+			"// r is how often the note changes - every 125 milliseconds" CR
+			"r = 125;" CR
+			"// R is a unary operator that produces a random value using the operand" CR
+			"// a will range between 0 and 21 and we choose a new value" CR
+			"// when p equals zero and is not currently equal to m%r" CR
+			"a = p<1 & p<m%r ? R22 : a;" CR
+			"p = m%r;" CR
+			"$(t*F(n + a))",
 			// watches
-			"s", "a", "b", "c", "", "", "", "", "", "",
+			"s", "a", "", "", "", "", "", "", "", "",
 		},
 
 		{
