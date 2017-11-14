@@ -15,6 +15,14 @@
 #include <math.h>
 #include <stdlib.h>
 
+// used to store const values relating to [*], 
+// which allows for reading the sum of all inputs or writing the same value to all outputs.
+namespace Wildcard
+{
+	const Program::Char  Char = '*';
+	const Program::Value Value = -1;
+}
+
 Program::Program(const std::vector<Op>& inOps, const size_t userMemorySize)
 	: ops(inOps)
 	, userMemSize(userMemorySize)
@@ -66,9 +74,13 @@ const char * Program::GetErrorString(Program::CompileError error)
 	case Program::CE_ILLEGAL_ASSIGNMENT:
 		return "Left side of '=' must be assignable (a variable, address, or output)";
 	case Program::CE_ILLEGAL_STATEMENT_TERMINATION:
-		return "Illegal statement termination.\nSemi-colon may not appear within parens or ternary operators.";
+		return "Illegal statement termination.\n"
+			   "Semi-colon may not appear within parens or ternary operators.";
 	case Program::CE_ILLEGAL_VARIABLE_NAME:
 		return "Illegal variable name - uppercase letters are reserved for operators.";
+	case Program::CE_MISSING_PUT:
+		return "The program does not output any values.\n"
+			   "You must assign something to [0], [1], or [*].";
 	default:
 		return "Unknown";
 	}
@@ -187,7 +199,18 @@ static int ParseAtom(CompilationState& state)
 	{
 		state.parsePos++;
 		state.bracketCount++;
-		if (Parse(state)) return 1;
+		// check for wildcard before attempting to parse an expression
+		state.SkipWhitespace();
+		if (*state == Wildcard::Char)
+		{
+			state.parsePos++;
+			state.Push(Program::Op::PSH, Wildcard::Value);
+			state.SkipWhitespace();
+		}
+		else if (Parse(state))
+		{
+			return 1;
+		}
 		if (*state != ']')
 		{
 			state.error = Program::CE_MISSING_BRACKET;
@@ -553,6 +576,23 @@ Program* Program::Compile(const Char* source, const size_t userMemorySize, Compi
 		{
 			state.error = CE_UNEXPECTED_CHAR;
 		}
+		// make sure the program includes at least one PUT.
+		// we consider it a compilation error if it doesn't
+		// since the resulting program would output nothing 
+		// and therefore be useless.
+		else
+		{
+			bool hasPut = false;
+			for (auto& op : state.ops)
+			{
+				hasPut = hasPut || op.code == Op::PUT;
+			}
+
+			if (!hasPut)
+			{
+				state.error = CE_MISSING_PUT;
+			}
+		}
 	}
 
 	// now create a program or don't
@@ -608,28 +648,9 @@ Program::RuntimeError Program::Run(Value* results, const size_t size)
 	const uint64_t icount = GetInstructionCount();
 	if (icount > 0)
 	{
-		Value stackResult = 0;
-		bool  didPut = false;
-
 		for (int i = 0; i < icount && error == RE_NONE; ++i)
 		{
-			if (ops[i].code == Op::POP)
-			{
-				if (stack.size() > 0)
-				{
-					stackResult = stack.top();
-					stack.pop();
-				}
-				else
-				{
-					error = RE_INCONSISTENT_STACK;
-				}
-			}
-			else
-			{
-				didPut = didPut || ops[i].code == Op::PUT;
-				error = Exec(ops[i], results, size);
-			}
+			error = Exec(ops[i], results, size);
 		}
 
 		// under error-free execution we should have either 1 or 0 values in the stack.
@@ -638,23 +659,9 @@ Program::RuntimeError Program::Run(Value* results, const size_t size)
 		// in the case of the POP, the value of the expression will already be in result.
 		if (error == RE_NONE)
 		{
-			if (stack.size() == 1)
-			{
-				stackResult = stack.top();
-				stack.pop();
-			}
-			else if (stack.size() > 1)
+			if (stack.size() > 1)
 			{
 				error = RE_INCONSISTENT_STACK;
-			}
-
-			// implicitly output to all channels if they did not explicitly put somewhere
-			if (!didPut)
-			{
-				for (int i = 0; i < size; ++i)
-				{
-					results[i] = stackResult;
-				}
 			}
 		}
 
@@ -687,6 +694,17 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 		stack.push(op.val);
 		break;
 
+	case Op::POP:
+	{
+		stack.pop();
+		// stack should now be empty, if it isn't that's an error
+		if (stack.size() > 0)
+		{
+			error = RE_INCONSISTENT_STACK;
+		}
+	}
+	break;
+
 		// one operand - operand value is popped from the stack, result is pushed back on 
 	case Op::PEK:
 	{
@@ -699,7 +717,15 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 	{
 		POP1;
 		Value v = 0;
-		if (a < size)
+		// wildcard GET should return the sum of all channels
+		if (a == Wildcard::Value)
+		{
+			for (int i = 0; i < size; ++i)
+			{
+				v += results[i];
+			}
+		}
+		else if (a < size)
 		{
 			v = results[a];
 		}
@@ -799,7 +825,8 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 	case Op::PUT:
 	{
 		POP2;
-		if (a == -1)
+		// [*] = should put the same value to all outputs
+		if (a == Wildcard::Value)
 		{
 			for (int i = 0; i < size; ++i)
 			{

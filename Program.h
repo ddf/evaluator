@@ -26,6 +26,7 @@ public:
 		CE_ILLEGAL_ASSIGNMENT,
 		CE_ILLEGAL_STATEMENT_TERMINATION, // found a semi-colon where one isn't allowed
 		CE_ILLEGAL_VARIABLE_NAME, // found an uppercase letter where we expected a lowercase one
+		CE_MISSING_PUT, // the program does not contain any PUT instructions
 	};
 
 	enum RuntimeError

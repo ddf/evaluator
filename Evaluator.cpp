@@ -267,15 +267,18 @@ void Evaluator::OnParamChange(int paramIdx)
 				Program::GetErrorString(error),
 				programText + errorPosition);
 			mInterface->SetConsoleText(errorDesc);
-			mProgram = Program::Compile("w/2", 0, error, errorPosition);
+			mProgram = Program::Compile("[*] = w/2", 0, error, errorPosition);
 		}
 
 		// initializeeeee
 		mTick = 0;
-		for (paramIdx = kVControl0; paramIdx <= kVControl7; ++paramIdx)
+		if (mProgramIsValid)
 		{
-			Program::Value vidx = paramIdx - kVControl0;
-			mProgram->SetVC(vidx, GetParam(paramIdx)->Int());
+			for (paramIdx = kVControl0; paramIdx <= kVControl7; ++paramIdx)
+			{
+				Program::Value vidx = paramIdx - kVControl0;
+				mProgram->SetVC(vidx, GetParam(paramIdx)->Int());
+			}
 		}
 		RedrawParamControls();
 	}
