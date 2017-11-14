@@ -22,7 +22,7 @@ namespace Presets
 		// name, volume, bit depth, t-mode, program text
 		{
 			"saw wave",
-			50, 15, TTWithNoteResetting,
+			50, 16, TTWithNoteResetting,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// t is automatically incremented before generating a sample frame." CR
 			"// n is set to the most recent MIDI Note On value." CR
@@ -40,7 +40,7 @@ namespace Presets
 
 		{
 			"square wave",
-			50, 15, TTWithNoteResetting,
+			50, 16, TTWithNoteResetting,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// # is a unary operator that creates a 'square' of its operand." CR
 			"// it does this by taking the operand modulo w" CR
@@ -55,7 +55,7 @@ namespace Presets
 
 		{
 			"sine wave",
-			50, 15, TTWithNoteResetting,
+			50, 16, TTWithNoteResetting,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// $ is a unary operator that returns the 'sine' of its operand." CR
 			"// the 'sine' is calculated in relation to the current value of w." CR
@@ -67,7 +67,7 @@ namespace Presets
 
 		{
 			"triangle wave",
-			50, 15, TTWithNoteResetting,
+			50, 16, TTWithNoteResetting,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// T is a unary operator that returns the 'triangle' of its operand." CR
 			"// like $ and #, the operation uses the current value of w." CR
@@ -79,7 +79,7 @@ namespace Presets
 
 		{
 			"pulse wave",
-			50, 15, TTWithNoteResetting,
+			50, 16, TTWithNoteResetting,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// a pulse wave is a square wave that spends longer" CR
 			"// on one of the two values every cycle." CR
@@ -98,7 +98,7 @@ namespace Presets
 
 		{
 			"ternary arp",
-			50, 15, TTWithNoteResetting,
+			50, 16, TTWithNoteResetting,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// the ternary operator '?:' can be used to create expressions" CR
 			"// that will resolve to one of two values." CR
@@ -116,7 +116,7 @@ namespace Presets
 
 		{
 			"frequency modulation",
-			50, 15, TTWithNoteResetting,
+			50, 16, TTWithNoteResetting,
 			2, 0, 0, 0, 0, 0, 0, 0,
 			"// a saw wave can be frequency modulated by adding a sine wave to it." CR
 			"// we use the value of the V0 knob to control the modulation frequency." CR
@@ -127,7 +127,7 @@ namespace Presets
 
 		{
 			"amplitude modulation",
-			50, 15, TTAlways,
+			50, 16, TTAlways,
 			12, 0, 0, 0, 0, 0, 0, 0,
 			"// to amplitude modulate we need to scale the range up and down," CR
 			"// but keep the values 'centered' around w/2." CR
@@ -149,7 +149,7 @@ namespace Presets
 
 		{
 			"midi pitch sweep",
-			15, 15, TTWithNoteResetting,
+			15, 16, TTWithNoteResetting,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// the C operator allows us to access incoming midi control change values." CR
 			"// here we use the modwheel to control the pitch of an oscillator." CR
@@ -206,7 +206,7 @@ namespace Presets
 
 		{
 			"computer music" ,
-			50, 15, TTWithNoteResetting,
+			50, 16, TTWithNoteResetting,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// here we create a random note sequence" CR
 			"// based on the incoming MIDI note." CR
@@ -292,18 +292,18 @@ namespace Presets
 		},
 
 		{
-		"moving average",
-		50, 17, TTAlways,
-		0, 0, 0, 0, 0, 0, 0, 0,
-		"// this sonifies the cumulative moving average for the function" CR
-		"// f(x) = x*256 ^ x*64 & x*32" CR
-		"// see https://en.wikipedia.org/wiki/Moving_average" CR
-		"x = t+1;" CR
-		"f = x*256 ^ x*64 & x*32;" CR
-		"p = p + (f - p)/x;" CR
-		"[*] = p;",
-		// watches
-		"x", "f", "p", "", "", "", "", "", "", "",
+			"moving average",
+			50, 17, TTAlways,
+			0, 0, 0, 0, 0, 0, 0, 0,
+			"// this sonifies the cumulative moving average for the function" CR
+			"// f(x) = x*256 ^ x*64 & x*32" CR
+			"// see https://en.wikipedia.org/wiki/Moving_average" CR
+			"x = t+1;" CR
+			"f = x*256 ^ x*64 & x*32;" CR
+			"p = p + (f - p)/x;" CR
+			"[*] = p;",
+			// watches
+			"x", "f", "p", "", "", "", "", "", "", "",
 		},
 
 		{
@@ -330,7 +330,7 @@ namespace Presets
 
 		{
 			"sample and hold effect",
-			100, 15, TTAlways,
+			100, 16, TTAlways,
 			36, 0, 0, 0, 0, 0, 0, 0,
 			"// this modifies the audio coming into the program" CR
 			"// to create a sample and hold effect, with V0 controlling the intensity." CR
@@ -367,7 +367,7 @@ namespace Presets
 
 		{
 			"rhythmic glitch sine",
-			15, 15, TTAlways,
+			50, 16, TTAlways,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// programs have a large 'user' memory space that can be accessed with '@'." CR
 			"// this allows us to store many previous values of the program." CR
