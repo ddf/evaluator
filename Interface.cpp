@@ -33,6 +33,17 @@ enum ELayout
 	kTimeType_W = 27 * TTCount,
 	kTimeType_H = kVolumeKnob_H + kVolumeLabel_H,
 
+	// rect for the tempo box in standalone
+	kTempoLabel_X = kTimeType_X + kTimeType_W + 20,
+	kTempoLabel_Y = kVolumeLabel_Y,
+	kTempoLabel_W = 60,
+	kTempoLabel_H = kVolumeLabel_H,
+
+	kTempoBox_X = kTempoLabel_X,
+	kTempoBox_Y = kVolumeKnob_Y + 3,
+	kTempoBox_W = kTempoLabel_W,
+	kTempoBox_H = 20,
+
 	kVControl_W = 30,
 	kVControl_H = 30,
 	kVControl_S = kVControl_W + 10,
@@ -347,6 +358,26 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 
 		pGraphics->AttachControl(tmodeText);
 	}
+
+#if SA_API
+	// tempo label and edit box
+	{
+		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kTempoLabel), &kLabelTextStyle, "BPM"));
+
+		IText textStyle = kExpressionTextStyle;
+		textStyle.mAlign = IText::kAlignCenter;
+		IRECT backRect = MakeIRect(kTempoBox);
+		IRECT textRect;
+		pGraphics->MeasureIText(&textStyle, "000.00", &textRect);
+		int HH = textRect.H() / 2;
+		int HW = textRect.W() / 2;
+		textRect.L = backRect.MW() - HW;
+		textRect.R = backRect.MW() + HW;
+		textRect.T = backRect.MH() - HH;
+		textRect.B = backRect.MH() + HH;
+		pGraphics->AttachControl(new TextBox(mPlug, backRect, kTempo, &textStyle, textRect));
+	}
+#endif
 
 	// ---V Control Knobs-------------------------
 	{

@@ -57,6 +57,36 @@ void ITextEdit::TextFromTextEntry(const char* txt)
 /////////////////////////////////////
 // ConsoleText
 //
+TextBox::TextBox(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, IRECT textRect)
+	: ICaptionControl(pPlug, pR, paramIdx, pText, false)
+	, mTextRect(textRect)
+{
+}
+
+bool TextBox::Draw(IGraphics* pGraphics)
+{
+	pGraphics->FillIRect(&mText.mTextEntryBGColor, &mRECT);
+	pGraphics->DrawRect(&mText.mTextEntryFGColor, &mRECT);
+
+	IRECT ourRect = mRECT;
+	mRECT = mTextRect;
+	bool result = ICaptionControl::Draw(pGraphics);
+	mRECT = ourRect;
+
+	return result;
+}
+
+void TextBox::OnMouseDown(int x, int y, IMouseMod* pMod)
+{
+	mPlug->GetGUI()->PromptUserInput(this, mPlug->GetParam(mParamIdx), &mTextRect);
+	Redraw();
+}
+//
+/////////////////////////////////////
+
+/////////////////////////////////////
+// ConsoleText
+//
 ConsoleText::ConsoleText(IPlugBase* plug, IRECT pR, IText* textStyle, const IColor* backgroundColor, int margin)
 	: IControl(plug, pR)
 	, mPanel(plug, pR, backgroundColor)

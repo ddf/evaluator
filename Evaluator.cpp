@@ -40,6 +40,9 @@ Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
 		GetParam(paramIdx)->InitInt(vcName, kVControlMin, kVControlMin, kVControlMax);
 	}
 
+	GetParam(kTempo)->InitDouble("tempo (ignored)", DEFAULT_TEMPO, kTempoMin, kTempoMax, 0.01, "bpm");
+	GetParam(kTempo)->SetCanAutomate(false);
+
 	for (int i = 0; i < Presets::Count(); ++i)
 	{
 		MakePresetFromData(Presets::Get(i));
@@ -60,7 +63,16 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 
 	const Program::Value range = (Program::Value)1 << mBitDepth;
 	const double mdenom = GetSampleRate() / 1000.0;
-	const double qdenom = (GetSampleRate() / (GetTempo() / 60.0)) / 128.0;
+#if !SA_API
+	if ( GetParam(kTempo)->Value() != GetTempo() )
+	{
+		BeginInformHostOfParamChange(kTempo);
+		GetParam(kTempo)->Set(GetTempo());
+		InformHostOfParamChange(kTempo, GetParam(kTempo)->GetNormalized());
+		EndInformHostOfParamChange(kTempo);
+	}
+#endif
+	const double qdenom = (GetSampleRate() / (GetParam(kTempo)->Value() / 60.0)) / 128.0;
 
 	mProgram->Set('w', range);
 	mProgram->Set('~', (Program::Value)GetSampleRate());
@@ -306,7 +318,8 @@ void Evaluator::OnParamChange(int paramIdx)
 static const int kStateFirstVersion = 100000; // add the watch strings to the serialized state
 static const int kStateVCParams = kStateFirstVersion + 1;
 static const int kStateProgramName = kStateVCParams + 1;
-static const int kStateVersion = kStateProgramName;
+static const int kStateTempo = kStateProgramName + 1;
+static const int kStateVersion = kStateTempo;
 
 void Evaluator::MakePresetFromData(const Presets::Data& data)
 {
@@ -439,7 +452,9 @@ int Evaluator::UnserializeState(ByteChunk* pChunk, int startPos)
 
 	startPos = nextPos;
 
-	const int numParams = version < kStateVCParams ? kScopeWindow + 1 : kNumParams;
+	const int numParams = version < kStateVCParams ? kScopeWindow + 1
+						: version < kStateTempo ? kVControl7 + 1
+						: kNumParams;
 
 	return IPlugBase::UnserializeParams(pChunk, startPos, numParams); // must remember to call UnserializeParams at the end
 }

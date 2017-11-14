@@ -44,6 +44,18 @@ protected:
 	WDL_String mStr;
 };
 
+class TextBox : public ICaptionControl
+{
+public:
+	TextBox(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, IRECT textRect);
+
+	bool Draw(IGraphics* pGraphics) override;
+	void OnMouseDown(int x, int y, IMouseMod* pMod) override;
+
+private:
+	IRECT mTextRect;
+};
+
 class ConsoleText : public IControl
 {
 public:
