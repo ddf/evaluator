@@ -34,7 +34,7 @@ enum EParams
 	kScopeWindowMax = 2000,
 
 	kVControlMin = 0,
-	kVControlMax = 256
+	kVControlMax = 255
 };
 
 enum TimeType : uint8_t
