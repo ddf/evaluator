@@ -264,17 +264,19 @@ LoadButton::LoadButton(IPlugBase* pPlug, int x, int y, IBitmap* pButtonBack, ITe
 	mRECT = IRECT(0, 0, GUI_WIDTH, GUI_HEIGHT);
 	// but only our button should get mouse clicks to begin with
 	SetTargetArea(mButtonRect);
+	mDisablePrompt = true;
 	mMenuRect.T += kMenuPadding;
 	mMenuRect.B += kMenuPadding;
-	mDisablePrompt = true;
 	const int selectionCount = Presets::Count() + 1;
-	const int selectionHeight = menuRect.H() / selectionCount;
+	const int selectionHeight = menuRect.H() / (selectionCount-1);
 	for (int i = 0; i < selectionCount; ++i)
 	{
 		const int T = mMenuRect.T + kMenuPadding + i*selectionHeight;
 		IRECT rect = IRECT(menuRect.L + kMenuPadding, T, menuRect.R - kMenuPadding, T + selectionHeight);
 		mRECTs.Add(rect);
 	}
+
+	mMenuRect.B += kMenuPadding*2;
 }
 
 bool LoadButton::Draw(IGraphics* pGraphics)

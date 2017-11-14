@@ -123,7 +123,7 @@ enum ELayout
 	kPresetPopup_X = 30,
 	kPresetPopup_Y = kProgramText_Y,
 	kPresetPopup_W = kEditorWidth - kPresetPopup_X * 2,
-	kPresetPopup_H = kProgramText_H + kConsole_H,
+	kPresetPopup_H = kProgramText_H + kConsole_H + 15,
 };
 
 // note: ICOLOR is ARGB
