@@ -79,6 +79,8 @@ public:
 			RND, // random number operator - operand is used to wrap value returned by rand() - so like Random.Range(0, operand)
 			CCV, // use the operand to look up the current value of a midi control change value, eg 'a = C1'
 			VCV, // use the operand to look up the current value of a "voltage" control value, eg 'a = V5'
+			NOT,
+			COM,
 		};
 
 		// need default constructor or we can't use vector

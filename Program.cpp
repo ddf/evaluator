@@ -151,7 +151,7 @@ static int ParseAtom(CompilationState& state)
 	std::stack<Program::Op::Code> unaryOps;
 
 	Program::Char op = *state;
-	while (op == '-' || op == '+' || op == '$' || op == '#' || op == 'F' || op == 'T' || op == '@' || op == 'R' || op == 'C' || op == 'V')
+	while (op == '-' || op == '+' || op == '$' || op == '#' || op == 'F' || op == 'T' || op == '@' || op == 'R' || op == 'C' || op == 'V' || op == '!' || op == '~')
 	{
 		switch (op)
 		{
@@ -165,6 +165,8 @@ static int ParseAtom(CompilationState& state)
 		case 'R': unaryOps.push(Program::Op::RND); break;
 		case 'C': unaryOps.push(Program::Op::CCV); break;
 		case 'V': unaryOps.push(Program::Op::VCV); break;
+		case '!': unaryOps.push(Program::Op::NOT); break;
+		case '~': unaryOps.push(Program::Op::COM); break;
 		}
 		state.parsePos++;
 		op = *state;
@@ -810,6 +812,20 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 	{
 		POP1;
 		stack.push(GetVC(a));
+	}
+	break;
+			
+	case Op::NOT:
+	{
+		POP1;
+		stack.push(!a);
+	}
+	break;
+	
+	case Op::COM:
+	{
+		POP1;
+		stack.push(~a);
 	}
 	break;
 
