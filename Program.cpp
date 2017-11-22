@@ -251,7 +251,7 @@ static int ParseAtom(CompilationState& state)
 	{
 		const Program::Char* startPtr = state.source + state.parsePos;
 		Program::Char* endPtr = nullptr;
-		Program::Value res = (Program::Value)strtoull(startPtr, &endPtr, 10);
+		Program::Value res = (Program::Value)strtoull(startPtr, &endPtr, 0);
 		// failed to parse a number
 		if (endPtr == startPtr)
 		{
