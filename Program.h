@@ -52,6 +52,7 @@ public:
 
 		enum Code
 		{
+			NOP, // no operation (doesn't pop from the stack or push to it)
 			PSH, // push a value onto the stack
 			PEK, // get the value at a memory address
 			POK, // set the value at a memory address

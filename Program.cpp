@@ -14,6 +14,23 @@
 #include <deque>
 #include <math.h>
 #include <stdlib.h>
+#include <map>
+
+const std::map<Program::Char, Program::Op::Code> UnaryOperators =
+{
+	{ '@', Program::Op::PEK },
+	{ 'F', Program::Op::FRQ },
+	{ '#', Program::Op::SQR },
+	{ '$', Program::Op::SIN },
+	{ 'T', Program::Op::TRI },
+	{ '+', Program::Op::NOP },
+	{ '-', Program::Op::NEG },
+	{ '~', Program::Op::COM },
+	{ '!', Program::Op::NOT },
+	{ 'C', Program::Op::CCV },
+	{ 'V', Program::Op::VCV },
+	{ 'R', Program::Op::RND }
+};
 
 // used to store const values relating to [*], 
 // which allows for reading the sum of all inputs or writing the same value to all outputs.
@@ -150,26 +167,17 @@ static int ParseAtom(CompilationState& state)
 
 	std::stack<Program::Op::Code> unaryOps;
 
-	Program::Char op = *state;
-	while (op == '-' || op == '+' || op == '$' || op == '#' || op == 'F' || op == 'T' || op == '@' || op == 'R' || op == 'C' || op == 'V' || op == '!' || op == '~')
+	// see if the current character is a unary operator
+	// and push the appropriate opcode onto the unaryOps stack.
+	// we don't push a NOP because it's pointless to have any.
+	while( UnaryOperators.count(*state) )
 	{
-		switch (op)
+		const Program::Op::Code code = UnaryOperators.find(*state)->second;
+		if ( code != Program::Op::NOP )
 		{
-		case '-': unaryOps.push(Program::Op::NEG); break;
-		case '+': break; // no op
-		case '$': unaryOps.push(Program::Op::SIN); break;
-		case '#': unaryOps.push(Program::Op::SQR); break;
-		case 'F': unaryOps.push(Program::Op::FRQ); break;
-		case 'T': unaryOps.push(Program::Op::TRI); break;
-		case '@': unaryOps.push(Program::Op::PEK); break;
-		case 'R': unaryOps.push(Program::Op::RND); break;
-		case 'C': unaryOps.push(Program::Op::CCV); break;
-		case 'V': unaryOps.push(Program::Op::VCV); break;
-		case '!': unaryOps.push(Program::Op::NOT); break;
-		case '~': unaryOps.push(Program::Op::COM); break;
+			unaryOps.push(code);
 		}
 		state.parsePos++;
-		op = *state;
 	}
 
 	// Check if there is parenthesis
