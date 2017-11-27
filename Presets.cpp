@@ -391,9 +391,11 @@ namespace Presets
 			50, 16, TTWithNoteResetting,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// another way to use 'user' memory could be to store values of a sequence." CR
-			"// here we create an arpeggiator that uses the midi note as the root of a major chord." CR
+			"// here we create an arpeggiator" CR 
+			"// that uses the midi note as the root of a major chord." CR
 			"@0 = 0; @1 = 4; @2 = 7; @3 = 12;" CR
-			"// we want advance through the sequence every sixteenth note, wrapping around." CR
+			"// we want advance through the sequence every sixteenth note," CR 
+			"// wrapping around to the beginning of the sequence when it reaches the end." CR
 			"i = q/32 % 4;" CR
 			"[*] = n>0 ? t*F(n+@i) : w/2;",
 			// watches
