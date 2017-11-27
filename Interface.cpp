@@ -24,17 +24,24 @@ enum ELayout
 	kVolumeKnob_W = kVolumeLabel_W,
 	kVolumeKnob_H = kVolumeLabel_W,
 
-	kBitDepth_X = kVolumeKnob_X + kVolumeKnob_W + 20,
-	kBitDepth_Y = kVolumeKnob_Y,
+	kBitDepthLabel_X = kVolumeLabel_X + kVolumeLabel_W + 15,
+	kBitDepthLabel_Y = kVolumeLabel_Y,
+	kBitDepthLabel_W = 30,
+	kBitDepthLabel_H = kVolumeLabel_H,
+
+	kBitDepth_X = kBitDepthLabel_X,
+	kBitDepth_Y = kVolumeKnob_Y + 3,
+	kBitDepth_W = kBitDepthLabel_W,
+	kBitDepth_H = 20,
 
 	// rect for label & buttons
-	kTimeType_X = kBitDepth_X + 60,
+	kTimeType_X = kBitDepth_X + 45,
 	kTimeType_Y = kVolumeLabel_Y,
 	kTimeType_W = 27 * TTCount,
 	kTimeType_H = kVolumeKnob_H + kVolumeLabel_H,
 
 	// rect for the tempo box in standalone
-	kTempoLabel_X = kTimeType_X + kTimeType_W + 20,
+	kTempoLabel_X = kTimeType_X + kTimeType_W + 15,
 	kTempoLabel_Y = kVolumeLabel_Y,
 	kTempoLabel_W = 60,
 	kTempoLabel_H = kVolumeLabel_H,
@@ -208,6 +215,14 @@ static const char* kTModeDescription[] = {
 
 Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 	: mPlug(plug)
+	, textEdit(nullptr)
+	, programName(nullptr)
+	, tmodeText(nullptr)
+	, consoleTextControl(nullptr)
+	, watches(nullptr)
+	, watchConsole(nullptr)
+	, bitDepthControl(nullptr)
+	, oscilloscope(nullptr)
 {
 	pGraphics->AttachPanelBackground(&kBackgroundColor);
 
@@ -298,33 +313,20 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 
 	//---Bit Depth--------------
 	{
-		IBitmap numberBoxArrowUp = pGraphics->LoadIBitmap(NUMBERBOX_ARROW_UP_ID, NUMBERBOX_ARROW_UP_FN, 2);
-		IBitmap numberBoxArrowDown = pGraphics->LoadIBitmap(NUMBERBOX_ARROW_DOWN_ID, NUMBERBOX_ARROW_DOWN_FN, 2);
-		IBitmap numberBack = pGraphics->LoadIBitmap(NUMBERBOX_BACK_ID, NUMBERBOX_BACK_FN);
+		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kBitDepthLabel), &kLabelTextStyle, "BITS"));
 
-		//--Bit Depth Number Box Background
-		IRECT backSize(kBitDepth_X, kBitDepth_Y, kBitDepth_X + numberBack.W, kBitDepth_Y + numberBack.H);
-
-		pGraphics->AttachControl(new IBitmapControl(mPlug, backSize.L, backSize.T, &numberBack));
-
-		//---Bit Depth Number Box Value--------
-		const int textHH = 5;
-		IRECT numberSize(backSize.L + 5, backSize.T + numberBack.H / 2 - textHH, backSize.L + 25, backSize.T + numberBack.H / 2 + textHH);
-		bitDepthControl = new ICaptionControl(mPlug, numberSize, kBitDepth, &kConsoleTextStyle);
-		pGraphics->AttachControl(bitDepthControl);
-
-		//---Number Box Buttons
-		int arrowX = backSize.R - numberBoxArrowUp.W;
-		int arrowY = backSize.T + numberBack.H / 2 - numberBoxArrowUp.H / 2;
-		pGraphics->AttachControl(new IIncrementControl(mPlug, arrowX, arrowY, kBitDepth, &numberBoxArrowUp, 1));
-		pGraphics->AttachControl(new IIncrementControl(mPlug, arrowX, arrowY + numberBoxArrowUp.H / 2, kBitDepth, &numberBoxArrowDown, -1));
-
-		//--Bit Depth Number Box Label
-		IRECT boxLabelSize(backSize.L,
-			kVolumeLabel_Y,
-			backSize.R,
-			backSize.T);
-		pGraphics->AttachControl(new ITextControl(mPlug, boxLabelSize, &kLabelTextStyle, "BITS"));
+		IText textStyle = kExpressionTextStyle;
+		textStyle.mAlign = IText::kAlignCenter;
+		IRECT backRect = MakeIRect(kBitDepth);
+		IRECT textRect;
+		pGraphics->MeasureIText(&textStyle, "00", &textRect);
+		int HH = textRect.H() / 2;
+		int HW = textRect.W() / 2;
+		textRect.L = backRect.MW() - HW;
+		textRect.R = backRect.MW() + HW;
+		textRect.T = backRect.MH() - HH;
+		textRect.B = backRect.MH() + HH;
+		pGraphics->AttachControl(new TextBox(mPlug, backRect, kBitDepth, &textStyle, textRect));
 	}
 
 	// ---Time Type------------------------------
@@ -423,14 +425,14 @@ void Interface::SetDirty(int paramIdx, bool pushToPlug)
 	switch (paramIdx)
 	{
 	case kBitDepth:
-		if (bitDepthControl)
+		if (bitDepthControl != nullptr)
 		{
 			bitDepthControl->SetDirty(pushToPlug);
 		}
 		break;
 
 	case kTimeType:
-		if (tmodeText)
+		if (tmodeText != nullptr)
 		{
 			int tmodeIdx = mPlug->GetParam(kTimeType)->Int();
 			tmodeText->SetTextFromPlug(const_cast<char*>(kTModeDescription[tmodeIdx]));
