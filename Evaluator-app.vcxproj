@@ -275,7 +275,6 @@
     <ClInclude Include="..\..\ASIO_SDK\iasiodrv.h" />
     <ClInclude Include="..\..\WDL\IPlug\IPlugStandalone.h" />
     <ClInclude Include="..\..\WDL\rtaudiomidi\RtAudio.h" />
-    <ClInclude Include="..\..\WDL\rtaudiomidi\RtError.h" />
     <ClInclude Include="..\..\WDL\rtaudiomidi\RtMidi.h" />
     <ClInclude Include="app_wrapper\app_main.h" />
     <ClInclude Include="app_wrapper\app_resource.h" />

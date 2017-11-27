@@ -15,9 +15,6 @@
     <ClInclude Include="..\..\WDL\rtaudiomidi\RtAudio.h">
       <Filter>app\RtAudioMidi</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\WDL\rtaudiomidi\RtError.h">
-      <Filter>app\RtAudioMidi</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\WDL\rtaudiomidi\RtMidi.h">
       <Filter>app\RtAudioMidi</Filter>
     </ClInclude>
