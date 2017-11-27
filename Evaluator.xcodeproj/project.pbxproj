@@ -142,7 +142,6 @@
 		4F78DAB213B640470032E0F3 /* swell-dlggen.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FD16D0313B63494001D0217 /* swell-dlggen.h */; };
 		4F78DAB313B640470032E0F3 /* swellappmain.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FD16D4513B635C8001D0217 /* swellappmain.h */; };
 		4F78DAB813B640530032E0F3 /* RtAudio.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F78D8C013B63A700032E0F3 /* RtAudio.h */; };
-		4F78DAB913B640530032E0F3 /* RtError.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F78D8C113B63A700032E0F3 /* RtError.h */; };
 		4F78DABA13B640530032E0F3 /* RtMidi.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F78D8C313B63A700032E0F3 /* RtMidi.h */; };
 		4F78DABB13B640620032E0F3 /* IPlugStandalone.h in Headers */ = {isa = PBXBuildFile; fileRef = 4F78D9EA13B63BE90032E0F3 /* IPlugStandalone.h */; };
 		4F8D4BCD13E97671004F7633 /* lice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F8D4BCC13E97664004F7633 /* lice.a */; };
@@ -499,7 +498,6 @@
 		4F78D8BD13B63A4E0032E0F3 /* wdltypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = wdltypes.h; path = ../../WDL/wdltypes.h; sourceTree = SOURCE_ROOT; };
 		4F78D8BF13B63A700032E0F3 /* RtAudio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RtAudio.cpp; sourceTree = "<group>"; };
 		4F78D8C013B63A700032E0F3 /* RtAudio.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RtAudio.h; sourceTree = "<group>"; };
-		4F78D8C113B63A700032E0F3 /* RtError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RtError.h; sourceTree = "<group>"; };
 		4F78D8C213B63A700032E0F3 /* RtMidi.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RtMidi.cpp; sourceTree = "<group>"; };
 		4F78D8C313B63A700032E0F3 /* RtMidi.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RtMidi.h; sourceTree = "<group>"; };
 		4F78D8D213B63B5D0032E0F3 /* aeffect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = aeffect.h; sourceTree = "<group>"; };
@@ -1012,7 +1010,6 @@
 			children = (
 				4F78D8BF13B63A700032E0F3 /* RtAudio.cpp */,
 				4F78D8C013B63A700032E0F3 /* RtAudio.h */,
-				4F78D8C113B63A700032E0F3 /* RtError.h */,
 				4F78D8C213B63A700032E0F3 /* RtMidi.cpp */,
 				4F78D8C313B63A700032E0F3 /* RtMidi.h */,
 			);
@@ -1349,7 +1346,6 @@
 			files = (
 				4F78DABB13B640620032E0F3 /* IPlugStandalone.h in Headers */,
 				4F78DAB813B640530032E0F3 /* RtAudio.h in Headers */,
-				4F78DAB913B640530032E0F3 /* RtError.h in Headers */,
 				4F78DABA13B640530032E0F3 /* RtMidi.h in Headers */,
 				4F78DAB113B640470032E0F3 /* swell-menugen.h in Headers */,
 				4F78DAB213B640470032E0F3 /* swell-dlggen.h in Headers */,
