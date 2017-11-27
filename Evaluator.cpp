@@ -274,10 +274,24 @@ void Evaluator::OnParamChange(int paramIdx)
 		{
 			static const int maxError = 1024;
 			static char errorDesc[maxError];
+			static const int maxLoc = 47;
+			static char programLoc[maxLoc];
+			int len = strlen(programText + errorPosition);
+			if (len > maxLoc - 2) len = maxLoc - 2;
+			memset(programLoc, '\0', maxLoc);
+			strncpy(programLoc, programText + errorPosition, len);
+			for (int i = 0; i < maxLoc; ++i)
+			{
+				if (programLoc[i] == '\n')
+				{
+					programLoc[i] = '\0';
+					break;
+				}
+			}
 			snprintf(errorDesc, maxError,
-				"Compile Error:\n%s\nAt:\n%s",
+				"Compile Error:\n\n%s\n\nAt:\n\n%s",
 				Program::GetErrorString(error),
-				programText + errorPosition);
+				programLoc);
 			mInterface->SetConsoleText(errorDesc);
 			mProgram = Program::Compile("[*] = w/2", 0, error, errorPosition);
 		}

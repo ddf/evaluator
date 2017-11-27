@@ -89,15 +89,15 @@ const char * Program::GetErrorString(Program::CompileError error)
 	case Program::CE_FAILED_TO_PARSE_NUMBER:
 		return "Failed to parse a numeric value";
 	case Program::CE_ILLEGAL_ASSIGNMENT:
-		return "Left side of '=' must be assignable (a variable, address, or output)";
+		return "Left side of '=' must be assignable.\n(a variable, address, or output)";
 	case Program::CE_ILLEGAL_STATEMENT_TERMINATION:
 		return "Illegal statement termination.\n"
-			   "Semi-colon may not appear within parens or ternary operators.";
+			   "Semi-colon may not appear within parens\nor ternary operators.";
 	case Program::CE_ILLEGAL_VARIABLE_NAME:
-		return "Illegal variable name - uppercase letters are reserved for operators.";
+		return "Illegal variable name.\n(uppercase letters are reserved for operators)";
 	case Program::CE_MISSING_PUT:
 		return "The program does not output any values.\n"
-			   "You must assign something to [0], [1], or [*].";
+			   "Assign something to [0], [1], or [*].";
 	default:
 		return "Unknown";
 	}
