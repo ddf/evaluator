@@ -78,9 +78,42 @@ bool TextBox::Draw(IGraphics* pGraphics)
 
 void TextBox::OnMouseDown(int x, int y, IMouseMod* pMod)
 {
-	mPlug->GetGUI()->PromptUserInput(this, mPlug->GetParam(mParamIdx), &mTextRect);
-	Redraw();
+	if (pMod->L)
+	{
+		mPlug->GetGUI()->PromptUserInput(this, mPlug->GetParam(mParamIdx), &mTextRect);
+		Redraw();
+	}
 }
+
+void TextBox::OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMod)
+{
+	if (pMod->R)
+	{
+		OnMouseWheel(x, y, pMod, -dY);
+	}
+}
+
+void TextBox::OnMouseWheel(int x, int y, IMouseMod* pMod, int d)
+{
+#ifdef PROTOOLS
+	if (pMod->C)
+	{
+		mValue += GetParam()->GetStep() * 0.001 * d;
+	}
+#else
+	if (pMod->C || pMod->S)
+	{
+		mValue += GetParam()->GetStep() * 0.001 * d;
+	}
+#endif
+	else
+	{
+		mValue += GetParam()->GetStep() * 0.01 * d;
+	}
+
+	SetDirty();
+}
+
 //
 /////////////////////////////////////
 
