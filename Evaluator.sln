@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Evaluator-app", "Evaluator-app.vcxproj", "{41785AE4-5B70-4A75-880B-4B418B4E13C6}"
 	ProjectSection(ProjectDependencies) = postProject
@@ -30,6 +30,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Evaluator-vst3", "Evaluator
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "base", "..\..\VST3_SDK\base\win\base.vcxproj", "{5755CC40-C699-491B-BD7C-5D841C26C28D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "expression_test", "expression_test\win\expression_test.vcxproj", "{5FE71BE5-DADD-4F82-9F38-AFF27849AC57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -113,6 +115,18 @@ Global
 		{5755CC40-C699-491B-BD7C-5D841C26C28D}.Tracer|Win32.Build.0 = Release|Win32
 		{5755CC40-C699-491B-BD7C-5D841C26C28D}.Tracer|x64.ActiveCfg = Release|x64
 		{5755CC40-C699-491B-BD7C-5D841C26C28D}.Tracer|x64.Build.0 = Release|x64
+		{5FE71BE5-DADD-4F82-9F38-AFF27849AC57}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5FE71BE5-DADD-4F82-9F38-AFF27849AC57}.Debug|Win32.Build.0 = Debug|Win32
+		{5FE71BE5-DADD-4F82-9F38-AFF27849AC57}.Debug|x64.ActiveCfg = Debug|x64
+		{5FE71BE5-DADD-4F82-9F38-AFF27849AC57}.Debug|x64.Build.0 = Debug|x64
+		{5FE71BE5-DADD-4F82-9F38-AFF27849AC57}.Release|Win32.ActiveCfg = Release|Win32
+		{5FE71BE5-DADD-4F82-9F38-AFF27849AC57}.Release|Win32.Build.0 = Release|Win32
+		{5FE71BE5-DADD-4F82-9F38-AFF27849AC57}.Release|x64.ActiveCfg = Release|x64
+		{5FE71BE5-DADD-4F82-9F38-AFF27849AC57}.Release|x64.Build.0 = Release|x64
+		{5FE71BE5-DADD-4F82-9F38-AFF27849AC57}.Tracer|Win32.ActiveCfg = Debug|Win32
+		{5FE71BE5-DADD-4F82-9F38-AFF27849AC57}.Tracer|Win32.Build.0 = Debug|Win32
+		{5FE71BE5-DADD-4F82-9F38-AFF27849AC57}.Tracer|x64.ActiveCfg = Release|x64
+		{5FE71BE5-DADD-4F82-9F38-AFF27849AC57}.Tracer|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
