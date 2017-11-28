@@ -94,18 +94,18 @@ enum ELayout
 	kWatchLabel_W = 25,
 	kWatchLabel_H = 15,
 
-	// rect for a text edit
-	kWatch_X = kWatchLabel_X,
-	kWatch_Y = kConsole_Y + kConsole_M,
-	kWatch_W = 50,
-	kWatch_H = 11,
-	kWatch_S = 2,
+	// rect for a watch text edit
+	kWatchVar_X = kWatchLabel_X,
+	kWatchVar_Y = kConsole_Y,
+	kWatchVar_W = 50,
+	kWatchVar_H = 12,
+	kWatchVar_S = 2,
 
 	// rect for the watch results
-	kWatchWindow_X = kWatch_X + kWatch_W + 5,
-	kWatchWindow_Y = kConsole_Y,
-	kWatchWindow_W = kEditorWidth - 10 - kWatchWindow_X,
-	kWatchWindow_H = kConsole_H,
+	kWatchVal_X = kWatchVar_X + kWatchVar_W + 5,
+	kWatchVal_Y = kWatchVar_Y,
+	kWatchVal_W = kEditorWidth - 10 - kWatchVal_X,
+	kWatchVal_H = kWatchVar_H,
 
 	kScopeTitle_X = kConsoleTitle_X,
 	kScopeTitle_Y = kConsole_Y + kConsole_H + 10,
@@ -219,8 +219,6 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 	, programName(nullptr)
 	, tmodeText(nullptr)
 	, consoleTextControl(nullptr)
-	, watches(nullptr)
-	, watchConsole(nullptr)
 	, bitDepthControl(nullptr)
 	, oscilloscope(nullptr)
 {
@@ -264,19 +262,21 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 	{
 		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kWatchLabel), &kTitleTextStyle, "WATCH"));
 
-		watches = new ITextEdit*[kWatchNum];
-		IRECT watchRect = MakeIRect(kWatch);
+		IRECT watchVarRect = MakeIRect(kWatchVar);
+		IRECT watchValRect = MakeIRect(kWatchVal);
 		for (int i = 0; i < kWatchNum; ++i)
 		{
-			watches[i] = new ITextEdit(mPlug, watchRect, kWatch + i, &kWatchTextStyle, "", kTextEntrySelectTextWhenFocused);
-			watches[i]->SetTextEntryLength(5);
-			pGraphics->AttachControl(watches[i]);
-			watchRect.T += kWatch_H + kWatch_S;
-			watchRect.B += kWatch_H + kWatch_S;
+			watches[i].var = new ITextEdit(mPlug, watchVarRect, kWatch + i, &kWatchTextStyle, "", kTextEntrySelectTextWhenFocused);
+			watches[i].var->SetTextEntryLength(5);
+			pGraphics->AttachControl(watches[i].var);
+			watchVarRect.T += kWatchVar_H + kWatchVar_S;
+			watchVarRect.B += kWatchVar_H + kWatchVar_S;
+			
+			watches[i].val = new ConsoleText(mPlug, watchValRect, &kConsoleTextStyle, &kConsoleBackgroundColor, 1);
+			pGraphics->AttachControl(watches[i].val);
+			watchValRect.T += kWatchVal_H + kWatchVar_S;
+			watchValRect.B += kWatchVal_H + kWatchVar_S;
 		}
-
-		watchConsole = new ConsoleText(mPlug, MakeIRect(kWatchWindow), &kConsoleTextStyle, &kConsoleBackgroundColor, kConsole_M);
-		pGraphics->AttachControl(watchConsole);
 	}
 
 	// -- Oscilloscope display
@@ -417,7 +417,6 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 
 Interface::~Interface()
 {
-	delete[] watches;
 }
 
 void Interface::SetDirty(int paramIdx, bool pushToPlug)
@@ -471,9 +470,12 @@ void Interface::SetConsoleText(const char * consoleText)
 	consoleTextControl->SetTextFromPlug(const_cast<char*>(consoleText));
 }
 
-void Interface::SetWatchText(const char * watchText)
+void Interface::SetWatchValue(int idx, const char * watchText)
 {
-	watchConsole->SetTextFromPlug(const_cast<char*>(watchText));
+	if ( idx >= 0 && idx < kWatchNum )
+	{
+		watches[idx].val->SetTextFromPlug(const_cast<char*>(watchText));
+	}
 }
 
 void Interface::UpdateOscilloscope(double left, double right)
@@ -488,14 +490,14 @@ int Interface::GetOscilloscopeWidth() const
 
 const char * Interface::GetWatch(int idx) const
 {
-	return watches[idx]->GetText();
+	return watches[idx].var->GetText();
 }
 
 void Interface::SetWatch(int idx, const char * text)
 {
 	if (idx >= 0 && idx < kWatchNum)
 	{
-		watches[idx]->SetTextFromPlug(text);
+		watches[idx].var->SetTextFromPlug(text);
 	}
 }
 

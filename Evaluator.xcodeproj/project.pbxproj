@@ -265,6 +265,8 @@
 		77CB8CCC1FA811E6006734F0 /* radio_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 77CB8CC71FA811DD006734F0 /* radio_button.png */; };
 		77CB8CCD1FA811E6006734F0 /* radio_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 77CB8CC71FA811DD006734F0 /* radio_button.png */; };
 		77CB8CCE1FA811E7006734F0 /* radio_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 77CB8CC71FA811DD006734F0 /* radio_button.png */; };
+		77EB800C1FCE2457005FE948 /* Params.h in Headers */ = {isa = PBXBuildFile; fileRef = 77EB800B1FCE2457005FE948 /* Params.h */; };
+		77EB800D1FCE2457005FE948 /* Params.h in Headers */ = {isa = PBXBuildFile; fileRef = 77EB800B1FCE2457005FE948 /* Params.h */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -628,6 +630,7 @@
 		77CB0C9F1F8178FD0034E05D /* numberbox_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = numberbox_background.png; path = resources/img/numberbox_background.png; sourceTree = "<group>"; };
 		77CB0CA01F8178FD0034E05D /* vslider_background.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = vslider_background.png; path = resources/img/vslider_background.png; sourceTree = "<group>"; };
 		77CB8CC71FA811DD006734F0 /* radio_button.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = radio_button.png; path = resources/img/radio_button.png; sourceTree = "<group>"; };
+		77EB800B1FCE2457005FE948 /* Params.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Params.h; sourceTree = "<group>"; };
 		D2F7E65807B2D6F200F64583 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
@@ -687,6 +690,7 @@
 		089C166AFE841209C02AAC07 /* IPlugExample */ = {
 			isa = PBXGroup;
 			children = (
+				77EB800B1FCE2457005FE948 /* Params.h */,
 				774C73AD1F9EA93F00E2EFC9 /* Controls.cpp */,
 				774C73A71F9EA91800E2EFC9 /* Controls.h */,
 				771CF5251F8D4481000F34E2 /* Interface.cpp */,
@@ -1303,6 +1307,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				77EB800D1FCE2457005FE948 /* Params.h in Headers */,
 				4F3AE17B12C0E5E2001FD7A4 /* resource.h in Headers */,
 				4FF016F7134E14E2001447BA /* mutex.h in Headers */,
 				4FF016F8134E14E2001447BA /* ptrlist.h in Headers */,
@@ -1357,6 +1362,7 @@
 				4F78DA8D13B640050032E0F3 /* heapbuf.h in Headers */,
 				4F78DA8E13B640050032E0F3 /* wdlendian.h in Headers */,
 				774C73A81F9EA91800E2EFC9 /* Controls.h in Headers */,
+				77EB800C1FCE2457005FE948 /* Params.h in Headers */,
 				4F78DA8F13B640050032E0F3 /* swell.h in Headers */,
 				4F78DA9013B640050032E0F3 /* swell-functions.h in Headers */,
 				4F78DA9113B640050032E0F3 /* swell-internal.h in Headers */,

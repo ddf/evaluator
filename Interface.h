@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Params.h"
+
 class Evaluator;
 class IGraphics;
 class ITextEdit;
@@ -24,7 +26,7 @@ public:
 
 	void SetProgramText(const char * programText);
 	void SetConsoleText(const char * consoleText);
-	void SetWatchText(const char* watchText);
+	void SetWatchValue(int idx, const char* watchText);
 
 	void UpdateOscilloscope(double left, double right);
 	int GetOscilloscopeWidth() const;
@@ -43,9 +45,15 @@ private:
 	ITextControl*	programName;
 	ITextControl*   tmodeText;
 	ConsoleText*	consoleTextControl;
-	ITextEdit**		watches;
-	ConsoleText*	watchConsole;
 	IControl*		bitDepthControl;
 	Oscilloscope*   oscilloscope;
+	
+	struct Watch
+	{
+		ITextEdit* var;
+		ConsoleText* val;
+	};
+	
+	Watch watches[kWatchNum];
 };
 

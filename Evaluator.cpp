@@ -632,6 +632,7 @@ void Evaluator::SetWatchText(Interface* forInterface) const
 			}
 			break;
 		}
+    forInterface->SetWatchValue(i, text);
+    printTo = text;
 	}
-	forInterface->SetWatchText(text);
 }
