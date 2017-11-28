@@ -730,7 +730,7 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 		// wildcard GET should return the sum of all channels
 		if (a == Wildcard::Value)
 		{
-			for (int i = 0; i < size; ++i)
+			for (size_t i = 0; i < size; ++i)
 			{
 				v += results[i];
 			}
@@ -852,7 +852,7 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 		// [*] = should put the same value to all outputs
 		if (a == Wildcard::Value)
 		{
-			for (int i = 0; i < size; ++i)
+			for (size_t i = 0; i < size; ++i)
 			{
 				results[i] = b;
 			}
