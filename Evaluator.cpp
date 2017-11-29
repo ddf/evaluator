@@ -19,7 +19,7 @@ Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
 	TRACE;
 
 	//arguments are: name, defaultVal, minVal, maxVal, step, label
-	GetParam(kGain)->InitDouble("gain", 50., 0., 100.0, 1, "%");
+	GetParam(kGain)->InitDouble("volume", 50., 0., 100.0, 1, "%");
 
 	GetParam(kBitDepth)->InitInt("bit depth", 15, kBitDepthMin, kBitDepthMax);
 
