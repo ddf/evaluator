@@ -4,7 +4,9 @@
 #include "IControl.h"
 #include "resource.h"
 
+#if SA_API
 static const char * kAboutBoxText = "Version " VST3_VER_STR "\nCreated by Damien Quartz\nBuilt on " __DATE__;
+#endif
 
 Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
 	: IPLUG_CTOR(kNumParams, Presets::Count(), instanceInfo)
