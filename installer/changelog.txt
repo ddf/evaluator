@@ -1,4 +1,4 @@
 Evaluator changelog
-www.olilarkin.co.uk
+https://damikyu.itch.io/evaluator
 
 00/00/00 - v1.00 initial release

@@ -39,14 +39,14 @@ APP=`echo | grep APP_FOLDER ../../common.xcconfig`
 APP=${APP//\APP_FOLDER = }/$PLUGIN_NAME.app
 
 # Dev build folder
-RTAS=`echo | grep RTAS_FOLDER ../../common.xcconfig`
-RTAS=${RTAS//\RTAS_FOLDER = }/$PLUGIN_NAME.dpm
-RTAS_FINAL="/Library/Application Support/Digidesign/Plug-Ins/$PLUGIN_NAME.dpm"
+#RTAS=`echo | grep RTAS_FOLDER ../../common.xcconfig`
+#RTAS=${RTAS//\RTAS_FOLDER = }/$PLUGIN_NAME.dpm
+#RTAS_FINAL="/Library/Application Support/Digidesign/Plug-Ins/$PLUGIN_NAME.dpm"
 
 # Dev build folder
-AAX=`echo | grep AAX_FOLDER ../../common.xcconfig`
-AAX=${AAX//\AAX_FOLDER = }/$PLUGIN_NAME.aaxplugin
-AAX_FINAL="/Library/Application Support/Avid/Audio/Plug-Ins/$PLUGIN_NAME.aaxplugin"
+#AAX=`echo | grep AAX_FOLDER ../../common.xcconfig`
+#AAX=${AAX//\AAX_FOLDER = }/$PLUGIN_NAME.aaxplugin
+#AAX_FINAL="/Library/Application Support/Avid/Audio/Plug-Ins/$PLUGIN_NAME.aaxplugin"
 
 PKG="installer/build-mac/$PLUGIN_NAME Installer.pkg"
 PKG_US="installer/build-mac/$PLUGIN_NAME Installer.unsigned.pkg"
@@ -139,8 +139,8 @@ echo ""
 setfileicon resources/$PLUGIN_NAME.icns $AU
 setfileicon resources/$PLUGIN_NAME.icns $VST2
 setfileicon resources/$PLUGIN_NAME.icns $VST3
-setfileicon resources/$PLUGIN_NAME.icns "${RTAS}"
-setfileicon resources/$PLUGIN_NAME.icns "${AAX}"
+#setfileicon resources/$PLUGIN_NAME.icns "${RTAS}"
+#setfileicon resources/$PLUGIN_NAME.icns "${AAX}"
 
 #---------------------------------------------------------------------------------------------------------
 
@@ -151,20 +151,20 @@ strip -x $AU/Contents/MacOS/$PLUGIN_NAME
 strip -x $VST2/Contents/MacOS/$PLUGIN_NAME
 strip -x $VST3/Contents/MacOS/$PLUGIN_NAME
 strip -x $APP/Contents/MacOS/$PLUGIN_NAME
-strip -x "${AAX}/Contents/MacOS/$PLUGIN_NAME"
-strip -x "${RTAS}/Contents/MacOS/$PLUGIN_NAME"
+#strip -x "${AAX}/Contents/MacOS/$PLUGIN_NAME"
+#strip -x "${RTAS}/Contents/MacOS/$PLUGIN_NAME"
 
 #---------------------------------------------------------------------------------------------------------
 
 #ProTools stuff
 
-echo "copying RTAS PLUGIN_NAME from 3PDev to main RTAS folder"
-sudo cp -p -R "${RTAS}" "${RTAS_FINAL}"
+#echo "copying RTAS PLUGIN_NAME from 3PDev to main RTAS folder"
+#sudo cp -p -R "${RTAS}" "${RTAS_FINAL}"
 
-echo "copying AAX PLUGIN_NAME from 3PDev to main AAX folder"
-sudo cp -p -R "${AAX}" "${AAX_FINAL}"
+#echo "copying AAX PLUGIN_NAME from 3PDev to main AAX folder"
+#sudo cp -p -R "${AAX}" "${AAX_FINAL}"
 
-echo "code sign AAX binary"
+#echo "code sign AAX binary"
 #... consult PACE documentation
 
 #---------------------------------------------------------------------------------------------------------
