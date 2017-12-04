@@ -380,10 +380,10 @@ namespace Presets
 			"// we write into the address s and incorporate address r," CR
 			"// but only if there is an active midi note." CR
 			"// otherwise we 'reset' @s to w/2, which will produce silence" CR
-			"@s = n>0 ? $(t*Fn) + @r : w/2;"
+			"@s = n>0 ? $(t*Fn) + @r : w/2;" CR
 			"[*] = @s;",
 			// watches
-			"p", "r", "@p", "@r", "", "", "", "", "", "",
+			"r", "s", "@r", "@s", "", "", "", "", "", "",
 		},
 
 		{
