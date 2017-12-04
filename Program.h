@@ -135,7 +135,7 @@ private:
 	RuntimeError Exec(const Op& op, Value* results, size_t size);
 
 	static const size_t kCCSize = 128;
-	static const size_t kVCSize = 16;
+	static const size_t kVCSize = 8;
 
 	// the compiled code
 	std::vector<Op> ops;
