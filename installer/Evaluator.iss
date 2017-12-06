@@ -1,6 +1,8 @@
 [Setup]
 AppName=Evaluator
 AppVersion=1.0.0
+AppPublisher=Damien Quartz
+AppPublisherURL=https://damikyu.itch.io
 DefaultDirName={pf}\Evaluator
 DefaultGroupName=Evaluator
 Compression=lzma2
@@ -21,9 +23,9 @@ Name: "vst2_32"; Description: "32-bit VST2 Plugin (.dll)"; Types: full custom;
 Name: "vst2_64"; Description: "64-bit VST2 Plugin (.dll)"; Types: full custom; Check: Is64BitInstallMode;
 Name: "vst3_32"; Description: "32-bit VST3 Plugin (.vst3)"; Types: full custom;
 Name: "vst3_64"; Description: "64-bit VST3 Plugin (.vst3)"; Types: full custom; Check: Is64BitInstallMode;
-Name: "rtas_32"; Description: "32-bit RTAS Plugin (.dpm)"; Types: full custom;
-Name: "aax_32"; Description: "32-bit AAX Plugin (.aaxplugin)"; Types: full custom;
-Name: "aax_64"; Description: "64-bit AAX Plugin (.aaxplugin)"; Types: full custom; Check: Is64BitInstallMode;
+;Name: "rtas_32"; Description: "32-bit RTAS Plugin (.dpm)"; Types: full custom;
+;Name: "aax_32"; Description: "32-bit AAX Plugin (.aaxplugin)"; Types: full custom;
+;Name: "aax_64"; Description: "64-bit AAX Plugin (.aaxplugin)"; Types: full custom; Check: Is64BitInstallMode;
 Name: "manual"; Description: "User guide"; Types: full custom; Flags: fixed
 
 [Files]
@@ -38,11 +40,11 @@ Source: "..\build-win\vst3\Win32\bin\Evaluator.vst3"; DestDir: "{cf}\VST3\"; Che
 Source: "..\build-win\vst3\Win32\bin\Evaluator.vst3"; DestDir: "{cf32}\VST3\"; Check: Is64BitInstallMode; Components:vst3_32; Flags: ignoreversion;
 Source: "..\build-win\vst3\x64\bin\Evaluator.vst3"; DestDir: "{cf64}\VST3\"; Check: Is64BitInstallMode; Components:vst3_64; Flags: ignoreversion;
 
-Source: "..\build-win\rtas\bin\Evaluator.dpm"; DestDir: "{cf32}\Digidesign\DAE\Plug-Ins\"; Components:rtas_32; Flags: ignoreversion;
-Source: "..\build-win\rtas\bin\Evaluator.dpm.rsr"; DestDir: "{cf32}\Digidesign\DAE\Plug-Ins\"; Components:rtas_32; Flags: ignoreversion;
+;Source: "..\build-win\rtas\bin\Evaluator.dpm"; DestDir: "{cf32}\Digidesign\DAE\Plug-Ins\"; Components:rtas_32; Flags: ignoreversion;
+;Source: "..\build-win\rtas\bin\Evaluator.dpm.rsr"; DestDir: "{cf32}\Digidesign\DAE\Plug-Ins\"; Components:rtas_32; Flags: ignoreversion;
 
-Source: "..\build-win\aax\bin\Evaluator.aaxplugin\*.*"; DestDir: "{cf32}\Avid\Audio\Plug-Ins\Evaluator.aaxplugin\"; Components:aax_32; Flags: ignoreversion recursesubdirs;
-Source: "..\build-win\aax\bin\Evaluator.aaxplugin\*.*"; DestDir: "{cf}\Avid\Audio\Plug-Ins\Evaluator.aaxplugin\"; Components:aax_64; Flags: ignoreversion recursesubdirs;
+;Source: "..\build-win\aax\bin\Evaluator.aaxplugin\*.*"; DestDir: "{cf32}\Avid\Audio\Plug-Ins\Evaluator.aaxplugin\"; Components:aax_32; Flags: ignoreversion recursesubdirs;
+;Source: "..\build-win\aax\bin\Evaluator.aaxplugin\*.*"; DestDir: "{cf}\Avid\Audio\Plug-Ins\Evaluator.aaxplugin\"; Components:aax_64; Flags: ignoreversion recursesubdirs;
 
 Source: "..\manual\Evaluator_manual.pdf"; DestDir: "{app}"
 Source: "changelog.txt"; DestDir: "{app}"
