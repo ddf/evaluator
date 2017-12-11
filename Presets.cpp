@@ -242,7 +242,7 @@ namespace Presets
 			"blurp",
 			50, 15, TTAlways,
 			0, 0, 0, 0, 0, 0, 0, 0,
-			"// if you can stand the noise, let this one run for a long time."
+			"// if you can stand the noise, let this one run for a long time." CR
 			"// << shifts the bits of the left hand side" CR
 			"// by the number on the right hand side modulo 64" CR
 			"a = t<<t/(1024*8);" CR
