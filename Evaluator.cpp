@@ -153,7 +153,7 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 			run = !mNotes.empty(); break;
 #if !SA_API
 		case TTProjectTime:
-			if ((run = timeInfo.mTransportIsRunning)) mTick = timeInfo.mSamplePos + s; break;
+			if ((run = timeInfo.mTransportIsRunning)) mTick = (Program::Value)(timeInfo.mSamplePos + s); break;
 #endif
 		default: break;
 		}
