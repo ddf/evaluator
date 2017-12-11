@@ -49,9 +49,37 @@ Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
 	{
 		MakePresetFromData(Presets::Get(i));
 	}
+
 	IGraphics* pGraphics = MakeGraphics(this, GUI_WIDTH, GUI_HEIGHT);
 	mInterface = new Interface(this, pGraphics);
 	AttachGraphics(pGraphics);
+
+	// in the VST we need to re-initialize our state to match the first preset
+	// so that when the presets Bank chunk is created, we don't wind up with an incorrect first preset.
+#if defined VST_API
+	{
+		const Presets::Data& preset = Presets::Get(0);
+		GetParam(kGain)->Set(preset.volume);
+		GetParam(kBitDepth)->Set(preset.bitDepth);
+		GetParam(kTimeType)->Set(preset.timeType);
+
+		const int* vc = &preset.V0;
+		for (int paramIdx = kVControl0; paramIdx <= kVControl7; ++paramIdx)
+		{
+			const int vcIdx = paramIdx - kVControl0;
+			GetParam(paramIdx)->Set(vc[vcIdx]);
+		}
+
+		const char* const* watches = &preset.W0;
+		for (int i = 0; i < kWatchNum; ++i)
+		{
+			mInterface->SetWatch(i, watches[i]);
+		}
+
+		mInterface->SetProgramText(preset.program);
+		mInterface->SetProgramName(preset.name);
+	}
+#endif
 }
 
 Evaluator::~Evaluator()
