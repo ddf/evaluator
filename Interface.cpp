@@ -69,15 +69,15 @@ enum ELayout
 	kTModeLabel_H = kProgramLabel_H,
 	kTModeLabel_W = 45,
 
-	kTransport_X = kVControl_X,
-	kTransport_Y = kProgramLabel_Y,
-	kTransport_W = 60*3,
-	kTransport_H = 40,
-
 	kProgramText_X = kEditorMargin,
 	kProgramText_Y = kTModeLabel_Y + kTModeLabel_H,
 	kProgramText_W = kEditorWidth - kEditorMargin * 2,
 	kProgramText_H = 200,
+	
+	kTransport_X = kVControl_X + 40,
+	kTransport_W = 40*3,
+	kTransport_H = 25,
+	kTransport_Y = kProgramText_Y - kTransport_H - 5,
 
 	kConsoleTitle_X = kProgramText_X,
 	kConsoleTitle_Y = kProgramText_Y + kProgramText_H + 10,
@@ -388,7 +388,7 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 
 	// transport buttons
 	{
-		transportButtons = new TransportButtons(mPlug, MakeIRect(kTransport), kBackgroundColor, kExprBackgroundColor);
+		transportButtons = new TransportButtons(mPlug, MakeIRect(kTransport), kExprBackgroundColor, kGreenColor);
 		pGraphics->AttachControl(transportButtons);
 	}
 #endif

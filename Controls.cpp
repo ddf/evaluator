@@ -475,6 +475,7 @@ TransportButtons::TransportButtons(IPlugBase* pPlug, IRECT rect, const IColor& b
 	, mBack(backgroundColor)
 	, mFore(foregroundColor)
 {
+	mDblAsSingleClick = true;
 	mPlayRect = rect.SubRectHorizontal(3, 0);
 	mPauseRect = rect.SubRectHorizontal(3, 1);
 	mStopRect = rect.SubRectHorizontal(3, 2);
@@ -484,12 +485,15 @@ bool TransportButtons::Draw(IGraphics* pGraphics)
 {
 	// play button
 	{
-		bool active = mState == kTransportPlaying || kTransportPaused;
-		pGraphics->FillIRect(active ? &mFore : &mBack, &mPlayRect);
+		const bool active = (mState == kTransportPlaying || mState == kTransportPaused);
+		const int cx = mPlayRect.MW();
+		const int cy = mPlayRect.MH();
+		IRECT back = mPlayRect.GetPadded(-1);
+		pGraphics->FillIRect(active ? &mFore : &mBack, &back);
 		pGraphics->FillTriangle(active ? &mBack : &mFore,
-			mPlayRect.L + 5, mPlayRect.T + 5, 
-			mPlayRect.L + 5, mPlayRect.B - 5, 
-			mPlayRect.R - 10, mPlayRect.MW(),
+			cx - 6, cy - 5,
+			cx - 6, cy + 5,
+			cx + 8, cy,
 			&mBlend
 		);
 	}
@@ -497,15 +501,17 @@ bool TransportButtons::Draw(IGraphics* pGraphics)
 	// pause button
 	{
 		bool active = mState == kTransportPaused;
-		pGraphics->FillIRect(active ? &mFore : &mBack, &mPauseRect);
+		IRECT back = mPauseRect.GetPadded(-1);
+		pGraphics->FillIRect(active ? &mFore : &mBack, &back);
 		const IColor* color = active ? &mBack : &mFore;
-		IRECT slab = mPauseRect.SubRectHorizontal(5, 1);
-		slab.T += 5;
-		slab.B -= 5;
+		const int cx = mPauseRect.MW();
+		const int cy = mPauseRect.MH();
+		const int w = 4;
+		const int h = 6;
+		IRECT slab(cx - w*1.5, cy - h, cx - w*0.5, cy + h);
 		pGraphics->FillIRect(color, &slab, &mBlend);
-		slab = mPauseRect.SubRectHorizontal(5, 3);
-		slab.T += 5;
-		slab.B -= 5;
+		slab.L += w*2;
+		slab.R += w*2;
 		pGraphics->FillIRect(color, &slab, &mBlend);
 	}
 
@@ -513,9 +519,10 @@ bool TransportButtons::Draw(IGraphics* pGraphics)
 	{
 		const int cx = mStopRect.MW();
 		const int cy = mStopRect.MH();
-		const int r = 10;
-		IRECT button(cx - 5, cy - r, cx + 5, cy + 5);
-		pGraphics->FillIRect(&mBack, &mStopRect);
+		const int r = 6;
+		IRECT back = mStopRect.GetPadded(-1);
+		IRECT button(cx - r, cy - r, cx + r, cy + r);
+		pGraphics->FillIRect(&mBack, &back);
 		pGraphics->FillIRect(&mFore, &button);
 	}
 
@@ -526,19 +533,40 @@ void TransportButtons::OnMouseDown(int x, int y, IMouseMod* pMod)
 {
 	if (mPlayRect.Contains(x, y))
 	{
-		mState = kTransportPlaying;
-		mPlug->OnParamChange(kTransportState);
+		// if pause we stop and then start
+		// so that tick will be reset to zero.
+		// this matches transport behavior in reaper
+		// where pressing the play button while paused
+		// will cause it to start playing from the timeline marker
+		// rather than resuming from the current playhead position
+		if ( mState == kTransportPaused )
+		{
+			SetTransportState(kTransportStopped);
+		}
+		SetTransportState(kTransportPlaying);
 	}
 	else if (mPauseRect.Contains(x, y))
 	{
-		mState = kTransportPaused;
-		mPlug->OnParamChange(kTransportState);
+		if ( mState == kTransportPaused )
+		{
+			SetTransportState(kTransportPlaying);
+		}
+		else
+		{
+			SetTransportState(kTransportPaused);
+		}
 	}
 	else if (mStopRect.Contains(x, y))
 	{
-		mState = kTransportStopped;
-		mPlug->OnParamChange(kTransportState);
+		SetTransportState(kTransportStopped);
 	}
+}
+
+void TransportButtons::SetTransportState( TransportState state )
+{
+	mState = state;
+	SetDirty(false);
+	mPlug->OnParamChange(kTransportState);
 }
 
 TransportState TransportButtons::GetTransportState() const

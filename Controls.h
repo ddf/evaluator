@@ -177,6 +177,8 @@ public:
 	TransportState GetTransportState() const;
 
 private:
+	
+	void SetTransportState( TransportState state );
 
 	TransportState mState;
 
