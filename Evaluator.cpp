@@ -13,6 +13,7 @@ Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
 	, mProgram(0)
 	, mProgramMemorySize(0)
 	, mProgramIsValid(false)
+	, mTransport(kTransportPlaying)
 	, mGain(1.)
 	, mBitDepth(15)
 	, mScopeUpdate(0)
@@ -172,13 +173,13 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 			mMidiQueue.Remove();
 		}
 
-		bool run = true;
+		bool run = mTransport == kTransportPlaying;
 
 		switch (mTimeType)
 		{
 		case TTWithNoteContinuous:
 		case TTWithNoteResetting:
-			run = !mNotes.empty(); break;
+			run = run && !mNotes.empty(); break;
 #if !SA_API
 		case TTProjectTime:
 			if ((run = timeInfo.mTransportIsRunning)) mTick = (Program::Value)(timeInfo.mSamplePos + s); break;
@@ -257,6 +258,7 @@ void Evaluator::Reset()
 	}
 	// force recompile
 	OnParamChange(kExpression);
+	OnParamChange(kTransportState);
 
 	mMidiQueue.Resize(GetBlockSize());
 	mNotes.clear();
@@ -337,6 +339,27 @@ void Evaluator::OnParamChange(int paramIdx)
 			}
 		}
 		RedrawParamControls();
+	}
+	break;
+
+	case kTransportState:
+	{	
+		const TransportState newState = mInterface->GetTransportState();
+		switch( newState )
+		{
+		case kTransportPlaying:
+			if (mTransport != kTransportPaused)
+			{
+				mTick = 0;
+			}
+			break;
+
+		case kTransportStopped: 
+			mTick = 0; 
+			break;
+		}
+
+		mTransport = newState;
 	}
 	break;
 

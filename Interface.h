@@ -9,6 +9,7 @@ class ITextControl;
 class ConsoleText;
 class IControl;
 class Oscilloscope;
+class TransportButtons;
 
 class Interface
 {
@@ -37,6 +38,8 @@ public:
 	// made this so that the interface can update the program name when we load a preset
 	void LoadPreset(int idx);
 
+	TransportState GetTransportState() const;
+
 private:
 
 	Evaluator* mPlug;
@@ -47,6 +50,7 @@ private:
 	ConsoleText*	consoleTextControl;
 	IControl*		bitDepthControl;
 	Oscilloscope*   oscilloscope;
+	TransportButtons* transportButtons;
 	
 	struct Watch
 	{
@@ -54,6 +58,6 @@ private:
 		ConsoleText* val;
 	};
 	
-	Watch watches[kWatchNum];
+	Watch watches[kWatchNum];	
 };
 

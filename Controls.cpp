@@ -466,3 +466,84 @@ void SaveButton::OnMouseDown(int x, int y, IMouseMod* pMod)
 		mPlug->SaveProgramAsFXP(&fileName);
 	}
 }
+
+/////////////////////////////////////////////////////////////////
+// TransportButtons
+TransportButtons::TransportButtons(IPlugBase* pPlug, IRECT rect, const IColor& backgroundColor, const IColor& foregroundColor)
+	: IControl(pPlug, rect)
+	, mState(kTransportStopped)
+	, mBack(backgroundColor)
+	, mFore(foregroundColor)
+{
+	mPlayRect = rect.SubRectHorizontal(3, 0);
+	mPauseRect = rect.SubRectHorizontal(3, 1);
+	mStopRect = rect.SubRectHorizontal(3, 2);
+}
+
+bool TransportButtons::Draw(IGraphics* pGraphics)
+{
+	// play button
+	{
+		bool active = mState == kTransportPlaying || kTransportPaused;
+		pGraphics->FillIRect(active ? &mFore : &mBack, &mPlayRect);
+		pGraphics->FillTriangle(active ? &mBack : &mFore,
+			mPlayRect.L + 5, mPlayRect.T + 5, 
+			mPlayRect.L + 5, mPlayRect.B - 5, 
+			mPlayRect.R - 10, mPlayRect.MW(),
+			&mBlend
+		);
+	}
+
+	// pause button
+	{
+		bool active = mState == kTransportPaused;
+		pGraphics->FillIRect(active ? &mFore : &mBack, &mPauseRect);
+		const IColor* color = active ? &mBack : &mFore;
+		IRECT slab = mPauseRect.SubRectHorizontal(5, 1);
+		slab.T += 5;
+		slab.B -= 5;
+		pGraphics->FillIRect(color, &slab, &mBlend);
+		slab = mPauseRect.SubRectHorizontal(5, 3);
+		slab.T += 5;
+		slab.B -= 5;
+		pGraphics->FillIRect(color, &slab, &mBlend);
+	}
+
+	// stop button
+	{
+		const int cx = mStopRect.MW();
+		const int cy = mStopRect.MH();
+		const int r = 10;
+		IRECT button(cx - 5, cy - r, cx + 5, cy + 5);
+		pGraphics->FillIRect(&mBack, &mStopRect);
+		pGraphics->FillIRect(&mFore, &button);
+	}
+
+	return true;
+}
+
+void TransportButtons::OnMouseDown(int x, int y, IMouseMod* pMod)
+{
+	if (mPlayRect.Contains(x, y))
+	{
+		mState = kTransportPlaying;
+		mPlug->OnParamChange(kTransportState);
+	}
+	else if (mPauseRect.Contains(x, y))
+	{
+		mState = kTransportPaused;
+		mPlug->OnParamChange(kTransportState);
+	}
+	else if (mStopRect.Contains(x, y))
+	{
+		mState = kTransportStopped;
+		mPlug->OnParamChange(kTransportState);
+	}
+}
+
+TransportState TransportButtons::GetTransportState() const
+{
+	return mState;
+}
+
+//////////////////////////////////////////////////////////////////

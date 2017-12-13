@@ -47,6 +47,7 @@ private:
 	// will be false if user input produced a compilation error.
 	// we want to keep track of this so we don't update the UI in ProcessDoubleReplacing.
 	bool					mProgramIsValid;
+	TransportState	    mTransport;
 	double				mGain;
 	int					mBitDepth;
 	int					mScopeUpdate;

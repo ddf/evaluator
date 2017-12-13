@@ -281,6 +281,7 @@
     <ClInclude Include="Controls.h" />
     <ClInclude Include="Evaluator.h" />
     <ClInclude Include="Interface.h" />
+    <ClInclude Include="Params.h" />
     <ClInclude Include="Presets.h" />
     <ClInclude Include="Program.h" />
     <ClInclude Include="resource.h" />

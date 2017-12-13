@@ -69,6 +69,11 @@ enum ELayout
 	kTModeLabel_H = kProgramLabel_H,
 	kTModeLabel_W = 45,
 
+	kTransport_X = kVControl_X,
+	kTransport_Y = kProgramLabel_Y,
+	kTransport_W = 60*3,
+	kTransport_H = 40,
+
 	kProgramText_X = kEditorMargin,
 	kProgramText_Y = kTModeLabel_Y + kTModeLabel_H,
 	kProgramText_W = kEditorWidth - kEditorMargin * 2,
@@ -221,6 +226,7 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 	, consoleTextControl(nullptr)
 	, bitDepthControl(nullptr)
 	, oscilloscope(nullptr)
+	, transportButtons(nullptr)
 {
 	pGraphics->AttachPanelBackground(&kBackgroundColor);
 
@@ -379,6 +385,12 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 		textRect.B = backRect.MH() + HH;
 		pGraphics->AttachControl(new TextBox(mPlug, backRect, kTempo, &textStyle, textRect));
 	}
+
+	// transport buttons
+	{
+		transportButtons = new TransportButtons(mPlug, MakeIRect(kTransport), kBackgroundColor, kExprBackgroundColor);
+		pGraphics->AttachControl(transportButtons);
+	}
 #endif
 
 	// ---V Control Knobs-------------------------
@@ -505,4 +517,14 @@ void Interface::LoadPreset(int idx)
 {
 	mPlug->RestorePreset(idx);
 	mPlug->InformHostOfProgramChange();
+}
+
+TransportState Interface::GetTransportState() const
+{
+	if (transportButtons != nullptr)
+	{
+		return transportButtons->GetTransportState();
+	}
+	
+	return kTransportPlaying;
 }

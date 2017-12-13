@@ -30,6 +30,8 @@ enum EParams
 	
 	kWatch = 202, // starting paramIdx for watches
 	kWatchNum = 10, // total number of watches available
+
+	kTransportState = 301, // used to figure out if we should generate sound in the standalone
 	
 	kBitDepthMin = 1,
 	kBitDepthMax = 24,
@@ -56,4 +58,11 @@ enum TimeType : uint8_t
 #endif
 	
 	TTCount
+};
+
+enum TransportState
+{
+	kTransportStopped = 0,
+	kTransportPaused,
+	kTransportPlaying
 };
