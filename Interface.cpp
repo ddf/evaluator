@@ -136,6 +136,24 @@ enum ELayout
 	kPresetPopup_Y = kProgramText_Y,
 	kPresetPopup_W = kEditorWidth - kPresetPopup_X * 2,
 	kPresetPopup_H = kProgramText_H + kConsole_H + 15,
+
+	kHelpButton_W = 20,
+	kHelpButton_H = 20,
+	kHelpButton_X = kEditorWidth - kEditorMargin - kHelpButton_W,
+	kHelpButton_Y = kEditorMargin,
+
+	// width of the "help" area, which we use to resize the window
+	kHelpWidth = 300,
+
+	kSyntaxLabel_X = kEditorWidth + kEditorMargin,
+	kSyntaxLabel_Y = kPlugName_Y,
+	kSyntaxLabel_H = kPlugName_H,
+	kSyntaxLabel_W = kHelpWidth - kEditorMargin*2,
+
+	kSyntax_X = kEditorWidth + kEditorMargin,
+	kSyntax_Y = kSyntaxLabel_Y + kSyntaxLabel_H + 10,
+	kSyntax_H = kEditorHeight - kSyntax_Y - kEditorMargin,
+	kSyntax_W = kHelpWidth - kEditorMargin*2,
 };
 
 // note: ICOLOR is ARGB
@@ -218,6 +236,33 @@ static const char* kTModeDescription[] = {
 	"set 't' to project time"
 };
 
+static const char* kLanguageSyntax =
+"F      'frequency' unary operator\n"
+"$      'sine' unary operator\n"
+"#      'square' unary operator\n"
+"T      'triangle' unary operator\n"
+"R      'random' unary operator\n"
+"V      V knob access operator\n"
+"@      memory access unary operator\n"
+"[0]    audio input access\n"
+"!      logical NOT\n"
+"~      bitwise NOT (complement)\n"
+"*      multiplication\n"
+"/      division\n"
+"%      modulo (remainder)\n"
+"+      unary plus and addition\n"
+"-      unary minus and subtraction\n"
+"&      bitwise AND\n"
+"^      bitwise XOR\n"
+"|      bitwise OR\n"
+"?:     ternary conditional (non-branching)\n"
+"a =    assign to a variable\n"
+"@a =   assign to a memory address\n"
+"[0] =  assign to left output\n"
+"[1] =  assign to right output\n"
+"[*] =  assign to all outputs\n";
+
+
 Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 	: mPlug(plug)
 	, textEdit(nullptr)
@@ -227,6 +272,11 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 	, bitDepthControl(nullptr)
 	, oscilloscope(nullptr)
 	, transportButtons(nullptr)
+{
+	CreateControls(pGraphics);
+}
+
+void Interface::CreateControls(IGraphics* pGraphics)
 {
 	pGraphics->AttachPanelBackground(&kBackgroundColor);
 
@@ -424,6 +474,15 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 		buttonX += buttonBack.W + 5;
 		pGraphics->AttachControl(new LoadButton(mPlug, buttonX, buttonY, &buttonBack, &kLabelTextStyle, MakeIRect(kPresetPopup), &kConsoleTextStyle, this));		
 	}
+
+	// --- Syntax Reference Area -----------------------
+	{
+		IBitmap buttonBack = pGraphics->LoadIBitmap(BUTTON_BACK_ID, BUTTON_BACK_FN);
+		pGraphics->AttachControl(new HelpButton(mPlug, kHelpButton_X, kHelpButton_Y, &buttonBack, &kLabelTextStyle, this));
+
+		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kSyntaxLabel), &kTitleTextStyle, "Language Syntax"));
+		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kSyntax), &kConsoleTextStyle, kLanguageSyntax));
+	}
 }
 
 
@@ -527,4 +586,16 @@ TransportState Interface::GetTransportState() const
 	}
 	
 	return kTransportPlaying;
+}
+
+void Interface::ToggleHelp()
+{
+	if (mPlug->GetGUI()->Width() == kEditorWidth)
+	{
+		mPlug->GetGUI()->Resize(kEditorWidth + kHelpWidth, kEditorHeight);
+	}
+	else
+	{
+		mPlug->GetGUI()->Resize(kEditorWidth, kEditorHeight);
+	}
 }

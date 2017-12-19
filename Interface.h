@@ -40,7 +40,11 @@ public:
 
 	TransportState GetTransportState() const;
 
+	void ToggleHelp();
+
 private:
+
+	void CreateControls(IGraphics* pGraphics);
 
 	Evaluator* mPlug;
 

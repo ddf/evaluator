@@ -438,6 +438,8 @@ void LoadButton::OnMouseOver(int x, int y, IMouseMod* pMod)
 //
 //////////////////////////////////////////
 
+/////////////////////////////////////////////////////////////////
+// Save Button
 SaveButton::SaveButton(IPlugBase* pPlug, int x, int y, IBitmap* pButtonBack, IText* pButtonTextStyle, Interface* pInterface)
 	: IBitmapControl(pPlug, x, y, -1, pButtonBack)
 	, mButtonText(*pButtonTextStyle)
@@ -466,6 +468,33 @@ void SaveButton::OnMouseDown(int x, int y, IMouseMod* pMod)
 		mPlug->SaveProgramAsFXP(&fileName);
 	}
 }
+/////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////
+// Save Button
+HelpButton::HelpButton(IPlugBase* pPlug, int x, int y, IBitmap* pButtonBack, IText* pButtonTextStyle, Interface* pInterface)
+	: IBitmapControl(pPlug, x, y, -1, pButtonBack)
+	, mButtonText(*pButtonTextStyle)
+	, mInterface(pInterface)
+{
+
+}
+
+bool HelpButton::Draw(IGraphics* pGraphics)
+{
+	pGraphics->DrawBitmap(&mBitmap, &mRECT, 1, &mBlend);
+	IRECT textRect(mRECT);
+	textRect.T += 2; // fudge so the text looks vertically centered
+	pGraphics->DrawIText(&mButtonText, "?", &textRect);
+
+	return true;
+}
+
+void HelpButton::OnMouseDown(int x, int y, IMouseMod* pMod)
+{
+	mInterface->ToggleHelp();
+}
+/////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////
 // TransportButtons

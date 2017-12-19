@@ -163,6 +163,19 @@ private:
 	IText mButtonText;
 };
 
+class HelpButton : public IBitmapControl
+{
+public:
+	HelpButton(IPlugBase* pPlug, int x, int y, IBitmap* pButtonBack, IText* pButtonTextStyle, Interface* pInterface);
+
+	bool Draw(IGraphics* pGraphics) override;
+	void OnMouseDown(int x, int y, IMouseMod* pMod) override;
+
+private:
+	Interface* mInterface;
+	IText mButtonText;
+};
+
 // play, pause, and stop buttons used by the standalone to control how t increments
 // essentially makes TTAlways behave like TTProjectTime
 class TransportButtons : public IControl
