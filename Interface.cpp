@@ -143,7 +143,7 @@ enum ELayout
 	kHelpButton_Y = kEditorMargin,
 
 	// width of the "help" area, which we use to resize the window
-	kHelpWidth = 300,
+	kHelpWidth = 350,
 
 	kSyntaxLabel_X = kEditorWidth + kEditorMargin,
 	kSyntaxLabel_Y = kPlugName_Y,
@@ -152,7 +152,7 @@ enum ELayout
 
 	kSyntax_X = kEditorWidth + kEditorMargin,
 	kSyntax_Y = kSyntaxLabel_Y + kSyntaxLabel_H + 10,
-	kSyntax_H = 300,
+	kSyntax_H = 375,
 	kSyntax_W = kHelpWidth - kEditorMargin*2,
 	
 	kManualButton_X = kSyntax_X,
@@ -240,14 +240,15 @@ static const char* kTModeDescription[] = {
 };
 
 static const char* kLanguageSyntax =
+"[]     audio input/output access\n"
 "F      'frequency' unary operator\n"
 "$      'sine' unary operator\n"
 "#      'square' unary operator\n"
 "T      'triangle' unary operator\n"
 "R      'random' unary operator\n"
 "V      V knob access operator\n"
-"@      memory access unary operator\n"
-"[0]    audio input access\n"
+"C      MIDI CC message access operator\n"
+"@      memory access operator\n"
 "!      logical NOT\n"
 "~      bitwise NOT (complement)\n"
 "*      multiplication\n"
@@ -255,10 +256,12 @@ static const char* kLanguageSyntax =
 "%      modulo (remainder)\n"
 "+      unary plus and addition\n"
 "-      unary minus and subtraction\n"
+"<<     bitwise left shift (rhs % 64)\n"
+">>     bitwise right shift (rhs % 64)\n"
 "&      bitwise AND\n"
 "^      bitwise XOR\n"
 "|      bitwise OR\n"
-"?:     ternary conditional (non-branching)\n"
+"?:     ternary operator (non-branching)\n"
 "a =    assign to a variable\n"
 "@a =   assign to a memory address\n"
 "[0] =  assign to left output\n"
