@@ -498,7 +498,12 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		pGraphics->AttachControl(new ManualButton(mPlug, kManualButton_X, kManualButton_Y, &buttonBack, &textStyle, this));
 
 		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kSyntaxLabel), &kLabelTextStyle, "LANGUAGE SYNTAX"));
-		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kSyntax), &kConsoleTextStyle, kLanguageSyntax));
+		
+		textStyle = kConsoleTextStyle;
+#if defined(OS_OSX)
+		textStyle.mSize += 2;
+#endif
+		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kSyntax), &textStyle, kLanguageSyntax));
 	}
 }
 
