@@ -471,6 +471,51 @@ void SaveButton::OnMouseDown(int x, int y, IMouseMod* pMod)
 /////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////
+// Manual Button
+ManualButton::ManualButton(IPlugBase* pPlug, int x, int y, IBitmap* pButtonBack, IText* pButtonTextStyle, Interface* pInterface)
+: IBitmapControl(pPlug, x, y, -1, pButtonBack)
+, mButtonText(*pButtonTextStyle)
+, mInterface(pInterface)
+{
+	
+}
+
+bool ManualButton::Draw(IGraphics* pGraphics)
+{
+	pGraphics->DrawBitmap(&mBitmap, &mRECT, 1, &mBlend);
+	IRECT textRect(mRECT);
+	textRect.T += 2; // fudge so the text looks vertically centered
+	pGraphics->DrawIText(&mButtonText, "MANUAL", &textRect);
+	
+	return true;
+}
+
+void ManualButton::OnMouseDown(int x, int y, IMouseMod* pMod)
+{
+	WDL_String fileName("");
+	mPlug->GetGUI()->HostPath(&fileName);
+	fileName.Append("/Evaluator_manual.pdf");
+	bool success = mPlug->GetGUI()->OpenURL(fileName.Get());
+	if ( !success )
+	{
+		mPlug->GetGUI()->PluginPath(&fileName);
+		fileName.Append("/Evaluator_manual.pdf");
+		success = mPlug->GetGUI()->OpenURL(fileName.Get());
+	}
+	if ( !success )
+	{
+		mPlug->GetGUI()->AppSupportPath(&fileName);
+		fileName.Append("/Evaluator_manual.pdf");
+		success = mPlug->GetGUI()->OpenURL(fileName.Get());
+	}
+	if ( !success )
+	{
+		mPlug->GetGUI()->ShowMessageBox("Sorry, couldn't find the manual!", "Error", MB_OK);
+	}
+}
+/////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////
 // Help Button
 HelpButton::HelpButton(IPlugBase* pPlug, IRECT rect, IText* pButtonTextStyle, Interface* pInterface)
 	: IControl(pPlug, rect)

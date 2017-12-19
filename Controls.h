@@ -163,6 +163,19 @@ private:
 	IText mButtonText;
 };
 
+class ManualButton : public IBitmapControl
+{
+public:
+	ManualButton(IPlugBase* pPlug, int x, int y, IBitmap* pButtonBack, IText* pButtonTextStyle, Interface* pInterface);
+	
+	bool Draw(IGraphics* pGraphics) override;
+	void OnMouseDown(int x, int y, IMouseMod* pMod) override;
+	
+private:
+	Interface* mInterface;
+	IText mButtonText;
+};
+
 class HelpButton : public IControl
 {
 public:

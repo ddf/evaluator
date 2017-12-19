@@ -152,8 +152,11 @@ enum ELayout
 
 	kSyntax_X = kEditorWidth + kEditorMargin,
 	kSyntax_Y = kSyntaxLabel_Y + kSyntaxLabel_H + 10,
-	kSyntax_H = kEditorHeight - kSyntax_Y - kEditorMargin,
+	kSyntax_H = 300,
 	kSyntax_W = kHelpWidth - kEditorMargin*2,
+	
+	kManualButton_X = kSyntax_X,
+	kManualButton_Y = kSyntax_Y + kSyntax_H
 };
 
 // note: ICOLOR is ARGB
@@ -485,6 +488,11 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		textStyle.mSize = 12;
 		textStyle.mColor = kLabelTextStyle.mColor;
 		pGraphics->AttachControl(new HelpButton(mPlug, MakeIRect(kHelpButton), &textStyle, this));
+		
+		IBitmap buttonBack = pGraphics->LoadIBitmap(BUTTON_BACK_ID, BUTTON_BACK_FN);
+		textStyle = kLabelTextStyle;
+		textStyle.mSize = 11;
+		pGraphics->AttachControl(new ManualButton(mPlug, kManualButton_X, kManualButton_Y, &buttonBack, &textStyle, this));
 
 		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kSyntaxLabel), &kLabelTextStyle, "LANGUAGE SYNTAX"));
 		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kSyntax), &kConsoleTextStyle, kLanguageSyntax));
