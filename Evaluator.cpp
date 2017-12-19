@@ -130,14 +130,19 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 			switch (pMsg->StatusMsg())
 			{
 			case IMidiMsg::kNoteOn:
-				if (mTimeType == TTWithNoteResetting)
+				// according to the midi spec, we should treat a note on with a velocity of zero as a note off.
+				if (pMsg->Velocity() != 0)
 				{
-					mTick = 0;
+					if (mTimeType == TTWithNoteResetting)
+					{
+						mTick = 0;
+					}
+					mNotes.push_back(*pMsg);
+					mProgram->Set('n', pMsg->NoteNumber());
+					mProgram->Set('v', pMsg->Velocity());
+					break;
 				}
-				mNotes.push_back(*pMsg);
-				mProgram->Set('n', pMsg->NoteNumber());
-				mProgram->Set('v', pMsg->Velocity());
-				break;
+				// fallthrough to handle velocity of zero
 
 			case IMidiMsg::kNoteOff:
 				for (auto iter = mNotes.crbegin(); iter != mNotes.crend(); ++iter)
