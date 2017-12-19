@@ -204,6 +204,26 @@ bool KnobLineCoronaControl::Draw(IGraphics* pGraphics)
 	}
 	return IKnobLineControl::Draw(pGraphics);
 }
+
+void KnobLineCoronaControl::OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMod)
+{
+	double gearing = mGearing;
+
+#ifdef PROTOOLS
+#ifdef OS_WIN
+	if (pMod->C) gearing *= 10.0;
+#else
+	if (pMod->R) gearing *= 10.0;
+#endif
+#else
+	if (pMod->C || pMod->S) gearing *= 10.0;
+#endif
+
+	mValue += (double)dY / (double)(mRECT.T - mRECT.B) / gearing;
+	mValue += (double)dX / (double)(mRECT.R - mRECT.L) / gearing;
+
+	SetDirty();
+}
 //
 //////////////////////////////////////////
 

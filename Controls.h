@@ -96,6 +96,7 @@ public:
 		EDirection direction = kVertical, double gearing = DEFAULT_GEARING);
 
 	bool Draw(IGraphics* pGraphics) override;
+	void OnMouseDrag(int x, int y, int dX, int dY, IMouseMod* pMod) override;
 
 private:
 	IColor        mCoronaColor;
