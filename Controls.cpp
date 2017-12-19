@@ -471,9 +471,9 @@ void SaveButton::OnMouseDown(int x, int y, IMouseMod* pMod)
 /////////////////////////////////////////////////////////////////
 
 /////////////////////////////////////////////////////////////////
-// Save Button
-HelpButton::HelpButton(IPlugBase* pPlug, int x, int y, IBitmap* pButtonBack, IText* pButtonTextStyle, Interface* pInterface)
-	: IBitmapControl(pPlug, x, y, -1, pButtonBack)
+// Help Button
+HelpButton::HelpButton(IPlugBase* pPlug, IRECT rect, IText* pButtonTextStyle, Interface* pInterface)
+	: IControl(pPlug, rect)
 	, mButtonText(*pButtonTextStyle)
 	, mInterface(pInterface)
 {
@@ -482,7 +482,17 @@ HelpButton::HelpButton(IPlugBase* pPlug, int x, int y, IBitmap* pButtonBack, ITe
 
 bool HelpButton::Draw(IGraphics* pGraphics)
 {
-	pGraphics->DrawBitmap(&mBitmap, &mRECT, 1, &mBlend);
+	if ( mValue )
+	{
+		pGraphics->FillIRect(&mButtonText.mTextEntryFGColor, &mRECT);
+		pGraphics->DrawRect(&mButtonText.mTextEntryBGColor, &mRECT);
+	}
+	else
+	{
+		pGraphics->FillIRect(&mButtonText.mTextEntryBGColor, &mRECT);
+		pGraphics->DrawRect(&mButtonText.mTextEntryFGColor, &mRECT);
+	}
+	
 	IRECT textRect(mRECT);
 	textRect.T += 2; // fudge so the text looks vertically centered
 	pGraphics->DrawIText(&mButtonText, "?", &textRect);
@@ -493,6 +503,7 @@ bool HelpButton::Draw(IGraphics* pGraphics)
 void HelpButton::OnMouseDown(int x, int y, IMouseMod* pMod)
 {
 	mInterface->ToggleHelp();
+	mValue = 1 - mValue;
 }
 /////////////////////////////////////////////////////////////////
 

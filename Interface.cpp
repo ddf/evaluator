@@ -137,8 +137,8 @@ enum ELayout
 	kPresetPopup_W = kEditorWidth - kPresetPopup_X * 2,
 	kPresetPopup_H = kProgramText_H + kConsole_H + 15,
 
-	kHelpButton_W = 20,
-	kHelpButton_H = 20,
+	kHelpButton_W = 15,
+	kHelpButton_H = 15,
 	kHelpButton_X = kEditorWidth - kEditorMargin - kHelpButton_W,
 	kHelpButton_Y = kEditorMargin,
 
@@ -477,10 +477,16 @@ void Interface::CreateControls(IGraphics* pGraphics)
 
 	// --- Syntax Reference Area -----------------------
 	{
-		IBitmap buttonBack = pGraphics->LoadIBitmap(BUTTON_BACK_ID, BUTTON_BACK_FN);
-		pGraphics->AttachControl(new HelpButton(mPlug, kHelpButton_X, kHelpButton_Y, &buttonBack, &kLabelTextStyle, this));
+		IRECT backRect(kEditorWidth, 0, kEditorWidth + kHelpWidth, kEditorHeight);
+		pGraphics->AttachControl(new IPanelControl(mPlug, backRect, &kConsoleBackgroundColor));
+		
+		IText textStyle = kExpressionTextStyle;
+		textStyle.mAlign = IText::kAlignCenter;
+		textStyle.mSize = 12;
+		textStyle.mColor = kLabelTextStyle.mColor;
+		pGraphics->AttachControl(new HelpButton(mPlug, MakeIRect(kHelpButton), &textStyle, this));
 
-		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kSyntaxLabel), &kTitleTextStyle, "Language Syntax"));
+		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kSyntaxLabel), &kLabelTextStyle, "LANGUAGE SYNTAX"));
 		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kSyntax), &kConsoleTextStyle, kLanguageSyntax));
 	}
 }
