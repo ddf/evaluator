@@ -14,7 +14,8 @@ namespace Presets
 		const char * const name;
 		const float volume;
 		const int   bitDepth;
-		const int   timeType;
+		const int   runMode;
+		const bool  midiNoteResetsTime;
 		const int   V0, V1, V2, V3, V4, V5, V6, V7;
 		const char * const program;
 		const char * const W0, *const W1, *const W2, *const W3, *const W4, *const W5, *const W6, *const W7, *const W8, *const W9;

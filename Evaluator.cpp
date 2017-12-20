@@ -17,7 +17,8 @@ Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
 	, mGain(1.)
 	, mBitDepth(15)
 	, mScopeUpdate(0)
-	, mTimeType(TTAlways)
+	, mRunMode(kRunModeAlways)
+	, mMidiNoteResetsTick(false)
 {
 	TRACE;
 
@@ -26,12 +27,11 @@ Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
 
 	GetParam(kBitDepth)->InitInt("bit depth", 15, kBitDepthMin, kBitDepthMax);
 
-	GetParam(kTimeType)->InitEnum("t-mode", 0, TTCount);
-	GetParam(kTimeType)->SetDisplayText(TTAlways, "always");
-	GetParam(kTimeType)->SetDisplayText(TTWithNoteContinuous, "with note on (continuous)");
-	GetParam(kTimeType)->SetDisplayText(TTWithNoteResetting, "with note on (resetting)");
+	GetParam(kRunMode)->InitEnum("run mode", 0, kRunModeCount);
+	GetParam(kRunMode)->SetDisplayText(kRunModeAlways, "continuous");
+	GetParam(kRunMode)->SetDisplayText(kRunModeMIDI, "with midi");
 #if !SA_API
-	GetParam(kTimeType)->SetDisplayText(TTProjectTime, "follow project time");
+	GetParam(kRunMode)->SetDisplayText(kRunModeProjectTime, "project time");
 #endif
 
 	GetParam(kScopeWindow)->InitDouble("scope window size", 0.5, (double)kScopeWindowMin / 1000.0, (double)kScopeWindowMax / 1000.0, 0.05, "s");
@@ -45,6 +45,8 @@ Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
 
 	GetParam(kTempo)->InitDouble("tempo (ignored)", DEFAULT_TEMPO, kTempoMin, kTempoMax, 0.01, "bpm");
 	GetParam(kTempo)->SetCanAutomate(false);
+
+	GetParam(kMidiNoteResetsTime)->InitBool("midi note on sets t = 0", false);
 
 	for (int i = 0; i < Presets::Count(); ++i)
 	{
@@ -62,7 +64,8 @@ Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
 		const Presets::Data& preset = Presets::Get(0);
 		GetParam(kGain)->Set(preset.volume);
 		GetParam(kBitDepth)->Set(preset.bitDepth);
-		GetParam(kTimeType)->Set(preset.timeType);
+		GetParam(kRunMode)->Set(preset.runMode);
+		GetParam(kMidiNoteResetsTime)->Set(preset.midiNoteResetsTime);
 
 		const int* vc = &preset.V0;
 		for (int paramIdx = kVControl0; paramIdx <= kVControl7; ++paramIdx)
@@ -133,7 +136,7 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 				// according to the midi spec, we should treat a note on with a velocity of zero as a note off.
 				if (pMsg->Velocity() != 0)
 				{
-					if (mTimeType == TTWithNoteResetting)
+					if (mMidiNoteResetsTick)
 					{
 						mTick = 0;
 					}
@@ -180,13 +183,12 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 
 		bool run = mTransport == kTransportPlaying;
 
-		switch (mTimeType)
+		switch (mRunMode)
 		{
-		case TTWithNoteContinuous:
-		case TTWithNoteResetting:
+		case kRunModeMIDI:
 			run = run && !mNotes.empty(); break;
 #if !SA_API
-		case TTProjectTime:
+		case kRunModeProjectTime:
 			if ((run = timeInfo.mTransportIsRunning)) mTick = (Program::Value)(timeInfo.mSamplePos + s); break;
 #endif
 		default: break;
@@ -290,9 +292,13 @@ void Evaluator::OnParamChange(int paramIdx)
 		mInterface->SetDirty(kBitDepth, false);
 		break;
 
-	case kTimeType:
-		mTimeType = (TimeType)GetParam(kTimeType)->Int();
-		mInterface->SetDirty(kTimeType, false);
+	case kRunMode:
+		mRunMode = (RunMode)GetParam(kRunMode)->Int();
+		mInterface->SetDirty(kRunMode, false);
+		break;
+
+	case kMidiNoteResetsTime:
+		mMidiNoteResetsTick = GetParam(kMidiNoteResetsTime)->Bool();
 		break;
 
 	case kExpression:
@@ -391,14 +397,16 @@ static const int kStateFirstVersion = 100000; // add the watch strings to the se
 static const int kStateVCParams = kStateFirstVersion + 1;
 static const int kStateProgramName = kStateVCParams + 1;
 static const int kStateTempo = kStateProgramName + 1;
-static const int kStateVersion = kStateTempo;
+static const int kStateMidiReset = kStateTempo + 1;
+static const int kStateVersion = kStateMidiReset;
 
 void Evaluator::MakePresetFromData(const Presets::Data& data)
 {
 	// set params.
 	GetParam(kGain)->Set(data.volume);
 	GetParam(kBitDepth)->Set(data.bitDepth);
-	GetParam(kTimeType)->Set(data.timeType);
+	GetParam(kRunMode)->Set(data.runMode);
+	GetParam(kMidiNoteResetsTime)->Set(data.midiNoteResetsTime);
 
 	const int* vc = &data.V0;
 	for (int paramIdx = kVControl0; paramIdx <= kVControl7; ++paramIdx)
@@ -526,6 +534,7 @@ int Evaluator::UnserializeState(ByteChunk* pChunk, int startPos)
 
 	const int numParams = version < kStateVCParams ? kScopeWindow + 1
 						: version < kStateTempo ? kVControl7 + 1
+						: version < kStateMidiReset ? kTempo + 1
 						: kNumParams;
 
 	return IPlugBase::UnserializeParams(pChunk, startPos, numParams); // must remember to call UnserializeParams at the end

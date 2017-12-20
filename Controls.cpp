@@ -144,33 +144,55 @@ void ConsoleText::SetTextFromPlug(const char * text)
 ////////////////////////////////////
 
 ////////////////////////////////////
-// IncrementControl (used for numberboxx)
+// EnumControl (used for RunMode)
 //
-IIncrementControl::IIncrementControl(IPlugBase* pPlug, int x, int y, int paramIdx, IBitmap* pBitmap, int direction)
-	: IBitmapControl(pPlug, x, y, paramIdx, pBitmap)
-	, mPressed(0)
+EnumControl::EnumControl(IPlugBase* pPlug, IRECT rect, int paramIdx, IText* textStyle)
+	: IControl(pPlug, rect, paramIdx)
 {
-	IParam* param = GetParam();
-	mInc = direction * 1.0 / (param->GetMax() - param->GetMin());
+	SetText(textStyle);
 	mDblAsSingleClick = true;
+	mDisablePrompt = false;
 }
 
-bool IIncrementControl::Draw(IGraphics* pGraphics)
+bool EnumControl::Draw(IGraphics* pGraphics)
 {
-	return pGraphics->DrawBitmap(&mBitmap, &mRECT, mPressed + 1, &mBlend);
+	pGraphics->FillIRect(&mText.mTextEntryBGColor, &mRECT);
+	pGraphics->DrawRect(&mText.mTextEntryFGColor, &mRECT);
+	static char display[16];
+	GetParam()->GetDisplayForHost(display);
+	IRECT textRect = mRECT;
+	textRect.T += 3;
+	pGraphics->DrawIText(&mText, display, &textRect);
+
+	return true;
 }
 
-void IIncrementControl::OnMouseDown(int x, int y, IMouseMod* pMod)
+void EnumControl::OnMouseDown(int x, int y, IMouseMod* pMod)
 {
-	mPressed = 1;
-	mValue = GetParam()->GetNormalized() + mInc;
-	SetDirty();
+	if (pMod->R)
+	{
+		PromptUserInput();
+	}
+	else
+	{
+		int count = GetParam()->GetNDisplayTexts();
+		if (count > 1)
+		{
+			mValue += 1.0 / (double)(count - 1);
+		}
+		else
+		{
+			mValue += 1.0;
+		}
+
+		if (mValue > 1.001)
+		{
+			mValue = 0.0;
+		}
+		SetDirty();
+	}
 }
 
-void IIncrementControl::OnMouseUp(int x, int y, IMouseMod* pMod)
-{
-	mPressed = 0;
-}
 //
 //////////////////////////////////////////
 
@@ -680,3 +702,32 @@ TransportState TransportButtons::GetTransportState() const
 }
 
 //////////////////////////////////////////////////////////////////
+
+ToggleControl::ToggleControl(IPlugBase* pPlug, IRECT rect, int paramIdx, IColor backgroundColor, IColor fillColor)
+	: IControl(pPlug, rect, paramIdx)
+{
+	mText.mTextEntryBGColor = backgroundColor;
+	mText.mTextEntryFGColor = fillColor;
+}
+
+bool ToggleControl::Draw(IGraphics* pGraphics)
+{
+	pGraphics->FillIRect(&mText.mTextEntryBGColor, &mRECT);
+	pGraphics->DrawRect(&mText.mTextEntryFGColor, &mRECT);
+	
+	if (mValue)
+	{
+		IRECT fill = mRECT.GetPadded(-2);
+		fill.T += 1;
+		fill.L += 1;
+		pGraphics->FillIRect(&mText.mTextEntryFGColor, &fill);
+	}
+
+	return true;
+}
+
+void ToggleControl::OnMouseDown(int x, int y, IMouseMod* pMod)
+{
+	mValue = 1 - mValue;
+	SetDirty();
+}

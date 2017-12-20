@@ -51,7 +51,8 @@ private:
 	double				mGain;
 	int					mBitDepth;
 	int					mScopeUpdate;
-	TimeType				mTimeType;
+	RunMode				mRunMode;
+	bool				mMidiNoteResetsTick;
 	Program::Value		mTick;
 	IMidiQueue			mMidiQueue;
 	std::vector<IMidiMsg> mNotes;

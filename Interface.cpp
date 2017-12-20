@@ -35,13 +35,19 @@ enum ELayout
 	kBitDepth_H = 20,
 
 	// rect for label & buttons
-	kTimeType_X = kBitDepth_X + 45,
-	kTimeType_Y = kVolumeLabel_Y,
-	kTimeType_W = 27 * TTCount,
-	kTimeType_H = kVolumeKnob_H + kVolumeLabel_H,
+	kRunModeLabel_X = kBitDepth_X + 45,
+	kRunModeLabel_Y = kVolumeLabel_Y,
+	kRunModeLabel_W = 110,
+	kRunModeLabel_H = kVolumeLabel_H,
+
+	// rect for label & buttons
+	kRunMode_X = kBitDepth_X + 45,
+	kRunMode_Y = kVolumeKnob_Y + 3,
+	kRunMode_W = kRunModeLabel_W,
+	kRunMode_H = 20,
 
 	// rect for the tempo box in standalone
-	kTempoLabel_X = kTimeType_X + kTimeType_W + 15,
+	kTempoLabel_X = kRunMode_X + kRunMode_W + 15,
 	kTempoLabel_Y = kVolumeLabel_Y,
 	kTempoLabel_W = 60,
 	kTempoLabel_H = kVolumeLabel_H,
@@ -58,19 +64,18 @@ enum ELayout
 	kVControl_X = kEditorWidth - kEditorMargin * 2 - kVControl_S*(kVControl7 - kVControl0) - kVControl_W,
 	kVControl_Y = kVolumeKnob_Y,
 
-	kProgramLabel_X = kEditorMargin,
-	kProgramLabel_Y = kVolumeKnob_Y + kVolumeKnob_H + 5,
-	kProgramLabel_W = 75,
-	kProgramLabel_H = 17,
+	kTResetLabel_X = kRunMode_X,
+	kTResetLabel_Y = kVolumeKnob_Y + kVolumeKnob_H,
+	kTResetLabel_H = 15,
+	kTResetLabel_W = 45,
 
-	// additional T-MODE label that appears under PROGRAM and will be followed by a description of the current mode
-	kTModeLabel_X = kEditorMargin,
-	kTModeLabel_Y = kProgramLabel_Y + kProgramLabel_H,
-	kTModeLabel_H = kProgramLabel_H,
-	kTModeLabel_W = 45,
+	kProgramLabel_X = kEditorMargin,
+	kProgramLabel_Y = kTResetLabel_Y + kTResetLabel_H + 5,
+	kProgramLabel_H = 20,
+	kProgramLabel_W = 75,
 
 	kProgramText_X = kEditorMargin,
-	kProgramText_Y = kTModeLabel_Y + kTModeLabel_H,
+	kProgramText_Y = kProgramLabel_Y + kProgramLabel_H,
 	kProgramText_W = kEditorWidth - kEditorMargin * 2,
 	kProgramText_H = 200,
 	
@@ -273,11 +278,12 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 	: mPlug(plug)
 	, textEdit(nullptr)
 	, programName(nullptr)
-	, tmodeText(nullptr)
 	, consoleTextControl(nullptr)
 	, bitDepthControl(nullptr)
 	, oscilloscope(nullptr)
 	, transportButtons(nullptr)
+	, timeResetLabel(nullptr)
+	, timeResetToggle(nullptr)
 {
 	CreateControls(pGraphics);
 }
@@ -391,36 +397,32 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		pGraphics->AttachControl(new TextBox(mPlug, backRect, kBitDepth, &textStyle, textRect));
 	}
 
-	// ---Time Type------------------------------
+	// ---Run Mode------------------------------
 	{
-		IBitmap radioButton = pGraphics->LoadIBitmap(RADIO_BUTTON_ID, RADIO_BUTTON_FN, 2);
-		IRECT buttonRect = MakeIRect(kTimeType);
-
-		ITextControl* label = new ITextControl(mPlug, buttonRect, &kLabelTextStyle, "T-MODE");
-
-		buttonRect.T = kVolumeKnob_Y;
-		buttonRect.B = kVolumeKnob_Y + kVolumeKnob_H;
-		IRadioButtonsControl* radios = new IRadioButtonsControl(mPlug, buttonRect, kTimeType, TTCount, &radioButton, kHorizontal);
-
-		pGraphics->AttachControl(label);
-		pGraphics->AttachControl(radios);
+		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kRunModeLabel), &kLabelTextStyle, "RUN MODE"));
+		IText textStyle = kExpressionTextStyle;
+		textStyle.mAlign = IText::kAlignCenter;
+		pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kRunMode), kRunMode, &textStyle));
 	}
 
-	// ---T-MODE label
+	// ---MIDI note resets
 	{
 		IText textStyle = kLabelTextStyle;
 		textStyle.mAlign = IText::kAlignNear;
 
-		IRECT captionRect = MakeIRect(kTModeLabel);
-		pGraphics->MeasureIText(&textStyle, "T-MODE:", &captionRect);
-		pGraphics->AttachControl(new ITextControl(mPlug, captionRect, &textStyle, "T-MODE:"));
+		IRECT captionRect = MakeIRect(kTResetLabel);
+		const char * label = mPlug->GetParam(kMidiNoteResetsTime)->GetNameForHost();
+		pGraphics->MeasureIText(&textStyle, const_cast<char*>(label), &captionRect);
+
+		timeResetLabel = new ITextControl(mPlug, captionRect, &textStyle, label);
+		pGraphics->AttachControl(timeResetLabel);
 
 		const int width = captionRect.W() + 5;
 		captionRect.L += width;
-		captionRect.R += width;
-		tmodeText = new ITextControl(mPlug, captionRect, &textStyle);
+		captionRect.R = captionRect.L + captionRect.H();
 
-		pGraphics->AttachControl(tmodeText);
+		timeResetToggle = new ToggleControl(mPlug, captionRect, kMidiNoteResetsTime, kExprBackgroundColor, kGreenColor);
+		pGraphics->AttachControl(timeResetToggle);
 	}
 
 #if SA_API
@@ -523,13 +525,15 @@ void Interface::SetDirty(int paramIdx, bool pushToPlug)
 		}
 		break;
 
-	case kTimeType:
-		if (tmodeText != nullptr)
+#if !SA_API
+	case kRunMode:
+		if (timeResetToggle != nullptr)
 		{
-			int tmodeIdx = mPlug->GetParam(kTimeType)->Int();
-			tmodeText->SetTextFromPlug(const_cast<char*>(kTModeDescription[tmodeIdx]));
+			const bool toggleDisabled = mPlug->GetParam(kRunMode)->Int() == kRunModeProjectTime;
+			timeResetLabel->Hide(toggleDisabled);
+			timeResetToggle->Hide(toggleDisabled);
 		}
-		break;
+#endif
 	}
 }
 

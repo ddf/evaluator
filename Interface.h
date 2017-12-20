@@ -50,11 +50,12 @@ private:
 
 	ITextEdit*		textEdit;
 	ITextControl*	programName;
-	ITextControl*   tmodeText;
 	ConsoleText*	consoleTextControl;
 	IControl*		bitDepthControl;
 	Oscilloscope*   oscilloscope;
 	TransportButtons* transportButtons;
+	IControl*		timeResetLabel;
+	IControl*		timeResetToggle;
 	
 	struct Watch
 	{

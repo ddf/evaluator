@@ -14,14 +14,14 @@
 namespace Presets
 {
 #if SA_API
-	const TimeType TTProjectTime = TTAlways;
+	const RunMode kRunModeProjectTime = kRunModeAlways;
 #endif
 
 	const Data kPresets[] =
 	{
 		{
 			"the sierpinsky harmony",
-			50, 8, TTProjectTime,
+			50, 8, kRunModeProjectTime, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// t is automatically incremented before generating a sample frame." CR
 			"// this program was originally written to run at 8000kHz" CR
@@ -35,7 +35,7 @@ namespace Presets
 		
 		{
 			"the forty-two melody",
-			50, 8, TTProjectTime,
+			50, 8, kRunModeProjectTime, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// t is automatically incremented before generating a sample frame." CR
 			"// this program was originally written to run at 8000kHz" CR
@@ -49,7 +49,7 @@ namespace Presets
 		
 		{
 			"visy's tune",
-			50, 8, TTProjectTime,
+			50, 8, kRunModeProjectTime, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// this program is one shown in viznut's first bytebeat video" CR
 			"// https://www.youtube.com/watch?v=GtQdIYUtAHg" CR
@@ -64,7 +64,7 @@ namespace Presets
 		
 		{
 			"little ditty",
-			50, 15, TTProjectTime,
+			50, 15, kRunModeProjectTime, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// here we make a rhythmic ditty by combining three signals:" CR
 			"// a frequency modulated saw wave (try changing the frequency of modulation)" CR
@@ -85,7 +85,7 @@ namespace Presets
 		
 		{
 			"overtone waterfall",
-			50, 17, TTProjectTime,
+			50, 17, kRunModeProjectTime, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// here is another example of combining multiple signals with bitwise OR." CR
 			"// first a vanilla low frequency saw" CR
@@ -103,7 +103,7 @@ namespace Presets
 		
 		{
 			"aggressive texture",
-			50, 15, TTProjectTime,
+			50, 15, kRunModeProjectTime, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// a low frequency sine wave" CR
 			"s = $(m/2000);" CR
@@ -119,7 +119,7 @@ namespace Presets
 		// this maybe takes too long to get interesting and is just unpleasant noise mostly, might want to ditch it.
 		{
 			"blurp",
-			50, 15, TTAlways,
+			50, 15, kRunModeAlways, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// if you can stand the noise, let this one run for a long time." CR
 			"// << shifts the bits of the left hand side" CR
@@ -139,7 +139,7 @@ namespace Presets
 		
 		{
 			"garbage trash",
-			50, 15, TTAlways,
+			50, 15, kRunModeAlways, false,
 			16, 0, 0, 0, 0, 0, 0, 0,
 			"// let this one run for a while, it subtly changes over time." CR
 			"// r will increase by one every V0+1 milliseconds." CR
@@ -156,7 +156,7 @@ namespace Presets
 		
 		{
 			"nonsense can",
-			50, 15, TTAlways,
+			50, 15, kRunModeAlways, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// this demonstrates using the previous value of the program" CR
 			"// in the calculation for output value" CR
@@ -172,7 +172,7 @@ namespace Presets
 		
 		{
 			"oink oink ribbit",
-			30, 18, TTProjectTime,
+			30, 18, kRunModeProjectTime, false,
 			17, 2, 45, 5, 3, 0, 0, 0,
 			"// another example of using the previous value as part of the program," CR
 			"// with several V knobs incorporated" CR
@@ -188,7 +188,7 @@ namespace Presets
 		
 		{
 			"moving average",
-			50, 17, TTAlways,
+			50, 17, kRunModeAlways, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// this sonifies the cumulative moving average for the function" CR
 			"// f(x) = x*256 ^ x*64 & x*32" CR
@@ -203,7 +203,7 @@ namespace Presets
 		
 		{
 			"stereo ellipse",
-			50, 22, TTAlways,
+			50, 22, kRunModeAlways, false,
 			20, 100, 0, 0, 0, 0, 0, 0,
 			"// this sonifies the parametric equations for an ellipse." CR
 			"// the x-coordinate is sent to the left output channel." CR
@@ -226,7 +226,7 @@ namespace Presets
 		// name, volume, bit depth, t-mode, program text
 		{
 			"saw wave",
-			50, 16, TTWithNoteResetting,
+			50, 16, kRunModeMIDI, true,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// t is incremented only when there is at least one active Midi Note." CR
 			"// n is set to the most recent MIDI Note On value." CR
@@ -244,7 +244,7 @@ namespace Presets
 
 		{
 			"square wave",
-			50, 16, TTWithNoteResetting,
+			50, 16, kRunModeMIDI, true,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// # is a unary operator that creates a 'square' of its operand." CR
 			"// it does this by taking the operand modulo w" CR
@@ -259,7 +259,7 @@ namespace Presets
 
 		{
 			"sine wave",
-			50, 16, TTWithNoteResetting,
+			50, 16, kRunModeMIDI, true,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// $ is a unary operator that returns the 'sine' of its operand." CR
 			"// the 'sine' is calculated in relation to the current value of w." CR
@@ -271,7 +271,7 @@ namespace Presets
 
 		{
 			"triangle wave",
-			50, 16, TTWithNoteResetting,
+			50, 16, kRunModeMIDI, true,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// T is a unary operator that returns the 'triangle' of its operand." CR
 			"// like $ and #, the operation uses the current value of w." CR
@@ -283,7 +283,7 @@ namespace Presets
 
 		{
 			"pulse wave",
-			50, 16, TTWithNoteResetting,
+			50, 16, kRunModeMIDI, true,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// a pulse wave is a square wave that spends longer" CR
 			"// on one of the two values every cycle." CR
@@ -302,7 +302,7 @@ namespace Presets
 
 		{
 			"ternary arp",
-			50, 16, TTWithNoteResetting,
+			50, 16, kRunModeMIDI, true,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// the ternary operator '?:' can be used to create expressions" CR
 			"// that will resolve to one of two values." CR
@@ -320,7 +320,7 @@ namespace Presets
 
 		{
 			"frequency modulation",
-			50, 16, TTWithNoteResetting,
+			50, 16, kRunModeMIDI, true,
 			2, 0, 0, 0, 0, 0, 0, 0,
 			"// a saw wave can be frequency modulated by adding a sine wave to it." CR
 			"// we use the value of the V0 knob to control the modulation frequency." CR
@@ -331,7 +331,7 @@ namespace Presets
 
 		{
 			"amplitude modulation",
-			50, 16, TTAlways,
+			50, 16, kRunModeMIDI, false,
 			12, 0, 0, 0, 0, 0, 0, 0,
 			"// to amplitude modulate we need to scale the range up and down," CR
 			"// but keep the values 'centered' around w/2." CR
@@ -353,7 +353,7 @@ namespace Presets
 
 		{
 			"midi pitch sweep",
-			15, 16, TTWithNoteResetting,
+			15, 16, kRunModeMIDI, true,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// the C operator allows us to access incoming midi control change values." CR
 			"// here we use the modwheel to control the pitch of an oscillator." CR
@@ -371,7 +371,7 @@ namespace Presets
 
 		{
 			"computer music" ,
-			50, 16, TTWithNoteResetting,
+			50, 16, kRunModeMIDI, true,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// here we create a random note sequence" CR
 			"// based on the incoming MIDI note." CR
@@ -389,7 +389,7 @@ namespace Presets
 
 		{
 			"sample and hold effect",
-			100, 16, TTAlways,
+			100, 16, kRunModeAlways, false,
 			36, 0, 0, 0, 0, 0, 0, 0,
 			"// this modifies the audio coming into the program" CR
 			"// to create a sample and hold effect, with V0 controlling the intensity." CR
@@ -410,7 +410,7 @@ namespace Presets
 
 		{
 			"rhythmic glitch sine",
-			50, 16, TTAlways,
+			50, 16, kRunModeAlways, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// programs have a large 'user' memory space that can be accessed with '@'." CR
 			"// this allows us to store many previous values of the program." CR
@@ -431,7 +431,7 @@ namespace Presets
 
 		{
 			"memory sequence",
-			50, 16, TTWithNoteResetting,
+			50, 16, kRunModeMIDI, true,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// another way to use 'user' memory could be to store values of a sequence." CR
 			"// here we create an arpeggiator" CR 

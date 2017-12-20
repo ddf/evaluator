@@ -72,18 +72,22 @@ private:
 	ITextControl  mText;
 };
 
-class IIncrementControl : public IBitmapControl
+class EnumControl : public IControl
 {
 public:
-	IIncrementControl(IPlugBase* pPlug, int x, int y, int paramIdx, IBitmap* pBitmap, int direction);
+	EnumControl(IPlugBase* pPlug, IRECT rect, int paramIdx, IText* textStyle);
 
 	bool Draw(IGraphics* pGraphics) override;
 	void OnMouseDown(int x, int y, IMouseMod* pMod) override;
-	void OnMouseUp(int x, int y, IMouseMod* pMod) override;
+};
 
-private:
-	double mInc;
-	int   mPressed;
+class ToggleControl : public IControl
+{
+public:
+	ToggleControl(IPlugBase* pPlug, IRECT rect, int paramIdx, IColor backgroundColor, IColor fillColor);
+
+	bool Draw(IGraphics* pGraphics) override;
+	void OnMouseDown(int x, int y, IMouseMod* pMod) override;
 };
 
 class KnobLineCoronaControl : public IKnobLineControl
