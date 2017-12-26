@@ -36,6 +36,11 @@ bool ITextEdit::Draw(IGraphics* pGraphics)
 void ITextEdit::OnMouseDown(int x, int y, IMouseMod* pMod)
 {
 	mPlug->GetGUI()->CreateTextEntry(this, &mText, &mRECT, mStr.Get());
+
+	if (mNameDisplayControl)
+	{
+		mNameDisplayControl->Hide(false);
+	}
 }
 
 void ITextEdit::TextFromTextEntry(const char* txt)
@@ -49,6 +54,11 @@ void ITextEdit::TextFromTextEntry(const char* txt)
 		mPlug->OnParamChange(mIdx);
 		// we have to call this or else the host will not mark the project as modified
 		mPlug->InformHostOfParamChange(mIdx, 0);
+	}
+
+	if (mNameDisplayControl)
+	{
+		mNameDisplayControl->Hide(true);
 	}
 }
 //

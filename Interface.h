@@ -56,6 +56,7 @@ private:
 	TransportButtons* transportButtons;
 	IControl*		timeResetLabel;
 	IControl*		timeResetToggle;
+	IControl*		compilePrompt;
 	
 	struct Watch
 	{

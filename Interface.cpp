@@ -78,6 +78,11 @@ enum ELayout
 	kProgramText_Y = kProgramLabel_Y + kProgramLabel_H,
 	kProgramText_W = kEditorWidth - kEditorMargin * 2,
 	kProgramText_H = 200,
+
+	kCompilePrompt_W = 200,
+	kCompilePrompt_H = 15,
+	kCompilePrompt_X = kProgramText_X + kProgramText_W - kCompilePrompt_W,
+	kCompilePrompt_Y = kProgramText_Y + kProgramText_H + 2,
 	
 	kTransport_X = kVControl_X + 40,
 	kTransport_W = 40*3,
@@ -244,6 +249,13 @@ static const char* kTModeDescription[] = {
 	"set 't' to project time"
 };
 
+static const char* kCompilePromptMessage =
+#if defined(OS_OSX)
+"Cmd+Enter to Compile Program";
+#else
+"Ctrl+Enter to Compile Program";
+#endif
+
 static const char* kLanguageSyntax =
 "[]     audio input/output access\n"
 "F      'frequency' unary operator\n"
@@ -316,8 +328,22 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		programName = new ITextControl(mPlug, labelRect, &textStyle);
 		pGraphics->AttachControl(programName);
 
+		textStyle.mAlign = IText::kAlignFar;
+
+		compilePrompt = new ITextControl(mPlug, MakeIRect(kCompilePrompt), &textStyle, kCompilePromptMessage);
+		compilePrompt->Hide(true);
+		pGraphics->AttachControl(compilePrompt);
+
 		textEdit = new ITextEdit(mPlug, MakeIRect(kProgramText), kExpression, &kExpressionTextStyle, "", ETextEntryOptions(kTextEntryMultiline | kTextEntryEnterKeyInsertsCR));
+		textEdit->SetNameDisplayControl(compilePrompt);
+
 		pGraphics->AttachControl(textEdit);
+	}
+
+	//--- Label we show when the user is editing the program so they know they can commit the text with a keyboard stroke
+	{
+		
+		
 	}
 
 	//-- "window" displaying internal state of the expression
