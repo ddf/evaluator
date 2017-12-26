@@ -378,6 +378,7 @@ bool LoadButton::Draw(IGraphics* pGraphics)
 		pGraphics->FillIRect(&COLOR_BLACK, &mMenuRect);
 		pGraphics->DrawRect(&mMenuText.mColor, &mMenuRect);
 		IColor selectionColor(255, 30, 30, 30);
+		char text[128];
 		for (int i = 0; i < mRECTs.GetSize(); ++i)
 		{
 			IRECT itemRect = mRECTs.Get()[i];
@@ -390,7 +391,16 @@ bool LoadButton::Draw(IGraphics* pGraphics)
 			}
 			if (i < Presets::Count())
 			{
-				pGraphics->DrawIText(&mMenuText, const_cast<char*>(Presets::Get(i).name), &itemRect);
+				const auto& preset = Presets::Get(i);
+				if (preset.runMode == kRunModeMIDI || preset.midiNoteResetsTime)
+				{
+					sprintf(text, "%s [MIDI]", preset.name);
+				}
+				else
+				{
+					sprintf(text, "%s", preset.name);
+				}
+				pGraphics->DrawIText(&mMenuText, text, &itemRect);
 			}
 			else
 			{

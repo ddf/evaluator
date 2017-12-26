@@ -230,6 +230,7 @@ namespace Presets
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// t is incremented only when there is at least one active Midi Note." CR
 			"// n is set to the most recent MIDI Note On value." CR
+			"// connect a MIDI device or use the computer keyboard to generate notes." CR
 			"// F is a unary operator that converts its operand to a 'frequency'." CR
 			"// If F's operand is a MIDI note number," CR
 			"// the result can be multiplied with t to create an oscillator" CR 
@@ -246,6 +247,7 @@ namespace Presets
 			"square wave",
 			50, 16, kRunModeMIDI, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
+			"// connect a MIDI device or use the computer keyboard to generate notes." CR
 			"// # is a unary operator that creates a 'square' of its operand." CR
 			"// it does this by taking the operand modulo w" CR
 			"// and returning 0 if the result is less than w/2" CR
@@ -261,6 +263,7 @@ namespace Presets
 			"sine wave",
 			50, 16, kRunModeMIDI, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
+			"// connect a MIDI device or use the computer keyboard to generate notes." CR
 			"// $ is a unary operator that returns the 'sine' of its operand." CR
 			"// the 'sine' is calculated in relation to the current value of w." CR
 			"// this lets us turn a saw wave into a sine wave" CR
@@ -273,6 +276,7 @@ namespace Presets
 			"triangle wave",
 			50, 16, kRunModeMIDI, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
+			"// connect a MIDI device or use the computer keyboard to generate notes." CR
 			"// T is a unary operator that returns the 'triangle' of its operand." CR
 			"// like $ and #, the operation uses the current value of w." CR
 			"// this lets us easily turn a saw wave into a triangle wave" CR
@@ -285,6 +289,7 @@ namespace Presets
 			"pulse wave",
 			50, 16, kRunModeMIDI, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
+			"// connect a MIDI device or use the computer keyboard to generate notes." CR
 			"// a pulse wave is a square wave that spends longer" CR
 			"// on one of the two values every cycle." CR
 			"// we use a modified version of the square formula to do this:" CR
@@ -304,6 +309,7 @@ namespace Presets
 			"ternary arp",
 			50, 16, kRunModeMIDI, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
+			"// connect a MIDI device or use the computer keyboard to generate notes." CR
 			"// the ternary operator '?:' can be used to create expressions" CR
 			"// that will resolve to one of two values." CR
 			"// here we use it to modify n every other sixteenth note." CR
@@ -322,6 +328,7 @@ namespace Presets
 			"frequency modulation",
 			50, 16, kRunModeMIDI, false,
 			2, 0, 0, 0, 0, 0, 0, 0,
+			"// connect a MIDI device or use the computer keyboard to generate notes." CR
 			"// a saw wave can be frequency modulated by adding a sine wave to it." CR
 			"// we use the value of the V0 knob to control the modulation frequency." CR
 			"[*] = t*Fn + $(t*V0);",
@@ -333,6 +340,7 @@ namespace Presets
 			"amplitude modulation",
 			50, 16, kRunModeMIDI, false,
 			12, 0, 0, 0, 0, 0, 0, 0,
+			"// connect a MIDI device or use the computer keyboard to generate notes." CR
 			"// to amplitude modulate we need to scale the range up and down," CR
 			"// but keep the values 'centered' around w/2." CR
 			"// so we wrap to [0, w) before scaling with our modulator." CR
@@ -355,6 +363,7 @@ namespace Presets
 			"midi pitch sweep",
 			15, 16, kRunModeMIDI, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
+			"// connect a MIDI device or use the computer keyboard to generate notes." CR
 			"// the C operator allows us to access incoming midi control change values." CR
 			"// here we use the modwheel to control the pitch of an oscillator." CR
 			"// in order to have the pitch change smoothly, we step the phase explicitly" CR
@@ -373,6 +382,7 @@ namespace Presets
 			"computer music" ,
 			50, 16, kRunModeMIDI, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
+			"// connect a MIDI device or use the computer keyboard to generate notes." CR
 			"// here we create a random note sequence" CR
 			"// based on the incoming MIDI note." CR
 			"// r is how often the note changes - every 125 milliseconds" CR
