@@ -274,6 +274,8 @@ void Evaluator::Reset()
 
 void Evaluator::ProcessMidiMsg(IMidiMsg *pMsg)
 {
+	IMutexLock(this);
+
 	mMidiQueue.Add(pMsg);
 }
 

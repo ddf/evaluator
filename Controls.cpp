@@ -731,3 +731,80 @@ void ToggleControl::OnMouseDown(int x, int y, IMouseMod* pMod)
 	mValue = 1 - mValue;
 	SetDirty();
 }
+
+///////////////////////////////////////////////////////////
+// MidiControl
+//
+int KeyToNote(int key)
+{
+	int note = -1;
+	if (key >= KEY_DIGIT_0 && key <= KEY_DIGIT_9)
+	{
+		key = '0' + key - KEY_DIGIT_0;
+	}
+	else if (key >= KEY_ALPHA_A && key <= KEY_ALPHA_Z)
+	{
+		key += 50;
+	}
+	switch (key)
+	{
+	case 'Z': note = 48; break;
+	case 'S': note = 49; break;
+	case 'X': note = 50; break;
+	case 'D': note = 51; break;
+	case 'C': note = 52; break;
+	case 'V': note = 53; break;
+	case 'G': note = 54; break;
+	case 'B': note = 55; break;
+	case 'H': note = 56; break;
+	case 'N': note = 57; break;
+	case 'J': note = 58; break;
+	case 'M': note = 59; break;
+	case 'K': note = 60; break;
+
+	case 'Q': note = 60; break;
+	case '2': note = 61; break;
+	case 'W': note = 62; break;
+	case '3': note = 63; break;
+	case 'E': note = 64; break;
+	case 'R': note = 65; break;
+	case '5': note = 66; break;
+	case 'T': note = 67; break;
+	case '6': note = 68; break;
+	case 'Y': note = 69; break;
+	case '7': note = 70; break;
+	case 'U': note = 71; break;
+	case 'I': note = 72; break;
+	case '9': note = 73; break;
+	case 'O': note = 74; break;
+	case '0': note = 75; break;
+	case 'P': note = 76; break;
+
+	default:
+		break;
+	}
+	return note;
+}
+
+MidiControl::MidiControl(IPlugBase* pPlug)
+	: IControl(pPlug, IRECT(0,0,0,0))
+{
+
+}
+
+bool MidiControl::OnKeyDown(int x, int y, int key)
+{
+	const int note = KeyToNote(key);
+	const bool handled = note != -1;
+	if (handled)
+	{
+		IMidiMsg msg;
+		msg.MakeNoteOnMsg(note, 127, 0);
+		mPlug->ProcessMidiMsg(&msg);
+		msg.MakeNoteOffMsg(note, (int)mPlug->GetSampleRate()/8);
+		mPlug->ProcessMidiMsg(&msg);
+	}
+
+	return handled;
+}
+////////////////////////////////////////////////////////////

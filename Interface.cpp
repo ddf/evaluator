@@ -292,6 +292,8 @@ void Interface::CreateControls(IGraphics* pGraphics)
 {
 	pGraphics->AttachPanelBackground(&kBackgroundColor);
 
+	pGraphics->AttachKeyCatcher(new MidiControl(mPlug));
+
 	//--  Name of the plug and version
 	{
 		IText titleStyle(20, &kPlugNameColor, "Arial", IText::kStyleBold, IText::kAlignNear, 0, IText::kQualityDefault);

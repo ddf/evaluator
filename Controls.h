@@ -219,3 +219,14 @@ private:
 	IColor mBack;
 	IColor mFore;	
 };
+
+// catch keyboard events and generate midi events from them.
+// not a great implementation due to input limitations of IPlug.
+class MidiControl : public IControl
+{
+public:
+	MidiControl(IPlugBase* pPlug);
+
+	bool Draw(IGraphics* pGraphics) override { return false; }
+	bool OnKeyDown(int x, int y, int key) override;
+};

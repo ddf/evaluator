@@ -226,7 +226,7 @@ namespace Presets
 		// name, volume, bit depth, t-mode, program text
 		{
 			"saw wave",
-			50, 16, kRunModeMIDI, true,
+			50, 16, kRunModeMIDI, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// t is incremented only when there is at least one active Midi Note." CR
 			"// n is set to the most recent MIDI Note On value." CR
@@ -244,7 +244,7 @@ namespace Presets
 
 		{
 			"square wave",
-			50, 16, kRunModeMIDI, true,
+			50, 16, kRunModeMIDI, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// # is a unary operator that creates a 'square' of its operand." CR
 			"// it does this by taking the operand modulo w" CR
@@ -259,7 +259,7 @@ namespace Presets
 
 		{
 			"sine wave",
-			50, 16, kRunModeMIDI, true,
+			50, 16, kRunModeMIDI, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// $ is a unary operator that returns the 'sine' of its operand." CR
 			"// the 'sine' is calculated in relation to the current value of w." CR
@@ -271,7 +271,7 @@ namespace Presets
 
 		{
 			"triangle wave",
-			50, 16, kRunModeMIDI, true,
+			50, 16, kRunModeMIDI, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// T is a unary operator that returns the 'triangle' of its operand." CR
 			"// like $ and #, the operation uses the current value of w." CR
@@ -283,7 +283,7 @@ namespace Presets
 
 		{
 			"pulse wave",
-			50, 16, kRunModeMIDI, true,
+			50, 16, kRunModeMIDI, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// a pulse wave is a square wave that spends longer" CR
 			"// on one of the two values every cycle." CR
@@ -302,7 +302,7 @@ namespace Presets
 
 		{
 			"ternary arp",
-			50, 16, kRunModeMIDI, true,
+			50, 16, kRunModeMIDI, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// the ternary operator '?:' can be used to create expressions" CR
 			"// that will resolve to one of two values." CR
@@ -320,7 +320,7 @@ namespace Presets
 
 		{
 			"frequency modulation",
-			50, 16, kRunModeMIDI, true,
+			50, 16, kRunModeMIDI, false,
 			2, 0, 0, 0, 0, 0, 0, 0,
 			"// a saw wave can be frequency modulated by adding a sine wave to it." CR
 			"// we use the value of the V0 knob to control the modulation frequency." CR
@@ -353,7 +353,7 @@ namespace Presets
 
 		{
 			"midi pitch sweep",
-			15, 16, kRunModeMIDI, true,
+			15, 16, kRunModeMIDI, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// the C operator allows us to access incoming midi control change values." CR
 			"// here we use the modwheel to control the pitch of an oscillator." CR
@@ -371,7 +371,7 @@ namespace Presets
 
 		{
 			"computer music" ,
-			50, 16, kRunModeMIDI, true,
+			50, 16, kRunModeMIDI, false,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// here we create a random note sequence" CR
 			"// based on the incoming MIDI note." CR
