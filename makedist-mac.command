@@ -24,6 +24,19 @@ PLUGIN_NAME=`echo | grep BUNDLE_NAME resource.h`
 PLUGIN_NAME=${PLUGIN_NAME//\#define BUNDLE_NAME }
 PLUGIN_NAME=${PLUGIN_NAME//\"}
 
+# prompt for whether we should publish to itch after building
+PUBLISH=
+echo "Publish to Itch? (y/n): \c"
+read PUBLISH
+
+BUILD_FOLDER=""
+
+if [ "$PUBLISH" == "y" ] 
+then
+BUILD_FOLDER=$HOME/dev/Builds/$PLUGIN_NAME
+echo "Will publish to $BUILD_FOLDER"
+fi
+
 # work out the paths to the binaries
 
 VST2=`echo | grep VST_FOLDER ../../common.xcconfig`
@@ -134,11 +147,11 @@ fi
 #---------------------------------------------------------------------------------------------------------
 
 #icon stuff - http://maxao.free.fr/telechargements/setfileicon.gz
-echo "setting icons"
-echo ""
-setfileicon resources/$PLUGIN_NAME.icns $AU
-setfileicon resources/$PLUGIN_NAME.icns $VST2
-setfileicon resources/$PLUGIN_NAME.icns $VST3
+#echo "setting icons"
+#echo ""
+./setfileicon.sh resources/$PLUGIN_NAME.icns $AU
+./setfileicon.sh resources/$PLUGIN_NAME.icns $VST2
+./setfileicon.sh resources/$PLUGIN_NAME.icns $VST3
 #setfileicon resources/$PLUGIN_NAME.icns "${RTAS}"
 #setfileicon resources/$PLUGIN_NAME.icns "${AAX}"
 
@@ -211,7 +224,7 @@ productsign --sign "Developer ID Installer: ""${CERT_ID}" "${PKG_US}" "${PKG}"
 rm -R -f "${PKG_US}"
 
 #set installer icon
-setfileicon resources/$PLUGIN_NAME.icns "${PKG}"
+./setfileicon.sh resources/$PLUGIN_NAME.icns "${PKG}"
 
 #---------------------------------------------------------------------------------------------------------
 
@@ -255,5 +268,17 @@ sudo rm -R -f installer/build-mac/
 # rm -R installer/dist
 
 #---------------------------------------------------------------------------------------------------------
+# itch
+
+if [ "$BUILD_FOLDER" != "" ] 
+then
+echo "Publishing to Itch..."
+cp -R -v $APP $BUILD_FOLDER/App/
+cp -R -v manual/"$PLUGIN_NAME"_manual.pdf $BUILD_FOLDER/App/
+cp -R -v installer/$PLUGIN_NAME-mac.dmg $BUILD_FOLDER/Installer/
+echo $FULL_VERSION > $BUILD_FOLDER/version.txt
+cd $BUILD_FOLDER
+./publish-itch.command
+fi
 
 echo "done"
