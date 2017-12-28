@@ -8,6 +8,8 @@ REM - AAX codesigning requires ashelper tool added to %PATH% env variable and aa
 
 echo Making Evaluator win distribution ...
 
+set /P PUBLISH=Publish to Itch? (y/n):
+
 echo ------------------------------------------------------------------
 echo Updating version numbers ...
 
@@ -63,6 +65,26 @@ goto END-is
 REM - ZIP
 REM - "%ProgramFiles%\7-Zip\7z.exe" a .\installer\Evaluator-win-32bit.zip .\build-win\app\win32\bin\Evaluator.exe .\build-win\vst3\win32\bin\Evaluator.vst3 .\build-win\vst2\win32\bin\Evaluator.dll .\build-win\rtas\bin\Evaluator.dpm .\build-win\rtas\bin\Evaluator.dpm.rsr .\build-win\aax\bin\Evaluator.aaxplugin* .\installer\license.rtf .\installer\readmewin.rtf
 REM - "%ProgramFiles%\7-Zip\7z.exe" a .\installer\Evaluator-win-64bit.zip .\build-win\app\x64\bin\Evaluator.exe .\build-win\vst3\x64\bin\Evaluator.vst3 .\build-win\vst2\x64\bin\Evaluator.dll .\installer\license.rtf .\installer\readmewin.rtf
+
+if "%PUBLISH%" NEQ "y" goto LOG
+
+echo ------------------------------------------------------------------
+echo copying files to builds folder...
+
+set BUILD_FOLDER=..\..\..\Builds\Evaluator
+
+xcopy /Y /F version.txt %BUILD_FOLDER%\version.txt
+xcopy /Y /F .\build-win\app\win32\bin\Evaluator.exe %BUILD_FOLDER%\App32\Evaluator.exe
+xcopy /Y /F .\manual\Evaluator_manual.pdf %BUILD_FOLDER%\App32\Evaluator_manual.pdf
+xcopy /Y /F .\build-win\app\x64\bin\Evaluator.exe %BUILD_FOLDER%\App64\Evaluator.exe
+xcopy /Y /F .\manual\Evaluator_manual.pdf %BUILD_FOLDER%\App64\Evaluator_manual.pdf
+xcopy /Y /F ".\installer\Evaluator Installer.exe" "%BUILD_FOLDER%\Installer\Evaluator Installer.exe"
+
+pushd %BUILD_FOLDER%
+call .\publish-itch.bat
+popd
+
+:LOG
 
 echo ------------------------------------------------------------------
 echo Printing log file to console...

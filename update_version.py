@@ -30,12 +30,19 @@ def main():
       
   
   FullVersionStr = MajorStr + "." + MinorStr + "." + BugfixStr
-  
+ 
   today = datetime.date.today()
   CFBundleGetInfoString = FullVersionStr + ", Copyright Damien Quartz, " + str(today.year)
   CFBundleVersion = FullVersionStr
   
   print "update_version.py - setting version to " + FullVersionStr
+
+  print "updating version.txt"
+
+  version = open("version.txt", "w")
+  version.write(FullVersionStr)
+  version.close()
+
   print "Updating plist version info..."
   
   plistpath = scriptpath + "/resources/Evaluator-VST2-Info.plist"
