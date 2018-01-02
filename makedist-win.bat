@@ -37,8 +37,9 @@ REM - SET CMDLINE_DEFINES="DEMO_VERSION"
 REM - Could build individual targets like this:
 REM - msbuild Evaluator-app.vcxproj /p:configuration=release /p:platform=win32
 
-msbuild Evaluator.sln /p:configuration=release /p:platform=win32 /nologo /noconsolelogger /fileLogger /v:quiet /flp:logfile=build-win.log;errorsonly 
-msbuild Evaluator.sln /p:configuration=release /p:platform=x64 /nologo /noconsolelogger /fileLogger /v:quiet /flp:logfile=build-win.log;errorsonly;append
+REM - do a clean and build for both platforms to ensure we don't build with any old object files that might have been from a debug build
+msbuild Evaluator.sln /t:Clean,Build /p:configuration=release /p:platform=win32 /nologo /noconsolelogger /fileLogger /v:quiet /flp:logfile=build-win.log;errorsonly 
+msbuild Evaluator.sln /t:Clean,Build /p:configuration=release /p:platform=x64 /nologo /noconsolelogger /fileLogger /v:quiet /flp:logfile=build-win.log;errorsonly;append
 
 REM echo ------------------------------------------------------------------
 REM echo Code sign aax binary...
