@@ -3,6 +3,51 @@
 #include "IControl.h"
 #include "Controls.h"
 
+#if SA_API
+extern char *gINIPath;
+#else
+
+#ifdef OS_WIN
+#include <windows.h>
+#include <shlobj.h>
+#include <sys/stat.h>
+#else
+include "swell.h"
+#endif
+
+char *gINIPath = new char[200]; // path of ini file
+
+void InitIniPath()
+{
+#ifdef OS_WIN
+	if (SHGetFolderPathA(NULL, CSIDL_LOCAL_APPDATA, NULL, 0, gINIPath) != S_OK)
+	{
+		DBGMSG("could not retrieve the user's application data directory!\n");
+
+		//TODO error msg?
+		return;
+	}
+
+	sprintf(gINIPath, "%s\\%s", gINIPath, BUNDLE_NAME); // Add the app name to the path
+
+	struct stat st;
+	if (stat(gINIPath, &st) == 0) // if directory exists
+	{
+		sprintf(gINIPath, "%s\\%s", gINIPath, "settings.ini"); // add file name to path
+	}
+#else
+	homeDir = getenv("HOME");
+	sprintf(gINIPath, "%s/Library/Application Support/%s/", homeDir, BUNDLE_NAME);
+
+	struct stat st;
+	if (stat(gINIPath, &st) == 0) // if directory exists
+	{
+		sprintf(gINIPath, "%s%s", gINIPath, "settings.ini"); // add file name to path
+	}
+#endif
+}
+#endif
+
 enum ELayout
 {
 	kEditorWidth = GUI_WIDTH,
@@ -298,6 +343,10 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 	, timeResetToggle(nullptr)
 {
 	CreateControls(pGraphics);
+
+#if !SA_API
+	InitIniPath();
+#endif
 }
 
 void Interface::CreateControls(IGraphics* pGraphics)
@@ -652,4 +701,17 @@ void Interface::ToggleHelp()
 	{
 		mPlug->GetGUI()->Resize(kEditorWidth, kEditorHeight);
 	}
+}
+
+bool Interface::GetSupportPath(WDL_String* outPath) const
+{
+#if SA_API
+	mPlug->GetGUI()->HostPath(outPath);
+	return true;
+#else
+	outPath->SetLen(256);
+	GetPrivateProfileString("install", "support path", NULL, outPath->Get(), 256, gINIPath);
+
+	return true;
+#endif
 }

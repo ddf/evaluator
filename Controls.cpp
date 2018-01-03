@@ -555,21 +555,14 @@ bool ManualButton::Draw(IGraphics* pGraphics)
 void ManualButton::OnMouseDown(int x, int y, IMouseMod* pMod)
 {
 	WDL_String fileName("");
-	mPlug->GetGUI()->HostPath(&fileName);
-	fileName.Append("/Evaluator_manual.pdf");
-	bool success = mPlug->GetGUI()->OpenURL(fileName.Get());
-	if ( !success )
+	bool success = mInterface->GetSupportPath(&fileName);
+
+	if (success)
 	{
-		mPlug->GetGUI()->PluginPath(&fileName);
 		fileName.Append("/Evaluator_manual.pdf");
 		success = mPlug->GetGUI()->OpenURL(fileName.Get());
 	}
-	if ( !success )
-	{
-		mPlug->GetGUI()->AppSupportPath(&fileName);
-		fileName.Append("/Evaluator_manual.pdf");
-		success = mPlug->GetGUI()->OpenURL(fileName.Get());
-	}
+
 	if ( !success )
 	{
 		mPlug->GetGUI()->ShowMessageBox("Sorry, couldn't find the manual!", "Error", MB_OK);

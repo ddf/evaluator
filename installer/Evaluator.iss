@@ -57,6 +57,10 @@ Name: "{group}\Changelog"; Filename: "{app}\changelog.txt"
 ;Name: "{group}\readme"; Filename: "{app}\readme.rtf"
 Name: "{group}\Uninstall Evaluator"; Filename: "{app}\unins000.exe"
 
+[INI]
+Filename: "{localappdata}\Evaluator\settings.ini"; Section: "install"; Flags: uninsdeletesection
+Filename: "{localappdata}\Evaluator\settings.ini"; Section: "install"; Key: "support path"; String: "{app}"
+
 ;[Dirs] 
 ;Name: {cf}\Digidesign\DAE\Plugins\
 

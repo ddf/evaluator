@@ -10,6 +10,7 @@ class ConsoleText;
 class IControl;
 class Oscilloscope;
 class TransportButtons;
+class WDL_String;
 
 class Interface
 {
@@ -41,6 +42,8 @@ public:
 	TransportState GetTransportState() const;
 
 	void ToggleHelp();
+
+	bool GetSupportPath(WDL_String* outPath) const;
 
 private:
 
