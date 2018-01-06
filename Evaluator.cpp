@@ -59,7 +59,8 @@ Evaluator::Evaluator(IPlugInstanceInfo instanceInfo)
 
 	// in the VST we need to re-initialize our state to match the first preset
 	// so that when the presets Bank chunk is created, we don't wind up with an incorrect first preset.
-#if defined VST_API
+  // we do this in AU as well because it doesn't load a preset by default.
+#if defined(VST_API) || defined(AU_API)
 	{
 		const Presets::Data& preset = Presets::Get(0);
 		GetParam(kGain)->Set(preset.volume);
