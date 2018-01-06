@@ -705,16 +705,14 @@ void Interface::ToggleHelp()
 
 bool Interface::GetSupportPath(WDL_String* outPath) const
 {
-#if SA_API
-	mPlug->GetGUI()->HostPath(outPath);
-	return true;
-#elif defined(OS_WIN)
+#if defined(OS_WIN)
 	outPath->SetLen(256);
 	GetPrivateProfileString("install", "support path", NULL, outPath->Get(), 256, gINIPath);
 
 	return true;
 #else
 	mPlug->GetGUI()->AppSupportPath(outPath, true);
+	outPath->Append("/Evaluator");
 	return true;
 #endif
 }

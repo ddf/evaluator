@@ -555,17 +555,36 @@ bool ManualButton::Draw(IGraphics* pGraphics)
 void ManualButton::OnMouseDown(int x, int y, IMouseMod* pMod)
 {
 	WDL_String fileName("");
-	bool success = mInterface->GetSupportPath(&fileName);
+	bool success = false;
 
-	if (success)
+	// check in the same folder as the app first because
+	// this is where it will be if installed by Itch
+	// or if the user downloaded the standalone directly.
+#if SA_API
+	mPlug->GetGUI()->HostPath(&fileName);
+	fileName.Append("/Evaluator_manual.pdf");
+	success = mPlug->GetGUI()->OpenURL(fileName.Get());
+#endif
+	
+	// if we didn't find it, check in the support path,
+	// which is where it will be if this was installed
+	// by the installer.
+	if ( !success )
 	{
-		fileName.Append("/Evaluator_manual.pdf");
-		success = mPlug->GetGUI()->OpenURL(fileName.Get());
+		success = mInterface->GetSupportPath(&fileName);
+
+		if (success)
+		{
+			fileName.Append("/Evaluator_manual.pdf");
+			success = mPlug->GetGUI()->OpenURL(fileName.Get());
+		}
 	}
 
 	if ( !success )
 	{
-		mPlug->GetGUI()->ShowMessageBox("Sorry, couldn't find the manual!", "Error", MB_OK);
+		static char msg[256];
+		sprintf(msg, "Sorry, couldn't find the manual at %s.", fileName.Get());
+		mPlug->GetGUI()->ShowMessageBox(msg, "Error", MB_OK);
 	}
 }
 /////////////////////////////////////////////////////////////////
