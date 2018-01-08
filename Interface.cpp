@@ -458,7 +458,7 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		textStyle.mAlign = IText::kAlignCenter;
 		IRECT backRect = MakeIRect(kBitDepth);
 		IRECT textRect;
-		pGraphics->MeasureIText(&textStyle, "00", &textRect);
+		pGraphics->MeasureIText(&textStyle, "000", &textRect);
 		int HH = textRect.H() / 2;
 		int HW = textRect.W() / 2;
 		textRect.L = (int)backRect.MW() - HW;
