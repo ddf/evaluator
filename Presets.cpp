@@ -223,6 +223,27 @@ namespace Presets
 			"a", "b", "c", "s", "", "", "", "", "", "",
 		},
 		
+		{
+			"sample and hold effect",
+			100, 16, kRunModeAlways, false,
+			36, 0, 0, 0, 0, 0, 0, 0,
+			"// this modifies the audio coming into the program" CR
+			"// to create a sample and hold effect, with V0 controlling the intensity." CR
+			"// s is how many samples to wait before grabbing a new value from the input" CR
+			"s = V0 + 2;" CR
+			"// r holds a 'bool' to indicate whether or not we should sample the input" CR
+			"r = p<1 & p<t%s;" CR
+			"p = t%s;" CR
+			"// when r is 'true' we sample the input," CR
+			"// otherwise we keep the value we already have" CR
+			"a = r ? [0] : a;" CR
+			"b = r ? [1] : b;" CR
+			"// and now we output our result" CR
+			"[0] = a; [1] = b;",
+			// watches
+			"V0", "s", "r", "a", "b", "", "", "", "", "",
+		},
+		
 		// name, volume, bit depth, t-mode, program text
 		{
 			"saw wave",
@@ -338,7 +359,7 @@ namespace Presets
 
 		{
 			"amplitude modulation",
-			50, 16, kRunModeMIDI, false,
+			50, 16, kRunModeMIDI, true,
 			12, 0, 0, 0, 0, 0, 0, 0,
 			"// connect a MIDI device or use the computer keyboard to generate notes." CR
 			"// to amplitude modulate we need to scale the range up and down," CR
@@ -398,29 +419,8 @@ namespace Presets
 		},
 
 		{
-			"sample and hold effect",
-			100, 16, kRunModeAlways, false,
-			36, 0, 0, 0, 0, 0, 0, 0,
-			"// this modifies the audio coming into the program" CR
-			"// to create a sample and hold effect, with V0 controlling the intensity." CR
-			"// s is how many samples to wait before grabbing a new value from the input" CR
-			"s = V0 + 2;" CR
-			"// r holds a 'bool' to indicate whether or not we should sample the input" CR
-			"r = p<1 & p<t%s;" CR
-			"p = t%s;" CR
-			"// when r is 'true' we sample the input," CR
-			"// otherwise we keep the value we already have" CR
-			"a = r ? [0] : a;" CR
-			"b = r ? [1] : b;" CR
-			"// and now we output our result" CR
-			"[0] = a; [1] = b;",
-			// watches
-			"V0", "s", "r", "a", "b", "", "", "", "", "",
-		},
-
-		{
 			"rhythmic glitch sine",
-			50, 16, kRunModeAlways, false,
+			50, 16, kRunModeMIDI, true,
 			0, 0, 0, 0, 0, 0, 0, 0,
 			"// programs have a large 'user' memory space that can be accessed with '@'." CR
 			"// this allows us to store many previous values of the program." CR

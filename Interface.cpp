@@ -12,7 +12,7 @@ extern char *gINIPath;
 #include <shlobj.h>
 #include <sys/stat.h>
 #else
-include "swell.h"
+#include "swell.h"
 #endif
 
 char *gINIPath = new char[200]; // path of ini file
@@ -36,7 +36,7 @@ void InitIniPath()
 		sprintf(gINIPath, "%s\\%s", gINIPath, "settings.ini"); // add file name to path
 	}
 #else
-	homeDir = getenv("HOME");
+	const char *homeDir = getenv("HOME");
 	sprintf(gINIPath, "%s/Library/Application Support/%s/", homeDir, BUNDLE_NAME);
 
 	struct stat st;
@@ -705,13 +705,14 @@ void Interface::ToggleHelp()
 
 bool Interface::GetSupportPath(WDL_String* outPath) const
 {
-#if SA_API
-	mPlug->GetGUI()->HostPath(outPath);
-	return true;
-#else
+#if defined(OS_WIN)
 	outPath->SetLen(256);
 	GetPrivateProfileString("install", "support path", NULL, outPath->Get(), 256, gINIPath);
 
+	return true;
+#else
+	mPlug->GetGUI()->AppSupportPath(outPath, true);
+	outPath->Append("/Evaluator");
 	return true;
 #endif
 }
