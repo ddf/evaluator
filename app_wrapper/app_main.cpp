@@ -6,6 +6,10 @@
   #include <sys/stat.h>
 #endif
 
+// #DQF - RtError variables have been replaced with RtAudioError and RtMidiError throughout this file,
+// due to an API change in RtAudio and RtMidi introduced between the original versions this was written against
+// and the most recent versions (5.0.0 and 3.0.0 respectively).
+
 HWND gHWND;
 
 HINSTANCE gHINST;
