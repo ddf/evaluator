@@ -467,10 +467,10 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		pGraphics->MeasureIText(&textStyle, "00", &textRect);
 		int HH = textRect.H() / 2;
 		int HW = textRect.W() / 2;
-		textRect.L = backRect.MW() - HW;
-		textRect.R = backRect.MW() + HW;
-		textRect.T = backRect.MH() - HH;
-		textRect.B = backRect.MH() + HH;
+		textRect.L = (int)backRect.MW() - HW;
+		textRect.R = (int)backRect.MW() + HW;
+		textRect.T = (int)backRect.MH() - HH;
+		textRect.B = (int)backRect.MH() + HH;
 		pGraphics->AttachControl(new TextBox(mPlug, backRect, kBitDepth, &textStyle, textRect));
 	}
 
@@ -514,10 +514,10 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		pGraphics->MeasureIText(&textStyle, "000.00", &textRect);
 		int HH = textRect.H() / 2;
 		int HW = textRect.W() / 2;
-		textRect.L = backRect.MW() - HW;
-		textRect.R = backRect.MW() + HW;
-		textRect.T = backRect.MH() - HH;
-		textRect.B = backRect.MH() + HH;
+		textRect.L = (int)backRect.MW() - HW;
+		textRect.R = (int)backRect.MW() + HW;
+		textRect.T = (int)backRect.MH() - HH;
+		textRect.B = (int)backRect.MH() + HH;
 		pGraphics->AttachControl(new TextBox(mPlug, backRect, kTempo, &textStyle, textRect));
 	}
 

@@ -626,8 +626,8 @@ bool TransportButtons::Draw(IGraphics* pGraphics)
 	// play button
 	{
 		const bool active = (mState == kTransportPlaying || mState == kTransportPaused);
-		const int cx = mPlayRect.MW();
-		const int cy = mPlayRect.MH();
+		const int cx = (int)mPlayRect.MW();
+		const int cy = (int)mPlayRect.MH();
 		IRECT back = mPlayRect.GetPadded(-1);
 		pGraphics->FillIRect(active ? &mFore : &mBack, &back);
 		pGraphics->FillTriangle(active ? &mBack : &mFore,
@@ -644,11 +644,11 @@ bool TransportButtons::Draw(IGraphics* pGraphics)
 		IRECT back = mPauseRect.GetPadded(-1);
 		pGraphics->FillIRect(active ? &mFore : &mBack, &back);
 		const IColor* color = active ? &mBack : &mFore;
-		const int cx = mPauseRect.MW();
-		const int cy = mPauseRect.MH();
+		const int cx = (int)mPauseRect.MW();
+		const int cy = (int)mPauseRect.MH();
 		const int w = 4;
 		const int h = 6;
-		IRECT slab(cx - w*1.5, cy - h, cx - w*0.5, cy + h);
+		IRECT slab(cx - (int)(w*1.5f), cy - h, cx - (int)(w*0.5f), cy + h);
 		pGraphics->FillIRect(color, &slab, &mBlend);
 		slab.L += w*2;
 		slab.R += w*2;
@@ -657,8 +657,8 @@ bool TransportButtons::Draw(IGraphics* pGraphics)
 
 	// stop button
 	{
-		const int cx = mStopRect.MW();
-		const int cy = mStopRect.MH();
+		const int cx = (int)mStopRect.MW();
+		const int cy = (int)mStopRect.MH();
 		const int r = 6;
 		IRECT back = mStopRect.GetPadded(-1);
 		IRECT button(cx - r, cy - r, cx + r, cy + r);
