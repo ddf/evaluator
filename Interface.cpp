@@ -287,12 +287,6 @@ IText kTitleTextStyle(16,
 	0, // orientation
 	IText::kQualityDefault);
 
-static const char* kTModeDescription[] = {
-	"increment 't' always",
-	"increment 't' while note on",
-	"increment 't' while note on, reset 't' every note on",
-	"set 't' to project time"
-};
 
 static const char* kCompilePromptMessage =
 #if defined(OS_OSX)
