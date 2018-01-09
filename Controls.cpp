@@ -35,7 +35,9 @@ bool ITextEdit::Draw(IGraphics* pGraphics)
 
 void ITextEdit::OnMouseDown(int x, int y, IMouseMod* pMod)
 {
-	mPlug->GetGUI()->CreateTextEntry(this, &mText, &mRECT, mStr.Get());
+	// stupid hack to prevent the edit window from displaying 1 pixel wider and taller
+	IRECT entryRect = mRECT.GetPadded(0,0,-1,-1);
+	mPlug->GetGUI()->CreateTextEntry(this, &mText, &entryRect, mStr.Get());
 
 	if (mNameDisplayControl)
 	{
