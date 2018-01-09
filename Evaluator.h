@@ -1,3 +1,10 @@
+//
+// Evaluator.h
+// Evaluator
+//
+// Originally created from an IPlug example project, modified by Damien Quartz.
+//
+
 #ifndef __EVALUATOR__
 #define __EVALUATOR__
 

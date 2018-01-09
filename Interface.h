@@ -1,3 +1,10 @@
+//
+// Interface.h
+// Evaluator
+//
+// Created by Damien Quartz
+//
+
 #pragma once
 
 #include "Params.h"

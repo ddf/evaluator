@@ -1,3 +1,10 @@
+//
+// Interface.cpp
+// Evaluator
+//
+// Created by Damien Quartz
+//
+
 #include "Interface.h"
 #include "Evaluator.h"
 #include "IControl.h"

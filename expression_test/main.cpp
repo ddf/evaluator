@@ -2,7 +2,7 @@
 //  main.cpp
 //  expression_test
 //
-//  Created by Damien Di Fede on 11/25/16.
+//  Created by Damien Quartz on 11/25/16.
 //
 //
 

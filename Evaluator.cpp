@@ -1,3 +1,10 @@
+//
+// Evaluator.cpp
+// Evaluator
+//
+// Originally created from an IPlug example project, modified by Damien Quartz.
+//
+
 #include "Evaluator.h"
 #include "IPlug_include_in_plug_src.h"
 #include "Interface.h"
