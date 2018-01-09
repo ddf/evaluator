@@ -1,4 +1,4 @@
 Evaluator changelog
 https://damikyu.itch.io/evaluator
 
-01/08/18 - v1.0.0 initial release
+01/09/18 - v1.0.0 initial release
