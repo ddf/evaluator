@@ -10,10 +10,10 @@
 #define _USE_MATH_DEFINES
 
 #include "Program.h"
+#include <chrono>
 #include <ctype.h>
 #include <deque>
 #include <math.h>
-#include <stdlib.h>
 #include <map>
 
 const std::map<Program::Char, Program::Op::Code> UnaryOperators =
@@ -44,6 +44,7 @@ Program::Program(const std::vector<Op>& inOps, const size_t userMemorySize)
 	: ops(inOps)
 	, userMemSize(userMemorySize)
 	, memSize(userMemorySize + 256) // 256 to enough room for all possible values of Char
+	, rng(std::chrono::system_clock::now().time_since_epoch().count())
 {
 	mem = new Value[memSize];
 	memset(mem, 0, sizeof(Value)*memSize);
@@ -805,7 +806,7 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 	case Op::RND:
 	{
 		POP1;
-		stack.push(rand() % a);
+		stack.push(rng() % a);
 	}
 	break;
 

@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include <vector>
 #include <stack>
+#include <random>
 
 class Program
 {
@@ -153,5 +154,7 @@ private:
 	Value vc[kVCSize];
 	// the execution stack (reused each time Run is called)
 	std::stack<Value> stack;
+	// rng because rand() doesn't generate a large enough range
+	std::default_random_engine rng;
 };
 
