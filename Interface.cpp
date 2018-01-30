@@ -216,9 +216,6 @@ enum ELayout
 	kSyntax_Y = kSyntaxLabel_Y + kSyntaxLabel_H + 10,
 	kSyntax_H = 375,
 	kSyntax_W = kHelpWidth - kEditorMargin*2,
-	
-	kManualButton_X = kSyntax_X,
-	kManualButton_Y = kSyntax_Y + kSyntax_H
 };
 
 // note: ICOLOR is ARGB
@@ -314,6 +311,8 @@ static const char* kLanguageSyntax =
 "-      unary minus and subtraction\n"
 "<<     bitwise left shift (rhs % 64)\n"
 ">>     bitwise right shift (rhs % 64)\n"
+"<		relational less than (0 or 1)\n"
+">		relational greater than (0 or 1)\n"
 "&      bitwise AND\n"
 "^      bitwise XOR\n"
 "|      bitwise OR\n"
@@ -564,11 +563,6 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		textStyle.mSize = 12;
 		textStyle.mColor = kLabelTextStyle.mColor;
 		pGraphics->AttachControl(new HelpButton(mPlug, MakeIRect(kHelpButton), &textStyle, this));
-		
-		IBitmap buttonBack = pGraphics->LoadIBitmap(BUTTON_BACK_ID, BUTTON_BACK_FN);
-		textStyle = kLabelTextStyle;
-		textStyle.mSize = 11;
-		pGraphics->AttachControl(new ManualButton(mPlug, kManualButton_X, kManualButton_Y, &buttonBack, &textStyle, this));
 
 		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kSyntaxLabel), &kLabelTextStyle, "LANGUAGE SYNTAX"));
 		
@@ -576,7 +570,17 @@ void Interface::CreateControls(IGraphics* pGraphics)
 #if defined(OS_OSX)
 		textStyle.mSize += 2;
 #endif
-		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kSyntax), &textStyle, kLanguageSyntax));
+		
+		IRECT syntaxRect = MakeIRect(kSyntax);
+		pGraphics->MeasureIText(&textStyle, const_cast<char*>(kLanguageSyntax), &syntaxRect);
+		pGraphics->AttachControl(new ITextControl(mPlug, syntaxRect, &textStyle, kLanguageSyntax));
+		
+		IBitmap buttonBack = pGraphics->LoadIBitmap(BUTTON_BACK_ID, BUTTON_BACK_FN);
+		textStyle = kLabelTextStyle;
+		textStyle.mSize = 11;
+		const int buttonX = syntaxRect.L;
+		const int buttonY = syntaxRect.B;
+		pGraphics->AttachControl(new ManualButton(mPlug, buttonX, buttonY, &buttonBack, &textStyle, this));
 	}
 }
 
