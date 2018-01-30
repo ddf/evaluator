@@ -518,6 +518,7 @@ bool ChooseMidiInput(const char* pPortName)
   */
   if (gMidiIn)
   {
+	
     gMidiIn->closePort();
 
     if (port == 0)
@@ -527,8 +528,20 @@ bool ChooseMidiInput(const char* pPortName)
     #ifdef OS_WIN
     else
     {
-      gMidiIn->openPort(port-1);
-      return true;
+      try
+	  {
+        gMidiIn->openPort(port-1);
+		return true;
+	  }
+	  catch (RtMidiError& error)
+	  {
+        error.printMessage();
+		char msg[512];
+		sprintf(msg, "Unable to open Midi In %s.\nIt may already be in use by another app.", pPortName);
+		MessageBox(gHWND, msg, "Midi Error", MB_OK);
+	  }
+	  // it failed so turn off input
+	  ChooseMidiInput("");
     }
     #else
     else if(port == 1)
@@ -582,8 +595,20 @@ bool ChooseMidiOutput(const char* pPortName)
     #ifdef OS_WIN
     else
     {
-      gMidiOut->openPort(port-1);
-      return true;
+	  try
+	  {
+        gMidiOut->openPort(port - 1);
+        return true;
+	  }
+	  catch (RtMidiError& error)
+	  {
+        error.printMessage();
+		char msg[512];
+		sprintf(msg, "Unable to open Midi Out %s.\nIt may already be in use by another app.", pPortName);
+		MessageBox(gHWND, msg, "Midi Error", MB_OK);
+	  }
+      // it failed so turn off output
+	  ChooseMidiOutput("");
     }
     #else
     else if(port == 1)
