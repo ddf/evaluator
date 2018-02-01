@@ -36,7 +36,12 @@ void ITextEdit::OnMouseDown(int x, int y, IMouseMod* pMod)
 {
 	// stupid hack to prevent the edit window from displaying 1 pixel wider and taller
 	IRECT entryRect = mRECT.GetPadded(0,0,-1,-1);
-	mPlug->GetGUI()->CreateTextEntry(this, &mText, &entryRect, mStr.Get());
+	IText entryText = mText;
+#if defined(OS_OSX)
+	entryRect.L += 3;
+	entryText.mSize -= 4;
+#endif
+	mPlug->GetGUI()->CreateTextEntry(this, &entryText, &entryRect, mStr.Get());
 
 	if (mNameDisplayControl)
 	{

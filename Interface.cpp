@@ -231,10 +231,21 @@ const IColor kScopeLineColorRight(255, 60, 169, 198);
 #pragma endregion
 
 #pragma region Text Styles
+#if defined(OS_WIN)
 static char* ConsoleFontName = "Consolas";
 static char* LabelFontName = "Segoe UI";
+static const int kFontSizeLabel = 14;
+static const int kFontSizeTitle = 16;
+static const int kFontSizeConsole = 14;
+#else
+static char* ConsoleFontName = "Monaco";
+static char* LabelFontName = "Helvetica Neue";
+static const int kFontSizeLabel = 12;
+static const int kFontSizeTitle = 14;
+static const int kFontSizeConsole = 15;
+#endif
 
-IText  kProgramTextStyle(14,
+IText  kProgramTextStyle(kFontSizeConsole,
 	&kGreenColor,
 	ConsoleFontName,
 	IText::kStyleNormal,
@@ -245,7 +256,7 @@ IText  kProgramTextStyle(14,
 	&kTextEditColor
 );
 
-IText  kTextBoxTextStyle(14,
+IText  kTextBoxTextStyle(kFontSizeConsole,
 	&kGreenColor,
 	ConsoleFontName,
 	IText::kStyleNormal,
@@ -256,7 +267,7 @@ IText  kTextBoxTextStyle(14,
 	&kTextEditColor
 );
 
-IText  kConsoleTextStyle(14,
+IText  kConsoleTextStyle(kFontSizeConsole,
 	&kGreenColor,
 	ConsoleFontName,
 	IText::kStyleNormal,
@@ -264,7 +275,7 @@ IText  kConsoleTextStyle(14,
 	0, // orientation
 	IText::kQualityDefault);
 
-IText  kSyntaxTextStyle(14,
+IText  kSyntaxTextStyle(kFontSizeConsole,
 	&kGreenColor,
 	ConsoleFontName,
 	IText::kStyleNormal,
@@ -272,7 +283,7 @@ IText  kSyntaxTextStyle(14,
 	0, // orientation
 	IText::kQualityDefault);
 
-IText  kWatchTextStyle(14,
+IText  kWatchTextStyle(kFontSizeConsole,
 	&kGreenColor,
 	ConsoleFontName,
 	IText::kStyleNormal,
@@ -282,7 +293,7 @@ IText  kWatchTextStyle(14,
 	&kExprBackgroundColor,
 	&kGreenColor);
 
-IText kLabelTextStyle(14,
+IText kLabelTextStyle(kFontSizeLabel,
 	&kTextColor,
 	LabelFontName,
 	IText::kStyleBold,
@@ -290,7 +301,7 @@ IText kLabelTextStyle(14,
 	0, // orientation
 	IText::kQualityDefault);
 
-IText kScopeTextStyle(14,
+IText kScopeTextStyle(kFontSizeLabel,
 	&kTextColor,
 	LabelFontName,
 	IText::kStyleBold,
@@ -298,7 +309,7 @@ IText kScopeTextStyle(14,
 	0, // orientation
 	IText::kQualityDefault);
 
-IText kTitleTextStyle(16,
+IText kTitleTextStyle(kFontSizeTitle,
 	&kSectionColor,
 	LabelFontName,
 	IText::kStyleBold,
@@ -417,12 +428,6 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		textEdit->SetNameDisplayControl(compilePrompt);
 
 		pGraphics->AttachControl(textEdit);
-	}
-
-	//--- Label we show when the user is editing the program so they know they can commit the text with a keyboard stroke
-	{
-		
-		
 	}
 
 	//-- "window" displaying internal state of the expression
