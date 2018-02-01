@@ -48,7 +48,7 @@ protected:
 class TextBox : public ICaptionControl
 {
 public:
-	TextBox(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, IRECT textRect);
+	TextBox(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, IRECT textRect, bool showParamUnits = false);
 
 	bool Draw(IGraphics* pGraphics) override;
 	void OnMouseDown(int x, int y, IMouseMod* pMod) override;
@@ -56,7 +56,21 @@ public:
 	void OnMouseWheel(int x, int y, IMouseMod* pMod, int d) override;
 
 private:
+	bool  mShowParamUnits;
 	IRECT mTextRect;
+};
+
+class TextTable : public IControl
+{
+public:
+	TextTable(IPlugBase* pPlug, IRECT pR, IText* pText, const char** data, int iColumns, int iRows);
+
+	bool Draw(IGraphics* pGraphics) override;
+
+private:
+	const char** tableData;
+	int columns;
+	int rows;
 };
 
 class ConsoleText : public IControl
@@ -147,6 +161,7 @@ private:
 
 	Interface* mInterface;
 	IRECT mButtonRect; // where the button goes
+	IRECT mTextRect; // where the text in the button goes
 	IRECT mMenuRect; // where the menu goes
 	// rects for all the selections in the menu
 	WDL_TypedBuf<IRECT> mRECTs;
@@ -166,6 +181,7 @@ public:
 private:
 	Interface* mInterface;
 	IText mButtonText;
+	IRECT mTextRect;
 };
 
 class ManualButton : public IBitmapControl
@@ -179,6 +195,7 @@ public:
 private:
 	Interface* mInterface;
 	IText mButtonText;
+	IRECT mTextRect;
 };
 
 class HelpButton : public IControl
@@ -192,6 +209,7 @@ public:
 private:
 	Interface* mInterface;
 	IText mButtonText;
+	IRECT mTextRect;
 };
 
 // play, pause, and stop buttons used by the standalone to control how t increments

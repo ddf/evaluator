@@ -129,7 +129,7 @@ enum ELayout
 	kProgramText_X = kEditorMargin,
 	kProgramText_Y = kProgramLabel_Y + kProgramLabel_H,
 	kProgramText_W = kEditorWidth - kEditorMargin * 2,
-	kProgramText_H = 200,
+	kProgramText_H = 230,
 
 	kCompilePrompt_W = 200,
 	kCompilePrompt_H = 15,
@@ -142,7 +142,7 @@ enum ELayout
 	kTransport_Y = kProgramText_Y - kTransport_H - 5,
 
 	kConsoleTitle_X = kProgramText_X,
-	kConsoleTitle_Y = kProgramText_Y + kProgramText_H + 10,
+	kConsoleTitle_Y = kProgramText_Y + kProgramText_H + 5,
 	kConsoleTitle_W = kProgramText_W,
 	kConsoleTitle_H = 15,
 
@@ -175,24 +175,20 @@ enum ELayout
 	kWatchVal_H = kWatchVar_H,
 
 	kScopeTitle_X = kConsoleTitle_X,
-	kScopeTitle_Y = kConsole_Y + kConsole_H + 10,
-	kScopeTitle_W = 60,
-	kScopeTitle_H = 15,
+	kScopeTitle_Y = kConsole_Y + kConsole_H + 5,
+	kScopeTitle_W = 50,
+	kScopeTitle_H = 15,	
 
+	// the WINDOW label, also used to the TextBox that follows
 	kScopeWindowLabel_X = kScopeTitle_X + kScopeTitle_W,
-	kScopeWindowLabel_Y = kScopeTitle_Y + 2,
+	kScopeWindowLabel_Y = kScopeTitle_Y,
 	kScopeWindowLabel_W = 52,
 	kScopeWindowLabel_H = 15,
 
-	kScopeWindow_X = kScopeWindowLabel_X + kScopeWindowLabel_W,
-	kScopeWindow_Y = kScopeWindowLabel_Y - 3,
-	kScopeWindow_W = 15,
-	kScopeWindow_H = 15,
-
 	kScope_X = kScopeTitle_X,
-	kScope_Y = kScopeTitle_Y + kScopeTitle_H,
+	kScope_Y = kScopeTitle_Y + kScopeTitle_H + 3,
 	kScope_W = kProgramText_W,
-	kScope_H = 125,
+	kScope_H = 100,
 
 	kPresetPopup_X = 30,
 	kPresetPopup_Y = kProgramText_Y,
@@ -205,7 +201,7 @@ enum ELayout
 	kHelpButton_Y = kEditorMargin,
 
 	// width of the "help" area, which we use to resize the window
-	kHelpWidth = 350,
+	kHelpWidth = 450,
 
 	kSyntaxLabel_X = kEditorWidth + kEditorMargin,
 	kSyntaxLabel_Y = kPlugName_Y,
@@ -213,15 +209,17 @@ enum ELayout
 	kSyntaxLabel_W = kHelpWidth - kEditorMargin*2,
 
 	kSyntax_X = kEditorWidth + kEditorMargin,
-	kSyntax_Y = kSyntaxLabel_Y + kSyntaxLabel_H + 10,
-	kSyntax_H = 375,
-	kSyntax_W = kHelpWidth - kEditorMargin*2,
+	kSyntax_Y = kSyntaxLabel_Y + kSyntaxLabel_H,
+	kSyntax_H = 500,
+	kSyntax_W = kHelpWidth - kEditorMargin*2 - 50,
 };
 
+#pragma region Colors
 // note: ICOLOR is ARGB
 const IColor kBackgroundColor(255, 19, 44, 34);
 const IColor kExprBackgroundColor(255, 32, 56, 59);
 const IColor kTextColor(255, 218, 228, 226);
+const IColor kSectionColor(255, 120, 199, 228);
 const IColor kGreenColor(255, 52, 209, 112);
 // color of text set in the Text FG Color for expression text
 const IColor kTextEditColor(kGreenColor);
@@ -230,10 +228,15 @@ const IColor kConsoleBackgroundColor(255, 11, 26, 19);
 const IColor kScopeBackgroundColor(255, 14, 21, 26);
 const IColor kScopeLineColorLeft(255, 194, 218, 150);
 const IColor kScopeLineColorRight(255, 60, 169, 198);
+#pragma endregion
 
-IText  kExpressionTextStyle(11,
+#pragma region Text Styles
+static char* ConsoleFontName = "Consolas";
+static char* LabelFontName = "Segoe UI";
+
+IText  kProgramTextStyle(14,
 	&kGreenColor,
-	"Courier",
+	ConsoleFontName,
 	IText::kStyleNormal,
 	IText::kAlignNear,
 	0, // orientation
@@ -242,25 +245,36 @@ IText  kExpressionTextStyle(11,
 	&kTextEditColor
 );
 
-IText  kExprMsgTextStyle(11,
-	&kTextColor,
-	"Arial",
-	IText::kStyleBold,
-	IText::kAlignNear,
-	0, // orientation
-	IText::kQualityDefault);
-
-IText  kConsoleTextStyle(11,
+IText  kTextBoxTextStyle(14,
 	&kGreenColor,
-	"Courier",
+	ConsoleFontName,
+	IText::kStyleNormal,
+	IText::kAlignCenter,
+	0, // orientation
+	IText::kQualityDefault,
+	&kExprBackgroundColor,
+	&kTextEditColor
+);
+
+IText  kConsoleTextStyle(14,
+	&kGreenColor,
+	ConsoleFontName,
 	IText::kStyleNormal,
 	IText::kAlignNear,
 	0, // orientation
 	IText::kQualityDefault);
 
-IText  kWatchTextStyle(11,
+IText  kSyntaxTextStyle(14,
 	&kGreenColor,
-	"Courier",
+	ConsoleFontName,
+	IText::kStyleNormal,
+	IText::kAlignNear,
+	0, // orientation
+	IText::kQualityDefault);
+
+IText  kWatchTextStyle(14,
+	&kGreenColor,
+	ConsoleFontName,
 	IText::kStyleNormal,
 	IText::kAlignNear,
 	0, // orientation
@@ -268,22 +282,30 @@ IText  kWatchTextStyle(11,
 	&kExprBackgroundColor,
 	&kGreenColor);
 
-IText kLabelTextStyle(12,
+IText kLabelTextStyle(14,
 	&kTextColor,
-	"Arial",
+	LabelFontName,
 	IText::kStyleBold,
 	IText::kAlignCenter,
 	0, // orientation
 	IText::kQualityDefault);
 
-IText kTitleTextStyle(16,
+IText kScopeTextStyle(14,
 	&kTextColor,
-	"Arial",
+	LabelFontName,
 	IText::kStyleBold,
 	IText::kAlignNear,
 	0, // orientation
 	IText::kQualityDefault);
 
+IText kTitleTextStyle(16,
+	&kSectionColor,
+	LabelFontName,
+	IText::kStyleBold,
+	IText::kAlignNear,
+	0, // orientation
+	IText::kQualityDefault);
+#pragma  endregion
 
 static const char* kCompilePromptMessage =
 #if defined(OS_OSX)
@@ -292,40 +314,55 @@ static const char* kCompilePromptMessage =
 "Ctrl+Enter to Compile Program";
 #endif
 
-static const char* kLanguageSyntax =
-"[]     audio input/output access\n"
-"F      'frequency' unary operator\n"
-"$      'sine' unary operator\n"
-"#      'square' unary operator\n"
-"T      'triangle' unary operator\n"
-"R      'random' unary operator\n"
-"V      V knob access operator\n"
-"C      MIDI CC message access operator\n"
-"@      memory access operator\n"
-"!      logical NOT\n"
-"~      bitwise NOT (complement)\n"
-"*      multiplication\n"
-"/      division\n"
-"%      modulo (remainder)\n"
-"+      unary plus and addition\n"
-"-      unary minus and subtraction\n"
-"<<     bitwise left shift (rhs % 64)\n"
-">>     bitwise right shift (rhs % 64)\n"
-"<		relational less than (0 or 1)\n"
-">		relational greater than (0 or 1)\n"
-"&      bitwise AND\n"
-"^      bitwise XOR\n"
-"|      bitwise OR\n"
-"?:     ternary operator (non-branching)\n"
-"a =    assign to a variable\n"
-"@a =   assign to a memory address\n"
-"[0] =  assign to left output\n"
-"[1] =  assign to right output\n"
-"[*] =  assign to all outputs\n";
+static const char* kLanguageSyntaxTable[] =
+{
+	"a...z",   "use any lowercase letter as a variable",
+	"t",       "time: incremented automatically",
+	"m",       "t expressed as milliseconds",
+	"q",       "t expressed a 128th notes (depends on BPM)",
+	"w",       "1<<BITS, program output is wrapped to this",
+	"n",       "most recent MIDI note number, range is [0,127]",
+	"v",       "velocity of n, range is [0,127]",
+	"[x]",     "access channel x%2 of audio input/output",
+	"Fx",      "convert x to a 'frequency'",
+	"$x",      "map x%w to a sine wave with the period w",
+	"#x",      "map x%w to a square wave with the period w",
+	"Tx",      "map x%w to a triangle wave with the period w",
+	"Rx",      "generate a random value in the range [0,x)",
+	"Vx",      "the value of V knob x%8, value range is [0,255]",
+	"Cx",      "the value MIDI CC x%128, value range is [0,127]",
+	"@x",      "access the value at memory address x",
+	"!x",      "logical NOT: 1 if x equals 0, otherwise 0",
+	"~x",      "bitwise NOT: flips all bits in x",
+	"+x",      "unary plus (a no-op)",
+	"-x",      "unary negation, similar to ~, still positive",
+	"x * y",   "the product of x times y",
+	"x / y",   "the result of x divided by y (no remainder)",
+	"x % y",   "the remainder of x divided by y (aka modulo)",
+	"x + y",   "the sum of x plus y",
+	"x - y",   "the difference x minus y",
+	"x << y",  "bitwise left shift of x by y%64 bits",
+	"x >> y",  "bitwise right shift of x by y%64 bits",
+	"x < y",   "0 if x is less than y, 1 otherwise",
+	"x > y",   "0 if x is greater than y, 1 otherwise",
+	"x & y",   "bitwise AND of x and y",
+	"x ^ y",   "bitwise XOR of x and y",
+	"x | y",   "bitwise OR of x and y",
+	"x ? y : z", "result is y when x is non-zero, otherwise z",
+	"x = y",   "assign the value of y to x",
+	"@x = y",  "assign the value of y to the memory address x",
+	"[0] = x", "assign the value of x to the left output",
+	"[1] = y", "assign the value of y to the right output",
+	"[*] = x", "assign the value of x to all outputs",
+};
+
+static const int kLanguageSyntaxColumns = 2;
+static const int kLanguageSyntaxRows = sizeof(kLanguageSyntaxTable) / sizeof(char*) / kLanguageSyntaxColumns;
 
 
 Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 	: mPlug(plug)
+	, mGraphics(pGraphics)
 	, textEdit(nullptr)
 	, programName(nullptr)
 	, consoleTextControl(nullptr)
@@ -350,7 +387,7 @@ void Interface::CreateControls(IGraphics* pGraphics)
 
 	//--  Name of the plug and version
 	{
-		IText titleStyle(20, &kPlugNameColor, "Arial", IText::kStyleBold, IText::kAlignNear, 0, IText::kQualityDefault);
+		IText titleStyle(20, &kPlugNameColor, LabelFontName, IText::kStyleBold, IText::kAlignNear, 0, IText::kQualityDefault);
 		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kPlugName), &titleStyle, "EVALUATOR" " " VST3_VER_STR));
 	}
 
@@ -376,7 +413,7 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		compilePrompt->Hide(true);
 		pGraphics->AttachControl(compilePrompt);
 
-		textEdit = new ITextEdit(mPlug, MakeIRect(kProgramText), kExpression, &kExpressionTextStyle, "", ETextEntryOptions(kTextEntryMultiline | kTextEntryEnterKeyInsertsCR));
+		textEdit = new ITextEdit(mPlug, MakeIRect(kProgramText), kExpression, &kProgramTextStyle, "", ETextEntryOptions(kTextEntryMultiline | kTextEntryEnterKeyInsertsCR));
 		textEdit->SetNameDisplayControl(compilePrompt);
 
 		pGraphics->AttachControl(textEdit);
@@ -423,20 +460,17 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		oscilloscope = new Oscilloscope(mPlug, MakeIRect(kScope), &kScopeBackgroundColor, &kScopeLineColorLeft, &kScopeLineColorRight);
 		pGraphics->AttachControl(oscilloscope);
 
-		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kScopeWindowLabel), &kLabelTextStyle, "WINDOW"));
+		IRECT windowLabelRect = MakeIRect(kScopeWindowLabel);
+		pGraphics->MeasureIText(&kScopeTextStyle, "WINDOW", &windowLabelRect);
+		pGraphics->AttachControl(new ITextControl(mPlug, windowLabelRect , &kScopeTextStyle, "WINDOW"));
 
-		IRECT updateRect = MakeIRect(kScopeWindow);
-		IControl* updateControl = new KnobLineCoronaControl(mPlug, updateRect, kScopeWindow, &kGreenColor, &kGreenColor, 0.5);
-
-		int w = updateRect.W() + 15;
-		updateRect.L += w;
-		updateRect.R += w;
-		updateRect.T = kScopeWindowLabel_Y;
-		IControl* caption = new ICaptionControl(mPlug, updateRect, kScopeWindow, &kLabelTextStyle);
-		updateControl->SetValDisplayControl(caption);
-
-		pGraphics->AttachControl(updateControl);
-		pGraphics->AttachControl(caption);
+		const int w = windowLabelRect.W() + 10;
+		IRECT windowEditRect = windowLabelRect;
+		windowEditRect.L += w;
+		windowEditRect.R += w;
+		IText textStyle = kTextBoxTextStyle;
+		IRECT windowBoxRect = windowEditRect.GetPadded(2);
+		pGraphics->AttachControl(new TextBox(mPlug, windowBoxRect, kScopeWindow, &textStyle, windowEditRect, true));
 	}
 
 	//---Volume--------------------
@@ -453,7 +487,7 @@ void Interface::CreateControls(IGraphics* pGraphics)
 	{
 		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kBitDepthLabel), &kLabelTextStyle, "BITS"));
 
-		IText textStyle = kExpressionTextStyle;
+		IText textStyle = kTextBoxTextStyle;
 		textStyle.mAlign = IText::kAlignCenter;
 		IRECT backRect = MakeIRect(kBitDepth);
 		IRECT textRect;
@@ -470,7 +504,7 @@ void Interface::CreateControls(IGraphics* pGraphics)
 	// ---Run Mode------------------------------
 	{
 		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kRunModeLabel), &kLabelTextStyle, "RUN MODE"));
-		IText textStyle = kExpressionTextStyle;
+		IText textStyle = kTextBoxTextStyle;
 		textStyle.mAlign = IText::kAlignCenter;
 		pGraphics->AttachControl(new EnumControl(mPlug, MakeIRect(kRunMode), kRunMode, &textStyle));
 	}
@@ -500,7 +534,7 @@ void Interface::CreateControls(IGraphics* pGraphics)
 	{
 		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kTempoLabel), &kLabelTextStyle, "BPM"));
 
-		IText textStyle = kExpressionTextStyle;
+		IText textStyle = kTextBoxTextStyle;
 		textStyle.mAlign = IText::kAlignCenter;
 		IRECT backRect = MakeIRect(kTempoBox);
 		IRECT textRect;
@@ -558,28 +592,23 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		IRECT backRect(kEditorWidth, 0, kEditorWidth + kHelpWidth, kEditorHeight);
 		pGraphics->AttachControl(new IPanelControl(mPlug, backRect, &kConsoleBackgroundColor));
 		
-		IText textStyle = kExpressionTextStyle;
+		IText textStyle = kLabelTextStyle;
 		textStyle.mAlign = IText::kAlignCenter;
-		textStyle.mSize = 12;
-		textStyle.mColor = kLabelTextStyle.mColor;
+		textStyle.mSize = 14;
+		textStyle.mTextEntryBGColor = kTextBoxTextStyle.mTextEntryBGColor;
+		textStyle.mTextEntryFGColor = kTextBoxTextStyle.mTextEntryFGColor;
 		pGraphics->AttachControl(new HelpButton(mPlug, MakeIRect(kHelpButton), &textStyle, this));
 
-		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kSyntaxLabel), &kLabelTextStyle, "LANGUAGE SYNTAX"));
-		
-		textStyle = kConsoleTextStyle;
-#if defined(OS_OSX)
-		textStyle.mSize += 2;
-#endif
+		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kSyntaxLabel), &kTitleTextStyle, "LANGUAGE SYNTAX"));
 		
 		IRECT syntaxRect = MakeIRect(kSyntax);
-		pGraphics->MeasureIText(&textStyle, const_cast<char*>(kLanguageSyntax), &syntaxRect);
-		pGraphics->AttachControl(new ITextControl(mPlug, syntaxRect, &textStyle, kLanguageSyntax));
+		pGraphics->AttachControl(new TextTable(mPlug, syntaxRect, &kSyntaxTextStyle, kLanguageSyntaxTable, kLanguageSyntaxColumns, kLanguageSyntaxRows));
 		
 		IBitmap buttonBack = pGraphics->LoadIBitmap(BUTTON_BACK_ID, BUTTON_BACK_FN);
 		textStyle = kLabelTextStyle;
-		textStyle.mSize = 11;
+		textStyle.mSize = 12;
 		const int buttonX = syntaxRect.L;
-		const int buttonY = syntaxRect.B;
+		const int buttonY = syntaxRect.B + 10;
 		pGraphics->AttachControl(new ManualButton(mPlug, buttonX, buttonY, &buttonBack, &textStyle, this));
 	}
 }

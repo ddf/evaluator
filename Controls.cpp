@@ -11,9 +11,7 @@
 #include "Interface.h"
 #include "Presets.h"
 
-////////////////////////////////////////////
-// ITextEdit
-//
+#pragma region ITextEdit 
 ITextEdit::ITextEdit(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, const char* str, ETextEntryOptions textEntryOptions)
 	: IControl(pPlug, pR)
 	, mIdx(paramIdx)
@@ -30,7 +28,8 @@ ITextEdit::~ITextEdit() {}
 bool ITextEdit::Draw(IGraphics* pGraphics)
 {
 	pGraphics->FillIRect(&mText.mTextEntryBGColor, &mRECT);
-	return pGraphics->DrawIText(&mText, mStr.Get(), &mRECT);
+	IRECT textRect = mRECT.GetHPadded(-3);
+	return pGraphics->DrawIText(&mText, mStr.Get(), &textRect);
 }
 
 void ITextEdit::OnMouseDown(int x, int y, IMouseMod* pMod)
@@ -63,14 +62,11 @@ void ITextEdit::TextFromTextEntry(const char* txt)
 		mNameDisplayControl->Hide(true);
 	}
 }
-//
-/////////////////////////////////////
+#pragma  endregion ITextEdit
 
-/////////////////////////////////////
-// ConsoleText
-//
-TextBox::TextBox(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, IRECT textRect)
-	: ICaptionControl(pPlug, pR, paramIdx, pText, false)
+#pragma  region TextBox
+TextBox::TextBox(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, IRECT textRect, bool showParamUnits)
+	: ICaptionControl(pPlug, pR, paramIdx, pText, showParamUnits)
 	, mTextRect(textRect)
 {
 }
@@ -125,13 +121,36 @@ void TextBox::OnMouseWheel(int x, int y, IMouseMod* pMod, int d)
 
 	SetDirty();
 }
+#pragma  endregion TextBox
 
-//
-/////////////////////////////////////
+#pragma  region TextTable
+TextTable::TextTable(IPlugBase* pPlug, IRECT pR, IText* pText, const char** data, int iColumns, int iRows)
+	: IControl(pPlug, pR)
+	, tableData(data)
+	, columns(iColumns)
+	, rows(iRows)
+{
+	SetText(pText);
+}
 
-/////////////////////////////////////
-// ConsoleText
-//
+bool TextTable::Draw(IGraphics* pGraphics)
+{
+	for (int r = 0; r < rows; ++r)
+	{
+		IRECT rowRect = mRECT.SubRectVertical(rows, r);
+		for (int c = 0; c < columns; ++c)
+		{
+			IRECT cellRect = rowRect.SubRectHorizontal(columns*2, c);
+			char* contents = const_cast<char*>(tableData[r*columns + c]);
+			pGraphics->DrawIText(&mText, contents, &cellRect);
+		}
+	}
+
+	return true;
+}
+#pragma  endregion TextTable
+
+#pragma  region ConsoleText
 ConsoleText::ConsoleText(IPlugBase* plug, IRECT pR, IText* textStyle, const IColor* backgroundColor, int margin)
 	: IControl(plug, pR)
 	, mPanel(plug, pR, backgroundColor)
@@ -152,12 +171,9 @@ void ConsoleText::SetTextFromPlug(const char * text)
 		Redraw();
 	}
 }
-//
-////////////////////////////////////
+#pragma  endregion ConsoleText
 
-////////////////////////////////////
-// EnumControl (used for RunMode)
-//
+#pragma region EnumControl (used for RunMode)
 EnumControl::EnumControl(IPlugBase* pPlug, IRECT rect, int paramIdx, IText* textStyle)
 	: IControl(pPlug, rect, paramIdx)
 {
@@ -204,13 +220,9 @@ void EnumControl::OnMouseDown(int x, int y, IMouseMod* pMod)
 		SetDirty();
 	}
 }
+#pragma  endregion EnumControl
 
-//
-//////////////////////////////////////////
-
-//////////////////////////////////////////
-// KnobLineCoronaControl
-//
+#pragma  region KnobLineCoronaControl
 KnobLineCoronaControl::KnobLineCoronaControl(IPlugBase* pPlug, IRECT pR, int paramIdx,
 	const IColor* pColor, const IColor* pCoronaColor,
 	float coronaThickness,
@@ -258,11 +270,9 @@ void KnobLineCoronaControl::OnMouseDrag(int x, int y, int dX, int dY, IMouseMod*
 
 	SetDirty();
 }
-//
-//////////////////////////////////////////
+#pragma  endregion KnobLineCoronaControl
 
-//////////////////////////////////////////
-// Oscilloscope
+#pragma  region Oscilloscope
 Oscilloscope::Oscilloscope(IPlugBase* pPlug, IRECT pR, const IColor* backgroundColor, const IColor* lineColorLeft, const IColor* lineColorRight)
 	: IControl(pPlug, pR)
 	, mBackgroundColor(*backgroundColor)
@@ -332,16 +342,16 @@ void Oscilloscope::AddSample(double left, double right)
 	mBufferBegin = (mBufferBegin + 2) % mBufferSize;
 	SetDirty(false);
 }
-//
-//////////////////////////////////////////
+#pragma  endregion Oscilloscope
 
-//////////////////////////////////////////
-// Load Button
+#pragma  region LoadButton
 static const int kMenuPadding = 5;
+static char* kLoadText = "LOAD...";
 LoadButton::LoadButton(IPlugBase* pPlug, int x, int y, IBitmap* pButtonBack, IText* pButtonTextStyle, IRECT menuRect, IText* pMenuTextStyle, Interface* pInterface)
 	: IBitmapControl(pPlug, x, y, -1, pButtonBack)
 	, mState(kClosed)
 	, mButtonRect(x,y,pButtonBack)
+	, mTextRect(mButtonRect)
 	, mMenuRect(menuRect.GetPadded(kMenuPadding))
 	, mButtonText(*pButtonTextStyle)
 	, mMenuText(*pMenuTextStyle)
@@ -364,14 +374,15 @@ LoadButton::LoadButton(IPlugBase* pPlug, int x, int y, IBitmap* pButtonBack, ITe
 	}
 
 	mMenuRect.B += kMenuPadding*2;
+
+	mInterface->GetGUI()->MeasureIText(&mButtonText, kLoadText, &mTextRect);
+	mTextRect.T += (mButtonRect.H() - mTextRect.H()) / 2;
 }
 
 bool LoadButton::Draw(IGraphics* pGraphics)
 {
 	pGraphics->DrawBitmap(&mBitmap, &mButtonRect, 1, &mBlend);
-	IRECT textRect(mButtonRect);
-	textRect.T += 2; // fudge so the text looks vertically centered
-	pGraphics->DrawIText(&mButtonText, "LOAD...", &textRect);
+	pGraphics->DrawIText(&mButtonText, kLoadText, &mTextRect);
 
 	if (mState == kOpen)
 	{
@@ -499,25 +510,24 @@ void LoadButton::OnMouseOver(int x, int y, IMouseMod* pMod)
 		}
 	}
 }
-//
-//////////////////////////////////////////
+#pragma  endregion LoadButton
 
-/////////////////////////////////////////////////////////////////
-// Save Button
+#pragma region SaveButton
+static char* kSaveText = "SAVE...";
 SaveButton::SaveButton(IPlugBase* pPlug, int x, int y, IBitmap* pButtonBack, IText* pButtonTextStyle, Interface* pInterface)
 	: IBitmapControl(pPlug, x, y, -1, pButtonBack)
 	, mButtonText(*pButtonTextStyle)
+	, mTextRect(mRECT)
 	, mInterface(pInterface)
 {
-
+	mInterface->GetGUI()->MeasureIText(&mButtonText, kSaveText, &mTextRect);
+	mTextRect.T += (mRECT.H() - mTextRect.H()) / 2;
 }
 
 bool SaveButton::Draw(IGraphics* pGraphics)
 {
 	pGraphics->DrawBitmap(&mBitmap, &mRECT, 1, &mBlend);
-	IRECT textRect(mRECT);
-	textRect.T += 2; // fudge so the text looks vertically centered
-	pGraphics->DrawIText(&mButtonText, "SAVE...", &textRect);
+	pGraphics->DrawIText(&mButtonText, kSaveText, &mTextRect);
 
 	return true;
 }
@@ -532,24 +542,24 @@ void SaveButton::OnMouseDown(int x, int y, IMouseMod* pMod)
 		mPlug->SaveProgramAsFXP(&fileName);
 	}
 }
-/////////////////////////////////////////////////////////////////
+#pragma  endregion SaveButton
 
-/////////////////////////////////////////////////////////////////
-// Manual Button
+#pragma  region ManualButton
+static char* kManualText = "MANUAL";
 ManualButton::ManualButton(IPlugBase* pPlug, int x, int y, IBitmap* pButtonBack, IText* pButtonTextStyle, Interface* pInterface)
 : IBitmapControl(pPlug, x, y, -1, pButtonBack)
 , mButtonText(*pButtonTextStyle)
+, mTextRect(mRECT)
 , mInterface(pInterface)
 {
-	
+	mInterface->GetGUI()->MeasureIText(&mButtonText, kManualText, &mTextRect);
+	mTextRect.T += (mRECT.H() - mTextRect.H()) / 2;
 }
 
 bool ManualButton::Draw(IGraphics* pGraphics)
 {
 	pGraphics->DrawBitmap(&mBitmap, &mRECT, 1, &mBlend);
-	IRECT textRect(mRECT);
-	textRect.T += 2; // fudge so the text looks vertically centered
-	pGraphics->DrawIText(&mButtonText, "MANUAL", &textRect);
+	pGraphics->DrawIText(&mButtonText, kManualText, &mTextRect);
 	
 	return true;
 }
@@ -589,16 +599,18 @@ void ManualButton::OnMouseDown(int x, int y, IMouseMod* pMod)
 		mPlug->GetGUI()->ShowMessageBox(msg, "Error", MB_OK);
 	}
 }
-/////////////////////////////////////////////////////////////////
+#pragma  endregion ManualButton
 
-/////////////////////////////////////////////////////////////////
-// Help Button
+#pragma  region HelpButton
+static char* kHelpText = "?";
 HelpButton::HelpButton(IPlugBase* pPlug, IRECT rect, IText* pButtonTextStyle, Interface* pInterface)
 	: IControl(pPlug, rect)
 	, mButtonText(*pButtonTextStyle)
+	, mTextRect(mRECT)
 	, mInterface(pInterface)
 {
-
+	mInterface->GetGUI()->MeasureIText(&mButtonText, kHelpText, &mTextRect);
+	mTextRect.T += (mRECT.H() - mTextRect.H()) / 2;
 }
 
 bool HelpButton::Draw(IGraphics* pGraphics)
@@ -613,10 +625,8 @@ bool HelpButton::Draw(IGraphics* pGraphics)
 		pGraphics->FillIRect(&mButtonText.mTextEntryBGColor, &mRECT);
 		pGraphics->DrawRect(&mButtonText.mTextEntryFGColor, &mRECT);
 	}
-	
-	IRECT textRect(mRECT);
-	textRect.T += 2; // fudge so the text looks vertically centered
-	pGraphics->DrawIText(&mButtonText, "?", &textRect);
+
+	pGraphics->DrawIText(&mButtonText, kHelpText, &mTextRect);
 
 	return true;
 }
@@ -626,10 +636,9 @@ void HelpButton::OnMouseDown(int x, int y, IMouseMod* pMod)
 	mInterface->ToggleHelp();
 	mValue = 1 - mValue;
 }
-/////////////////////////////////////////////////////////////////
+#pragma  endregion HelpButton
 
-/////////////////////////////////////////////////////////////////
-// TransportButtons
+#pragma  region TransportButtons
 TransportButtons::TransportButtons(IPlugBase* pPlug, IRECT rect, const IColor& backgroundColor, const IColor& foregroundColor)
 	: IControl(pPlug, rect)
 	, mState(kTransportStopped)
@@ -734,9 +743,9 @@ TransportState TransportButtons::GetTransportState() const
 {
 	return mState;
 }
+#pragma  endregion TransportButtons
 
-//////////////////////////////////////////////////////////////////
-
+#pragma  region ToggleControl
 ToggleControl::ToggleControl(IPlugBase* pPlug, IRECT rect, int paramIdx, IColor backgroundColor, IColor fillColor)
 	: IControl(pPlug, rect, paramIdx)
 {
@@ -765,10 +774,9 @@ void ToggleControl::OnMouseDown(int x, int y, IMouseMod* pMod)
 	mValue = 1 - mValue;
 	SetDirty();
 }
+#pragma  endregion ToggleControl
 
-///////////////////////////////////////////////////////////
-// MidiControl
-//
+#pragma  region MidiControl
 int KeyToNote(int key)
 {
 	int note = -1;
@@ -841,4 +849,4 @@ bool MidiControl::OnKeyDown(int x, int y, int key)
 
 	return handled;
 }
-////////////////////////////////////////////////////////////
+#pragma  endregion MidiControl

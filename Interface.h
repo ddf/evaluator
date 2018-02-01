@@ -52,11 +52,14 @@ public:
 
 	bool GetSupportPath(WDL_String* outPath) const;
 
+	IGraphics* GetGUI() const { return mGraphics; }
+
 private:
 
 	void CreateControls(IGraphics* pGraphics);
 
 	Evaluator* mPlug;
+	IGraphics* mGraphics;
 
 	ITextEdit*		textEdit;
 	ITextControl*	programName;
