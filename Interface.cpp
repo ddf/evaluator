@@ -593,6 +593,16 @@ void Interface::CreateControls(IGraphics* pGraphics)
 			knobRect.R += kVControl_S;
 		}
 	}
+	
+	// --- Help Button --------------------------------
+	{
+		IText textStyle = kLabelTextStyle;
+		textStyle.mAlign = IText::kAlignCenter;
+		textStyle.mSize = 14;
+		textStyle.mTextEntryBGColor = kTextBoxTextStyle.mTextEntryBGColor;
+		textStyle.mTextEntryFGColor = kTextBoxTextStyle.mTextEntryFGColor;
+		pGraphics->AttachControl(new HelpButton(mPlug, MakeIRect(kHelpButton), &textStyle, this));
+	}
 
 	// --- Load/Save Buttons ---------------------------
 	{
@@ -610,13 +620,6 @@ void Interface::CreateControls(IGraphics* pGraphics)
 	{
 		IRECT backRect(kEditorWidth, 0, kEditorWidth + kHelpWidth, kEditorHeight);
 		pGraphics->AttachControl(new IPanelControl(mPlug, backRect, &kConsoleBackgroundColor));
-		
-		IText textStyle = kLabelTextStyle;
-		textStyle.mAlign = IText::kAlignCenter;
-		textStyle.mSize = 14;
-		textStyle.mTextEntryBGColor = kTextBoxTextStyle.mTextEntryBGColor;
-		textStyle.mTextEntryFGColor = kTextBoxTextStyle.mTextEntryFGColor;
-		pGraphics->AttachControl(new HelpButton(mPlug, MakeIRect(kHelpButton), &textStyle, this));
 
 		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kSyntaxLabel), &kTitleTextStyle, "LANGUAGE SYNTAX"));
 		
@@ -624,7 +627,7 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		pGraphics->AttachControl(new TextTable(mPlug, syntaxRect, &kSyntaxTextStyle, kLanguageSyntaxTable, kLanguageSyntaxColumns, kLanguageSyntaxRows));
 		
 		IBitmap buttonBack = pGraphics->LoadIBitmap(BUTTON_BACK_ID, BUTTON_BACK_FN);
-		textStyle = kLabelTextStyle;
+		IText textStyle = kLabelTextStyle;
 		textStyle.mSize = 12;
 		const int buttonX = syntaxRect.L;
 		const int buttonY = syntaxRect.B + 10;
