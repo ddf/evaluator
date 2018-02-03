@@ -474,8 +474,10 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		windowEditRect.L += w;
 		windowEditRect.R += w;
 		IText textStyle = kTextBoxTextStyle;
-		IRECT windowBoxRect = windowEditRect.GetPadded(2);
-		pGraphics->AttachControl(new TextBox(mPlug, windowBoxRect, kScopeWindow, &textStyle, windowEditRect, true));
+		IRECT windowBoxRect = windowEditRect.GetPadded(-3,-3,2,2);
+		IControl* control = new TextBox(mPlug, windowBoxRect, kScopeWindow, &textStyle, windowEditRect, true);
+		control->SetTextEntryLength(4);
+		pGraphics->AttachControl(control);
 	}
 
 	//---Volume--------------------
@@ -496,6 +498,7 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		textStyle.mAlign = IText::kAlignCenter;
 		IRECT backRect = MakeIRect(kBitDepth);
 		IRECT textRect;
+#if defined(OS_WIN)
 		pGraphics->MeasureIText(&textStyle, "000", &textRect);
 		int HH = textRect.H() / 2;
 		int HW = textRect.W() / 2;
@@ -503,7 +506,12 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		textRect.R = (int)backRect.MW() + HW;
 		textRect.T = (int)backRect.MH() - HH;
 		textRect.B = (int)backRect.MH() + HH;
-		pGraphics->AttachControl(new TextBox(mPlug, backRect, kBitDepth, &textStyle, textRect));
+#else
+		textRect = backRect.GetPadded(3, 3, -2, -2);
+#endif
+		IControl* control = new TextBox(mPlug, backRect, kBitDepth, &textStyle, textRect);
+		control->SetTextEntryLength(2);
+		pGraphics->AttachControl(control);
 	}
 
 	// ---Run Mode------------------------------
@@ -543,6 +551,7 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		textStyle.mAlign = IText::kAlignCenter;
 		IRECT backRect = MakeIRect(kTempoBox);
 		IRECT textRect;
+#if defined(OS_WIN)
 		pGraphics->MeasureIText(&textStyle, "000.00", &textRect);
 		int HH = textRect.H() / 2;
 		int HW = textRect.W() / 2;
@@ -550,7 +559,12 @@ void Interface::CreateControls(IGraphics* pGraphics)
 		textRect.R = (int)backRect.MW() + HW;
 		textRect.T = (int)backRect.MH() - HH;
 		textRect.B = (int)backRect.MH() + HH;
-		pGraphics->AttachControl(new TextBox(mPlug, backRect, kTempo, &textStyle, textRect));
+#else
+		textRect = backRect.GetPadded(3, 3, -2, -2);
+#endif
+		IControl* control = new TextBox(mPlug, backRect, kTempo, &textStyle, textRect);
+		control->SetTextEntryLength(6);
+		pGraphics->AttachControl(control);
 	}
 
 	// transport buttons

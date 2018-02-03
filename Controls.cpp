@@ -93,7 +93,15 @@ void TextBox::OnMouseDown(int x, int y, IMouseMod* pMod)
 {
 	if (pMod->L)
 	{
-		mPlug->GetGUI()->PromptUserInput(this, mPlug->GetParam(mParamIdx), &mTextRect);
+		IText ourText = mText;
+		IRECT promptRect = mTextRect;
+#if defined(OS_OSX)
+		mText.mSize -= 3;
+		promptRect.T -= 1;
+		promptRect.L -= 1;
+#endif
+		mPlug->GetGUI()->PromptUserInput(this, mPlug->GetParam(mParamIdx), &promptRect);
+		mText = ourText;
 		Redraw();
 	}
 }
