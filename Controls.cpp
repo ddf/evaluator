@@ -623,6 +623,10 @@ HelpButton::HelpButton(IPlugBase* pPlug, IRECT rect, IText* pButtonTextStyle, In
 {
 	mInterface->GetGUI()->MeasureIText(&mButtonText, kHelpText, &mTextRect);
 	mTextRect.T += (mRECT.H() - mTextRect.H()) / 2;
+	// haxxxxx
+#if defined(OS_OSX)
+	mTextRect.T += 1;
+#endif
 }
 
 bool HelpButton::Draw(IGraphics* pGraphics)
