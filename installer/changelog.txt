@@ -1,4 +1,11 @@
 Evaluator changelog
 https://damikyu.itch.io/evaluator
 
+02/03/18 - v1.0.1
+
+* fixed implementation of R operator
+* fixed possible MIDI related crash at startup in Windows
+* improved language syntax reference
+* improved UI look and text box behavior
+
 01/09/18 - v1.0.0 initial release
