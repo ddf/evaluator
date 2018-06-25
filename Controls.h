@@ -132,6 +132,10 @@ public:
 	void AddSample(double left, double right);
 
 private:
+	
+	void DrawWaveform(IGraphics* pGraphics);
+	void DrawGrid(IGraphics* pGraphics);
+	
 	IColor mBackgroundColor;
 	IColor mLineColorLeft;
 	IColor mLineColorRight;

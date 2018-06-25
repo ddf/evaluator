@@ -285,6 +285,7 @@ void KnobLineCoronaControl::OnMouseDrag(int x, int y, int dX, int dY, IMouseMod*
 #pragma  endregion KnobLineCoronaControl
 
 #pragma  region Oscilloscope
+static const int gridLineWidth = 4;
 Oscilloscope::Oscilloscope(IPlugBase* pPlug, IRECT pR, const IColor* backgroundColor, const IColor* lineColorLeft, const IColor* lineColorRight)
 	: IControl(pPlug, pR)
 	, mBackgroundColor(*backgroundColor)
@@ -292,6 +293,8 @@ Oscilloscope::Oscilloscope(IPlugBase* pPlug, IRECT pR, const IColor* backgroundC
 	, mLineColorRight(*lineColorRight)
 {
 	mBufferSize = pR.W() * 2;
+	// buffer size for Grid
+	//mBufferSize = pR.W() * pR.H() / gridLineWidth + pR.H();
 	mBuffer = new double[mBufferSize];
 	memset(mBuffer, 0, mBufferSize*sizeof(double));
 	mBufferBegin = 0;
@@ -306,25 +309,33 @@ bool Oscilloscope::Draw(IGraphics* pGraphics)
 {
 	pGraphics->FillIRect(&mBackgroundColor, &mRECT, &mBlend);
 
+	DrawWaveform(pGraphics);
+	//DrawGrid(pGraphics);
+
+	return true;
+}
+
+void Oscilloscope::DrawWaveform(IGraphics* pGraphics)
+{
 	const float midY = mRECT.MH();
 	const float halfH = mRECT.H()*0.5f;
 	float px1 = (float)mRECT.L;
 	float pyl1 = midY;
 	float pyr1 = midY;
-
+	
 	pGraphics->DrawLine(&COLOR_GRAY, (float)mRECT.L, midY, (float)mRECT.R, midY);
 	IChannelBlend lineBlend = IChannelBlend(IChannelBlend::kBlendAdd);
 	const float fade = 0.25f;
-	IColor lineGhostLeft(mLineColorLeft.A, 
-		(int)((float)mLineColorLeft.R*fade),
-		(int)((float)mLineColorLeft.G*fade),
-		(int)((float)mLineColorLeft.B*fade));
-
-	IColor lineGhostRight(mLineColorRight.A, 
-		(int)((float)mLineColorRight.R*fade),
-		(int)((float)mLineColorRight.G*fade),
-		(int)((float)mLineColorRight.B*fade));
-
+	IColor lineGhostLeft(mLineColorLeft.A,
+						 (int)((float)mLineColorLeft.R*fade),
+						 (int)((float)mLineColorLeft.G*fade),
+						 (int)((float)mLineColorLeft.B*fade));
+	
+	IColor lineGhostRight(mLineColorRight.A,
+						  (int)((float)mLineColorRight.R*fade),
+						  (int)((float)mLineColorRight.G*fade),
+						  (int)((float)mLineColorRight.B*fade));
+	
 	for (int x = 0; x < mRECT.W(); x++)
 	{
 		const int lidx = (mBufferBegin + x * 2) % mBufferSize;
@@ -332,19 +343,54 @@ bool Oscilloscope::Draw(IGraphics* pGraphics)
 		const float px2 = (float)(mRECT.L + x);
 		const float pyl2 = midY - (float)mBuffer[lidx] * halfH;
 		const float pyr2 = midY - (float)mBuffer[ridx] * halfH;
-
+		
 		pGraphics->DrawLine(&lineGhostLeft, px2, midY, px2, pyl2, &lineBlend);
 		pGraphics->DrawLine(&lineGhostRight, px2, midY, px2, pyr2, &lineBlend);
-
+		
 		pGraphics->DrawLine(&mLineColorLeft, px1, pyl1, px2, pyl2, &lineBlend, true);
 		pGraphics->DrawLine(&mLineColorRight, px1, pyr1, px2, pyr2, &lineBlend, true);
-
+		
 		px1 = px2;
 		pyl1 = pyl2;
 		pyr1 = pyr2;
 	}
+}
 
-	return true;
+void Oscilloscope::DrawGrid(IGraphics* pGraphics)
+{
+	const float midY = mRECT.MH();
+	const int  halfH = mRECT.H() / 2;
+	const int  columns = mRECT.W() / gridLineWidth;
+	const int  columnH = halfH*2;
+	const int  readStart = (mBufferBegin + columnH - 1) / columnH * columnH;
+	
+	for(int x = 0; x < columns; ++x)
+	{
+		const int off = x*halfH*2;
+		const float px = (float)(mRECT.L + x*gridLineWidth);
+		for(int i = 0; i < halfH; ++i)
+		{
+			const int lidx = (readStart + off + i * 2) % mBufferSize;
+			const int ridx = lidx + 1;
+			const float pyl = midY - i;
+			const float pyr = midY + halfH - i;
+			
+			float fade = (mBuffer[lidx]+1) / 2.0f;
+			IColor colorLeft(mLineColorLeft.A,
+							 (int)((float)mLineColorLeft.R*fade),
+							 (int)((float)mLineColorLeft.G*fade),
+							 (int)((float)mLineColorLeft.B*fade));
+			
+			fade = (mBuffer[ridx]+1) / 2.0f;
+			IColor colorRight(mLineColorRight.A,
+							 (int)((float)mLineColorRight.R*fade),
+							 (int)((float)mLineColorRight.G*fade),
+							 (int)((float)mLineColorRight.B*fade));
+			
+			pGraphics->DrawLine(&colorLeft, px, pyl, px+gridLineWidth, pyl);
+			pGraphics->DrawLine(&colorRight, px, pyr, px+gridLineWidth, pyr);
+		}
+	}
 }
 
 void Oscilloscope::AddSample(double left, double right)
