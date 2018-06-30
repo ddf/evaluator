@@ -459,6 +459,7 @@ bool InitialiseAudio(unsigned int inId,
   catch ( RtAudioError& e )
   {
     e.printMessage();
+	MessageBox(gHWND, e.getMessage().c_str(), "Failed to Initialize Audio", MB_OK);
     return false;
   }
 
