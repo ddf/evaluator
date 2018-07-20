@@ -390,6 +390,23 @@ bool TryToChangeAudio()
   {
     return InitialiseAudio(inputID, outputID, samplerate, iovs, NUM_CHANNELS, gState->mAudioInChanL - 1, gState->mAudioOutChanL - 1);
   }
+  else
+  {
+    static char msg[256];
+    if ( inputID == -1 && outputID == -1 )
+    {
+      sprintf(msg, "Could not find ID for input %s and output %s.\n\nPlease open the Preferences dialog, choose an Input and Output, then click Apply.", gState->mAudioInDev, gState->mAudioOutDev);
+    }
+    else if ( inputID == -1 )
+    {
+      sprintf(msg, "Could not find ID for input %s.\n\nPlease open the Preferences dialog, choose an Input, then click Apply.", gState->mAudioInDev);
+    }
+    else
+    {
+      sprintf(msg, "Could not find ID for output %s.\n\nPlease open the Preferences dialog, choose an Output, then click Apply.", gState->mAudioOutDev);
+    }
+    MessageBox(gHWND, msg, "Change Audio Error", MB_OK);
+  }
 
   return false;
 }
@@ -459,7 +476,7 @@ bool InitialiseAudio(unsigned int inId,
   catch ( RtAudioError& e )
   {
     e.printMessage();
-	MessageBox(gHWND, e.getMessage().c_str(), "Failed to Initialize Audio", MB_OK);
+    MessageBox(gHWND, e.getMessage().c_str(), "Failed to Initialize Audio", MB_OK);
     return false;
   }
 
