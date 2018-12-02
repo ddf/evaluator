@@ -11,6 +11,9 @@
 #include "Interface.h"
 #include "Presets.h"
 
+// scratch array we use to split multi-line text edits into individual lines for rendering.
+static char textEditText[kExpressionLengthMax];
+
 #pragma region ITextEdit 
 ITextEdit::ITextEdit(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, const char* str, ETextEntryOptions textEntryOptions)
 	: IControl(pPlug, pR)
@@ -29,7 +32,32 @@ bool ITextEdit::Draw(IGraphics* pGraphics)
 {
 	pGraphics->FillIRect(&mText.mTextEntryBGColor, &mRECT);
 	IRECT textRect = mRECT.GetHPadded(-3);
+#if defined(OS_OSX)
+  // line spacing is too large when rendering on High Sierra (and presumably Mojave as well)
+  // so we render one line at a time so we can control the line spacing to match the native text field.
+  // it'd be great to be able to use strtok here, but if there are two \n in a row,
+  // strtok will skip the second one and we won't get an empty line.
+  const char * text = mStr.Get();
+  strncpy(textEditText, text, kExpressionLengthMax-1);
+  char* line = textEditText;
+  while(line != NULL)
+  {
+    char* end = strchr(line, '\n');
+    if (end != NULL)
+    {
+      end[0] = '\0';
+    }
+    pGraphics->DrawIText(&mText, line, &textRect);
+    if (mText.mCached != NULL)
+    {
+      textRect.T += mText.mCached->GetLineHeight() + 1;
+    }
+    line = end != NULL ? end+1 : NULL;
+  }
+#else
 	return pGraphics->DrawIText(&mText, mStr.Get(), &textRect);
+#endif
+  return true;
 }
 
 void ITextEdit::OnMouseDown(int x, int y, IMouseMod* pMod)
