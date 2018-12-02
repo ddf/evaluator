@@ -2002,6 +2002,7 @@
 		4F20EF30132C69FE0030E34C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				DSTROOT = "$(VST_FOLDER)";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
 					"$(VST_DEFS)",
@@ -2009,6 +2010,7 @@
 				);
 				INFOPLIST_FILE = "resources/Evaluator-VST2-Info.plist";
 				SKIP_INSTALL = NO;
+				VALID_ARCHS = x86_64;
 				WARNING_CFLAGS = "-Wno-main";
 				WRAPPER_EXTENSION = vst;
 			};
@@ -2017,6 +2019,7 @@
 		4F20EF31132C69FE0030E34C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				DSTROOT = "$(VST_FOLDER)";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
 					"$(VST_DEFS)",
@@ -2024,6 +2027,7 @@
 				);
 				INFOPLIST_FILE = "resources/Evaluator-VST2-Info.plist";
 				SKIP_INSTALL = NO;
+				VALID_ARCHS = x86_64;
 				WARNING_CFLAGS = "-Wno-main";
 				WRAPPER_EXTENSION = vst;
 			};
@@ -2032,6 +2036,7 @@
 		4F20EF32132C69FE0030E34C /* Tracer */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				DSTROOT = "$(VST_FOLDER)";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
 					"$(VST_DEFS)",
@@ -2039,6 +2044,7 @@
 				);
 				INFOPLIST_FILE = "resources/Evaluator-VST2-Info.plist";
 				SKIP_INSTALL = NO;
+				VALID_ARCHS = x86_64;
 				WARNING_CFLAGS = "-Wno-main";
 				WRAPPER_EXTENSION = vst;
 			};
@@ -2047,6 +2053,7 @@
 		4F3AE1DD12C0E5E2001FD7A4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				DSTROOT = "$(AU_FOLDER)";
 				EXPORTED_SYMBOLS_FILE = Evaluator.exp;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
@@ -2062,6 +2069,7 @@
 					$CA_SDK/AudioUnits/AUPublic/AUBase,
 				);
 				SKIP_INSTALL = NO;
+				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = component;
 			};
 			name = Debug;
@@ -2069,6 +2077,7 @@
 		4F3AE1DE12C0E5E2001FD7A4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				DSTROOT = "$(AU_FOLDER)";
 				EXPORTED_SYMBOLS_FILE = Evaluator.exp;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
@@ -2084,6 +2093,7 @@
 					$CA_SDK/AudioUnits/AUPublic/AUBase,
 				);
 				SKIP_INSTALL = NO;
+				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = component;
 			};
 			name = Release;
@@ -2091,6 +2101,7 @@
 		4F3AE1DF12C0E5E2001FD7A4 /* Tracer */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				DSTROOT = "$(AU_FOLDER)";
 				EXPORTED_SYMBOLS_FILE = Evaluator.exp;
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
@@ -2106,6 +2117,7 @@
 					$CA_SDK/AudioUnits/AUPublic/AUBase,
 				);
 				SKIP_INSTALL = NO;
+				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = component;
 			};
 			name = Tracer;
@@ -2141,6 +2153,7 @@
 		4F9828DD140A9EB700F3FCC1 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				DSTROOT = "$(VST3_FOLDER)";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
 					"$(VST3_DEFS)",
@@ -2152,6 +2165,7 @@
 				);
 				INFOPLIST_FILE = "resources/Evaluator-VST3-Info.plist";
 				SKIP_INSTALL = NO;
+				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = vst3;
 			};
 			name = Debug;
@@ -2159,6 +2173,7 @@
 		4F9828DE140A9EB700F3FCC1 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				DSTROOT = "$(VST3_FOLDER)";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
 					"$(VST3_DEFS)",
@@ -2170,6 +2185,7 @@
 				);
 				INFOPLIST_FILE = "resources/Evaluator-VST3-Info.plist";
 				SKIP_INSTALL = NO;
+				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = vst3;
 			};
 			name = Release;
@@ -2177,6 +2193,7 @@
 		4F9828DF140A9EB700F3FCC1 /* Tracer */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				DSTROOT = "$(VST3_FOLDER)";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
 					"$(VST3_DEFS)",
@@ -2188,6 +2205,7 @@
 				);
 				INFOPLIST_FILE = "resources/Evaluator-VST3-Info.plist";
 				SKIP_INSTALL = NO;
+				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = vst3;
 			};
 			name = Tracer;
@@ -2195,6 +2213,7 @@
 		4FD16A0C13B63082001D0217 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				DSTROOT = "$(APP_FOLDER)";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
 					"$(APP_DEFS)",
@@ -2213,6 +2232,7 @@
 				);
 				PREBINDING = NO;
 				SKIP_INSTALL = NO;
+				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -2220,6 +2240,7 @@
 		4FD16A0D13B63082001D0217 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				DSTROOT = "$(APP_FOLDER)";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
 					"$(APP_DEFS)",
@@ -2238,6 +2259,7 @@
 				);
 				PREBINDING = NO;
 				SKIP_INSTALL = NO;
+				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -2245,6 +2267,7 @@
 		4FD16A0E13B63082001D0217 /* Tracer */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD)";
 				DSTROOT = "$(APP_FOLDER)";
 				GCC_PREPROCESSOR_DEFINITIONS_NOT_USED_IN_PRECOMPS = (
 					"$(APP_DEFS)",
@@ -2263,6 +2286,7 @@
 				);
 				PREBINDING = NO;
 				SKIP_INSTALL = NO;
+				VALID_ARCHS = x86_64;
 				WRAPPER_EXTENSION = app;
 			};
 			name = Tracer;
