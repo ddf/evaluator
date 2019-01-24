@@ -47,7 +47,7 @@ instrument determined by PLUG _IS _INST
 #define PLUG_CHANNEL_IO "1-1 2-2"
 
 #define PLUG_LATENCY 0
-#define PLUG_IS_INST 0
+#define PLUG_IS_INST 1
 
 // if this is 0 RTAS can't get tempo info
 #define PLUG_DOES_MIDI 1
@@ -86,7 +86,7 @@ instrument determined by PLUG _IS _INST
 // vst3 stuff
 #define MFR_URL "www.compartmental.net"
 #define MFR_EMAIL "info@compartmental.net"
-#define EFFECT_TYPE_VST3 "Fx|Generator"
+#define EFFECT_TYPE_VST3 "Fx|Instrument"
 
 /* "Fx|Analyzer"", "Fx|Delay", "Fx|Distortion", "Fx|Dynamics", "Fx|EQ", "Fx|Filter",
 "Fx", "Fx|Instrument", "Fx|InstrumentExternal", "Fx|Spatial", "Fx|Generator",
