@@ -89,7 +89,8 @@ void ITextEdit::OnMouseDown(int x, int y, IMouseMod* pMod)
 
 void ITextEdit::TextFromTextEntry(const char* txt)
 {
-#if defined(OS_WIN)
+  // we always do this because we want to keep our input string clean.
+  // just because we are on OSX doesn't mean a user can't load a file that contains \r\n
 	std::string input(txt);
 	size_t pos = input.find('\r');
 	while (pos != std::string::npos)
@@ -97,14 +98,12 @@ void ITextEdit::TextFromTextEntry(const char* txt)
 		input.erase(pos, 1);
 		pos = input.find('\r');
 	}
-	txt = input.c_str();
-#endif
 
 	// don't set if it is the same, we don't want the project to become modified in this case
-	if (mStr != txt)
+	if (mStr != input)
 	{
-		// don't assign more characters that we support
-		mStr.assign(txt, kExpressionLengthMax);
+		// don't assign more characters than we support
+		mStr.assign(input, 0, kExpressionLengthMax);
 		SetDirty(false);
 	
 		mPlug->OnParamChange(mIdx);
