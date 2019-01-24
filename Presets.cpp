@@ -9,7 +9,7 @@
 #include "Presets.h"
 #include "Evaluator.h" // for the TimeType enum
 
-#define CR "\r\n"
+#define CR "\n"
 
 namespace Presets
 {

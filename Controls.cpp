@@ -11,17 +11,14 @@
 #include "Interface.h"
 #include "Presets.h"
 
-// scratch array we use to split multi-line text edits into individual lines for rendering.
-static char textEditText[kExpressionLengthMax];
-
 #pragma region ITextEdit 
 ITextEdit::ITextEdit(IPlugBase* pPlug, IRECT pR, int paramIdx, IText* pText, const char* str, ETextEntryOptions textEntryOptions)
 	: IControl(pPlug, pR)
 	, mIdx(paramIdx)
+	, mStr(str, kExpressionLengthMax)
 {
 	mDisablePrompt = true;
 	mText = *pText;
-	mStr.Set(str);
 	mTextEntryLength = kExpressionLengthMax;
 	mTextEntryOptions = textEntryOptions;
 }
@@ -32,13 +29,16 @@ bool ITextEdit::Draw(IGraphics* pGraphics)
 {
 	pGraphics->FillIRect(&mText.mTextEntryBGColor, &mRECT);
 	IRECT textRect = mRECT.GetHPadded(-3);
+
+	// copy into fixed-size buffer because DrawIText needs a non-const string
+	char textEditText[kExpressionLengthMax];
+	strncpy(textEditText, mStr.c_str(), kExpressionLengthMax - 1);
+
 #if defined(OS_OSX)
   // line spacing is too large when rendering on High Sierra (and presumably Mojave as well)
   // so we render one line at a time so we can control the line spacing to match the native text field.
   // it'd be great to be able to use strtok here, but if there are two \n in a row,
-  // strtok will skip the second one and we won't get an empty line.
-  const char * text = mStr.Get();
-  strncpy(textEditText, text, kExpressionLengthMax-1);
+  // strtok will skip the second one and we won't get an empty line.  
   char* line = textEditText;
   while(line != NULL)
   {
@@ -55,7 +55,7 @@ bool ITextEdit::Draw(IGraphics* pGraphics)
     line = end != NULL ? end+1 : NULL;
   }
 #else
-	return pGraphics->DrawIText(&mText, mStr.Get(), &textRect);
+	return pGraphics->DrawIText(&mText, textEditText, &textRect);
 #endif
   return true;
 }
@@ -64,12 +64,22 @@ void ITextEdit::OnMouseDown(int x, int y, IMouseMod* pMod)
 {
 	// stupid hack to prevent the edit window from displaying 1 pixel wider and taller
 	IRECT entryRect = mRECT.GetPadded(0,0,-1,-1);
-	IText entryText = mText;
+	IText entryTextStyle = mText;
+	const char * entryText = mStr.c_str();
 #if defined(OS_OSX)
 	entryRect.L += 3;
-	entryText.mSize -= 4;
+	entryTextStyle.mSize -= 4;
+#elif defined(OS_WIN)
+	size_t pos = mStr.find('\n');
+	while (pos != std::string::npos)
+	{
+		mStr.replace(pos, 1, "\r\n");
+		// start searching from pos+2 because we inserted 2 characters and don't want to find the \n we just inserted
+		pos = mStr.find('\n', pos + 2);
+	}
+	entryText = mStr.c_str();
 #endif
-	mPlug->GetGUI()->CreateTextEntry(this, &entryText, &entryRect, mStr.Get());
+	mPlug->GetGUI()->CreateTextEntry(this, &entryTextStyle, &entryRect, entryText);
 
 	if (mNameDisplayControl)
 	{
@@ -79,10 +89,22 @@ void ITextEdit::OnMouseDown(int x, int y, IMouseMod* pMod)
 
 void ITextEdit::TextFromTextEntry(const char* txt)
 {
-	// don't set if it is the same, we don't want the project to become modified in this case
-	if (strcmp(mStr.Get(), txt))
+#if defined(OS_WIN)
+	std::string input(txt);
+	size_t pos = input.find('\r');
+	while (pos != std::string::npos)
 	{
-		mStr.Set(txt);
+		input.erase(pos, 1);
+		pos = input.find('\r');
+	}
+	txt = input.c_str();
+#endif
+
+	// don't set if it is the same, we don't want the project to become modified in this case
+	if (mStr != txt)
+	{
+		// don't assign more characters that we support
+		mStr.assign(txt, kExpressionLengthMax);
 		SetDirty(false);
 	
 		mPlug->OnParamChange(mIdx);

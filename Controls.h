@@ -9,6 +9,7 @@
 
 #include "IControl.h"
 #include "Params.h"
+#include <string>
 
 class Interface;
 
@@ -27,22 +28,22 @@ public:
 	// text accessss
 	const char * GetText() const
 	{
-		return mStr.Get();
+		return mStr.c_str();
 	}
 
 	void SetTextFromPlug(const char * text)
 	{
-		mStr.Set(text);
+		mStr = text;
 	}
 
 	int GetTextLength() const
 	{
-		return mStr.GetLength();
+		return mStr.size();
 	}
 
 protected:
-	int        mIdx;
-	WDL_String mStr;
+	int         mIdx;
+	std::string mStr;
 };
 
 class TextBox : public ICaptionControl
