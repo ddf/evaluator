@@ -446,7 +446,8 @@ namespace Presets
 			"// another way to use 'user' memory could be to store values of a sequence." CR
 			"// here we create an arpeggiator" CR 
 			"// that uses the midi note as the root of a major chord." CR
-			"@0 = 0; @1 = 4; @2 = 7; @3 = 12;" CR
+			"// we can store a list of values to consecutive memory addresses like this:" CR
+			"@0 = { 0, 4, 7, 12 };" CR CR
 			"// we want advance through the sequence every sixteenth note," CR 
 			"// wrapping around to the beginning of the sequence when it reaches the end." CR
 			"i = q/32 % 4;" CR

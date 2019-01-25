@@ -237,12 +237,14 @@ static char* LabelFontName = "Segoe UI";
 static const int kFontSizeLabel = 14;
 static const int kFontSizeTitle = 16;
 static const int kFontSizeConsole = 14;
+static const int kFontSizeSyntax = 12;
 #else
 static char* ConsoleFontName = "Monaco";
 static char* LabelFontName = "Helvetica Neue";
 static const int kFontSizeLabel = 12;
 static const int kFontSizeTitle = 14;
 static const int kFontSizeConsole = 15;
+static const int kFontSizeSyntax = 13;
 #endif
 
 IText  kProgramTextStyle(kFontSizeConsole,
@@ -275,7 +277,7 @@ IText  kConsoleTextStyle(kFontSizeConsole,
 	0, // orientation
 	IText::kQualityDefault);
 
-IText  kSyntaxTextStyle(kFontSizeConsole,
+IText  kSyntaxTextStyle(kFontSizeSyntax,
 	&kGreenColor,
 	ConsoleFontName,
 	IText::kStyleNormal,
@@ -335,6 +337,7 @@ static const char* kLanguageSyntaxTable[] =
 	"n",       "most recent MIDI note number, range is [0,127]",
 	"v",       "velocity of n, range is [0,127]",
 	"[x]",     "access channel x%2 of audio input/output",
+	"[*]",	   "the sum of all audio channels",
 	"Fx",      "convert x to a 'frequency'",
 	"$x",      "map x%w to a sine wave with the period w",
 	"#x",      "map x%w to a square wave with the period w",
@@ -362,6 +365,7 @@ static const char* kLanguageSyntaxTable[] =
 	"x ? y : z", "result is y when x is non-zero, otherwise z",
 	"x = y",   "assign the value of y to x",
 	"@x = y",  "assign the value of y to the memory address x",
+	"@x = {a,b,c}", "assign multiple values to memory starting at address x",
 	"[0] = x", "assign the value of x to the left output",
 	"[1] = y", "assign the value of y to the right output",
 	"[*] = x", "assign the value of x to all outputs",

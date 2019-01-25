@@ -83,6 +83,8 @@ const char * Program::GetErrorString(Program::CompileError error)
 		return "Mismatched parens";
 	case Program::CE_MISSING_BRACKET:
 		return "Missing ']'";
+	case Program::CE_MISSING_BRACE:
+		return "Missing '}'";
 	case Program::CE_MISSING_COLON_IN_TERNARY:
 		return "Incomplete ternary statement - expected ':'";
 	case Program::CE_UNEXPECTED_CHAR:
@@ -495,11 +497,50 @@ static int ParsePOK(CompilationState& state)
 			state.error = Program::CE_ILLEGAL_ASSIGNMENT;
 			return 1;
 		}
-		// decrement the parse depth before recursing because it's 
-		// OK if the expression on the right hand side terminates in a semi-colon
-		state.parseDepth--;
-		if (Parse(state)) return 1;
-		state.parseDepth++;
+
+		state.SkipWhitespace();
+		// how many values to POK or PUT
+		int pcount = 0;
+		// check for the beginning of an "array" on the right side of the equals sign.		
+		if (*state == '{')
+		{
+			state.parsePos++;
+			for(;;)
+			{
+				state.parseDepth--;
+				if (Parse(state)) return 1;
+				state.parseDepth++;
+				++pcount;
+				
+				if (*state == ',')
+				{					
+					state.parsePos++;
+					continue;
+				}
+
+				// if we didn't find a comma, we *should* find the closing brace
+				if (*state == '}')
+				{
+					state.parsePos++;
+					break;					
+				}
+				else
+				{
+					state.error = Program::CE_MISSING_BRACE;
+					return 1;
+				}
+			}
+		}
+		else // no array, so it's just a single expression
+		{
+			// decrement the parse depth before recursing because it's 
+			// OK if the expression on the right hand side terminates in a semi-colon
+			state.parseDepth--;
+			if (Parse(state)) return 1;
+			state.parseDepth++;	
+			pcount = 1;
+		}
+
 		// the statement on the right side of the '=' might have ended with a semi-colon,
 		// which means the last op will be a POP. we need to POK or PUT before that.
 		const bool hasPOP = state.ops.back().code == Program::Op::POP;
@@ -510,11 +551,11 @@ static int ParsePOK(CompilationState& state)
 		switch (code)
 		{
 		case Program::Op::PEK:
-			state.Push(Program::Op::POK);
+			state.Push(Program::Op::POK, pcount);
 			break;
 
 		case Program::Op::GET:
-			state.Push(Program::Op::PUT);
+			state.Push(Program::Op::PUT, pcount);
 			break;
 			
 		// fix warning in osx
@@ -541,7 +582,7 @@ static int Parse(CompilationState& state)
 			// if we have recursed into Parse due to opening parens
 			// or due to parsing a section of a ternary operator,
 			// we should throw an error if we encounter a semi-colon
-			// because those constructs will not evaulate correctly
+			// because those constructs will not evaluate correctly
 			// if a POP appears in the middle of the instructions.
 			if (state.parseDepth != 1)
 			{
@@ -693,6 +734,7 @@ Program::RuntimeError Program::Run(Value* results, const size_t size)
 #define POP1 if ( stack.size() < 1 ) goto bad_stack; Value a = stack.top(); stack.pop();
 #define POP2 if ( stack.size() < 2 ) goto bad_stack; Value b = stack.top(); stack.pop(); Value a = stack.top(); stack.pop();
 #define POP3 if ( stack.size() < 3 ) goto bad_stack; Value c = stack.top(); stack.pop(); Value b = stack.top(); stack.pop(); Value a = stack.top(); stack.pop();
+#define POP(n) if (stack.size() < n) goto bad_stack; std::vector<Value> args; for(int i = 0; i < n; ++i) { args.push_back(stack.top()); stack.pop(); }
 
 // perform the operation
 Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
@@ -839,37 +881,6 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 	break;
 
 	// two operands - both are popped from the stack, result is pushed back on
-	case Op::POK:
-	{
-		POP2;
-		Poke(a, b);
-		stack.push(b);
-	}
-	break;
-
-	case Op::PUT:
-	{
-		POP2;
-		// [*] = should put the same value to all outputs
-		if (a == Wildcard::Value)
-		{
-			for (size_t i = 0; i < size; ++i)
-			{
-				results[i] = b;
-			}
-		}
-		else if (a < size)
-		{
-			results[a] = b;
-		}
-		else
-		{
-			error = RE_PUT_OUT_OF_BOUNDS;
-		}
-		stack.push(b);
-	}
-	break;
-
 	case Op::MUL:
 	{
 		POP2;
@@ -966,6 +977,96 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 	{
 		POP3;
 		stack.push(a ? b : c);
+	}
+	break;
+
+	// number of operands is variable
+	case Op::POK:
+	{
+		// pop off all of the results
+		POP(op.val);
+		// pop off the address for the first result
+		POP1;
+
+		// the order of the args is last to first,
+		// ie: { 1, 2, 3 } winds up in args as { 3, 2, 1 }
+		// this is why we pop values for Poke from the back of args.
+		for (int i = 0; i < op.val; ++i)
+		{
+			Value b = args.back();
+			args.pop_back();
+
+			Value address = a + i;
+			Poke(address, b);
+		}
+
+		// the result of this operation should be what is now in the *first* memory address (ie 'a')
+		// this is to make chained assignment statements work as expected. 
+		// for example:
+		//
+		//	a = @1 = { 1, 2, 3 };
+		//
+		// should result in the value of 'a' being equal to the value of '@1'
+		stack.push(Peek(a));
+	}
+	break;
+
+	case Op::PUT:
+	{
+		// pop off all of the results
+		POP(op.val);
+		// pop off the address for the first result
+		POP1;
+
+		Value b = args.back();
+		args.pop_back();
+
+		// [*] = should fill the entire output
+		// so we assign results in order until we run out
+		// and then repeat the last one to the remaining outputs.
+		// so, if there is only 1 result, it is copied to all outputs.
+		if (a == Wildcard::Value)
+		{	
+			// since [*] returns the sum of all values (see GET), we need to sum up the output as we go
+			Value c = 0;
+
+			for (size_t i = 0; i < size; ++i)
+			{
+				results[i] = b;
+				c += b;
+				if (!args.empty())
+				{
+					b = args.back();
+					args.pop_back();
+				}
+			}
+
+			stack.push(c);
+		}
+		else if (a < size)
+		{
+			// as with POK, the result of this operation should be equal to the first place we put a value.
+			// for example:
+			//
+			// a = [0] = { 1, 2 }
+			//
+			// should make a and [0] equal to 1, while [1] would be equal to 2
+			stack.push(b);
+
+			// begin assigning results starting from the provided index,
+			// but stop if we run out of args or get to the end of the output array.
+			results[a++] = b;
+			while (a < size && !args.empty())
+			{
+				b = args.back();
+				args.pop_back();
+				results[a++] = b;
+			}
+		}
+		else
+		{
+			error = RE_PUT_OUT_OF_BOUNDS;
+		}		
 	}
 	break;
 
