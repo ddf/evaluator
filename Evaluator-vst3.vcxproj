@@ -326,6 +326,7 @@ copy /y "$(TargetPath)" "S:\VST\x64\Evaluator.vst3"</Command>
     <ClInclude Include="Controls.h" />
     <ClInclude Include="Evaluator.h" />
     <ClInclude Include="Interface.h" />
+    <ClInclude Include="KnobLineCoronaControl.h" />
     <ClInclude Include="Presets.h" />
     <ClInclude Include="Program.h" />
     <ClInclude Include="resource.h" />
@@ -347,6 +348,7 @@ copy /y "$(TargetPath)" "S:\VST\x64\Evaluator.vst3"</Command>
     <ClCompile Include="Controls.cpp" />
     <ClCompile Include="Evaluator.cpp" />
     <ClCompile Include="Interface.cpp" />
+    <ClCompile Include="KnobLineCoronaControl.cpp" />
     <ClCompile Include="Presets.cpp" />
     <ClCompile Include="Program.cpp" />
   </ItemGroup>

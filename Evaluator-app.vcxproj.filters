@@ -50,6 +50,7 @@
     <ClInclude Include="Interface.h" />
     <ClInclude Include="Controls.h" />
     <ClInclude Include="Params.h" />
+    <ClInclude Include="KnobLineCoronaControl.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\WDL\rtaudiomidi\RtAudio.cpp">
@@ -81,6 +82,7 @@
     <ClCompile Include="Presets.cpp" />
     <ClCompile Include="Interface.cpp" />
     <ClCompile Include="Controls.cpp" />
+    <ClCompile Include="KnobLineCoronaControl.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Evaluator.rc" />

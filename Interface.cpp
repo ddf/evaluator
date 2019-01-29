@@ -401,6 +401,8 @@ Interface::Interface(Evaluator* plug, IGraphics* pGraphics)
 
 void Interface::CreateControls(IGraphics* pGraphics)
 {
+	pGraphics->HandleMouseOver(true);
+
 	pGraphics->AttachPanelBackground(&kBackgroundColor);
 
 	pGraphics->AttachKeyCatcher(new MidiControl(mPlug));
@@ -492,11 +494,14 @@ void Interface::CreateControls(IGraphics* pGraphics)
 	//---Volume--------------------
 	{
 		//---Volume Label--------
-		pGraphics->AttachControl(new ITextControl(mPlug, MakeIRect(kVolumeLabel), &kLabelTextStyle, "VOL"));
+		ITextControl* label = new ITextControl(mPlug, MakeIRect(kVolumeLabel), &kLabelTextStyle, "VOL");
+		pGraphics->AttachControl(label);
 
 		//---Volume Knob-------
 		IColor coronaColor(kGreenColor);
-		pGraphics->AttachControl(new KnobLineCoronaControl(mPlug, MakeIRect(kVolumeKnob), kGain, &kGreenColor, &coronaColor, 1.5, 0, 14));
+		KnobLineCoronaControl* knob = new KnobLineCoronaControl(mPlug, MakeIRect(kVolumeKnob), kGain, &kGreenColor, &coronaColor, 1.5, 0, 14);
+		knob->SetLabelControl(label);
+		pGraphics->AttachControl(knob);
 	}
 
 	//---Bit Depth--------------
@@ -594,6 +599,7 @@ void Interface::CreateControls(IGraphics* pGraphics)
 
 			ITextControl* label = new ITextControl(mPlug, labelRect, &kLabelTextStyle, mPlug->GetParam(paramIdx)->GetNameForHost());
 			KnobLineCoronaControl* knob = new KnobLineCoronaControl(mPlug, knobRect, paramIdx, &kGreenColor, &kGreenColor, 1.5, 0, 14);
+			knob->SetLabelControl(label);
 
 			pGraphics->AttachControl(label);
 			pGraphics->AttachControl(knob);

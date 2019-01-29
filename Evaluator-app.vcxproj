@@ -281,6 +281,7 @@
     <ClInclude Include="Controls.h" />
     <ClInclude Include="Evaluator.h" />
     <ClInclude Include="Interface.h" />
+    <ClInclude Include="KnobLineCoronaControl.h" />
     <ClInclude Include="Params.h" />
     <ClInclude Include="Presets.h" />
     <ClInclude Include="Program.h" />
@@ -298,6 +299,7 @@
     <ClCompile Include="Controls.cpp" />
     <ClCompile Include="Evaluator.cpp" />
     <ClCompile Include="Interface.cpp" />
+    <ClCompile Include="KnobLineCoronaControl.cpp" />
     <ClCompile Include="Presets.cpp" />
     <ClCompile Include="Program.cpp" />
   </ItemGroup>
