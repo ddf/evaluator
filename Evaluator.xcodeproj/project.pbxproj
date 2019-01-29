@@ -213,6 +213,10 @@
 		4FF016F8134E14E2001447BA /* ptrlist.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FF016F5134E14E2001447BA /* ptrlist.h */; };
 		4FF016F9134E14E2001447BA /* wdlstring.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FF016F6134E14E2001447BA /* wdlstring.h */; };
 		4FF0171A134E153A001447BA /* heapbuf.h in Headers */ = {isa = PBXBuildFile; fileRef = 4FF01719134E153A001447BA /* heapbuf.h */; };
+		770562BD2200ED3E00DAEA86 /* KnobLineCoronaControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 770562BC2200ED3500DAEA86 /* KnobLineCoronaControl.cpp */; };
+		770562BE2200ED3F00DAEA86 /* KnobLineCoronaControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 770562BC2200ED3500DAEA86 /* KnobLineCoronaControl.cpp */; };
+		770562BF2200ED4000DAEA86 /* KnobLineCoronaControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 770562BC2200ED3500DAEA86 /* KnobLineCoronaControl.cpp */; };
+		770562C02200ED4100DAEA86 /* KnobLineCoronaControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 770562BC2200ED3500DAEA86 /* KnobLineCoronaControl.cpp */; };
 		771CF52D1F8D448E000F34E2 /* Interface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 771CF5251F8D4481000F34E2 /* Interface.cpp */; };
 		771CF52F1F8D448E000F34E2 /* Presets.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 771CF5221F8D4481000F34E2 /* Presets.cpp */; };
 		771CF5301F8D448E000F34E2 /* Presets.h in Headers */ = {isa = PBXBuildFile; fileRef = 771CF5261F8D4481000F34E2 /* Presets.h */; };
@@ -614,6 +618,8 @@
 		52FBBED00D0CF139001C8B8A /* Evaluator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.cpp.cpp; path = Evaluator.cpp; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
 		52FBBED20D0CF13D001C8B8A /* Evaluator.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.h; path = Evaluator.h; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
 		52FBBED30D0CF143001C8B8A /* resource.h */ = {isa = PBXFileReference; fileEncoding = 4; indentWidth = 2; lastKnownFileType = sourcecode.c.h; path = resource.h; sourceTree = "<group>"; tabWidth = 2; usesTabs = 0; };
+		770562B52200ED3500DAEA86 /* KnobLineCoronaControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KnobLineCoronaControl.h; sourceTree = "<group>"; };
+		770562BC2200ED3500DAEA86 /* KnobLineCoronaControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KnobLineCoronaControl.cpp; sourceTree = "<group>"; };
 		771CF5211F8D4480000F34E2 /* Program.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Program.cpp; sourceTree = "<group>"; };
 		771CF5221F8D4481000F34E2 /* Presets.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Presets.cpp; sourceTree = "<group>"; };
 		771CF5231F8D4481000F34E2 /* Program.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Program.h; sourceTree = "<group>"; };
@@ -690,6 +696,8 @@
 		089C166AFE841209C02AAC07 /* IPlugExample */ = {
 			isa = PBXGroup;
 			children = (
+				770562BC2200ED3500DAEA86 /* KnobLineCoronaControl.cpp */,
+				770562B52200ED3500DAEA86 /* KnobLineCoronaControl.h */,
 				77EB800B1FCE2457005FE948 /* Params.h */,
 				774C73AD1F9EA93F00E2EFC9 /* Controls.cpp */,
 				774C73A71F9EA91800E2EFC9 /* Controls.h */,
@@ -1705,6 +1713,7 @@
 				4F78D9BD13B63BA50032E0F3 /* Hosts.cpp in Sources */,
 				4F78D9BF13B63BA50032E0F3 /* IGraphicsMac.mm in Sources */,
 				4F78D9C013B63BA50032E0F3 /* IGraphics.cpp in Sources */,
+				770562BE2200ED3F00DAEA86 /* KnobLineCoronaControl.cpp in Sources */,
 				4F78D9C113B63BA50032E0F3 /* IGraphicsCarbon.cpp in Sources */,
 				774C73AF1F9EA93F00E2EFC9 /* Controls.cpp in Sources */,
 				4F78D9C213B63BA50032E0F3 /* IGraphicsCocoa.mm in Sources */,
@@ -1727,6 +1736,7 @@
 				4F3AE1A312C0E5E2001FD7A4 /* Evaluator.cpp in Sources */,
 				4FD16D0E13B634BF001D0217 /* swell-gdi.mm in Sources */,
 				4F78D94513B63BA50032E0F3 /* IPlugBase.cpp in Sources */,
+				770562C02200ED4100DAEA86 /* KnobLineCoronaControl.cpp in Sources */,
 				771CF5471F8D44AC000F34E2 /* Interface.cpp in Sources */,
 				4F78D94713B63BA50032E0F3 /* IPlugStructs.cpp in Sources */,
 				4F78D94B13B63BA50032E0F3 /* Hosts.cpp in Sources */,
@@ -1779,6 +1789,7 @@
 				4F9828CE140A9EB700F3FCC1 /* vstinitiids.cpp in Sources */,
 				771CF5431F8D44A2000F34E2 /* Program.cpp in Sources */,
 				4F9828CF140A9EB700F3FCC1 /* vstnoteexpressiontypes.cpp in Sources */,
+				770562BF2200ED4000DAEA86 /* KnobLineCoronaControl.cpp in Sources */,
 				4F9828D0140A9EB700F3FCC1 /* vstparameters.cpp in Sources */,
 				4F9828D1140A9EB700F3FCC1 /* vstpresetfile.cpp in Sources */,
 				771CF5461F8D44AB000F34E2 /* Interface.cpp in Sources */,
@@ -1807,6 +1818,7 @@
 				4FD16D4013B635A0001D0217 /* swell-misc.mm in Sources */,
 				4FD16D4213B635AB001D0217 /* swell-wnd.mm in Sources */,
 				4FD16D4413B635B2001D0217 /* swell.cpp in Sources */,
+				770562BD2200ED3E00DAEA86 /* KnobLineCoronaControl.cpp in Sources */,
 				771CF5311F8D448E000F34E2 /* Program.cpp in Sources */,
 				4FD16D4713B635C8001D0217 /* swellappmain.mm in Sources */,
 				4F78D8C413B63A700032E0F3 /* RtAudio.cpp in Sources */,
