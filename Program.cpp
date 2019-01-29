@@ -425,7 +425,7 @@ static int ParseOR(CompilationState& state)
 	}
 }
 
-static int ParseTRN(CompilationState& state)
+static int ParseCND(CompilationState& state)
 {
 	if (ParseOR(state)) return 1;
 	for (;;)
@@ -439,10 +439,10 @@ static int ParseTRN(CompilationState& state)
 		state.parsePos++;
 
 		// result of the expression before the ? will be on the top of the stack now,
-		// the TRN instruction needs to check that value and jump over the next expression if it is false.
+		// the CND instruction needs to check that value and jump over the next expression if it is false.
 		// we won't know where to jump until after generating the instructions for the expression,
-		// so we stash where in the the ops list our TRN op needs to go, which allows to insert it when we have the address.
-		size_t trnOpAddr = state.Push(Program::Op::TRN);
+		// so we stash where in the the ops list our CND op needs to go, which allows us to insert it when we have the address.
+		size_t cndOpAddr = state.Push(Program::Op::CND);
 
 		// parse expression following the ?
 		// we decrement parseDepth before calling Parse because it's OK if the expression ends with a semi-colon.
@@ -462,8 +462,8 @@ static int ParseTRN(CompilationState& state)
 		
 		// add a JMP instruction so we can skip what comes next, which is the "false" part of the expression
 		size_t jmpOpAddr = state.Push(Program::Op::JMP);
-		// TRN needs to jump to the instruction that follows the JMP
-		state.ops[trnOpAddr].val = state.ops.size();
+		// CND needs to jump to the instruction that follows the JMP
+		state.ops[cndOpAddr].val = state.ops.size();
 		
 		// if there is a colon, the user has provided code to execute for "false".
 		// if there isn't, then we need to provide the result of the expression, which will simply be 0.
@@ -508,7 +508,7 @@ static int ParseTRN(CompilationState& state)
 		}
 		else
 		{
-			// when there's no POP we need to jmp to the instruction that will follow it.
+			// when there's no POP we need to JMP to the instruction that will follow it.
 			state.ops[jmpOpAddr].val = state.ops.size();
 		}
 	}
@@ -516,7 +516,7 @@ static int ParseTRN(CompilationState& state)
 
 static int ParsePOK(CompilationState& state)
 {
-	if (ParseTRN(state)) return 1;
+	if (ParseCND(state)) return 1;
 	for (;;)
 	{
 		state.SkipWhitespace();
@@ -1112,7 +1112,7 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 
 	// flow control.
 	// the pc is set to one less than the target address because it will be incremented after this method returns.
-	case Op::TRN:
+	case Op::CND:
 	{
 		POP1;
 		if (!a) 

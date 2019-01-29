@@ -75,7 +75,7 @@ public:
 			XOR,
 			CLT, // compare <
 			CGT, // compare >
-			TRN, // ternary operator - ?:
+			CND, // conditional - ?: and ?
 			POP, // ; (pop a value from the stack and do nothing with it)
 			GET, // get the the current value of a result. eg [0] or [1].
 			PUT, // assign to an output result using [0] = expression.
