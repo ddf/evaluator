@@ -236,8 +236,8 @@ namespace Presets
 			"p = t%s;" CR
 			"// when r is 'true' we sample the input," CR
 			"// otherwise we keep the value we already have" CR
-			"a = r ? [0] : a;" CR
-			"b = r ? [1] : b;" CR
+			"r ? a = [0];" CR
+			"r ? b = [1];" CR
 			"// and now we output our result" CR
 			"[0] = a; [1] = b;",
 			// watches
@@ -411,7 +411,7 @@ namespace Presets
 			"// R is a unary operator that produces a random value using the operand." CR
 			"// R22 will range between 0 and 21." CR
 			"// we choose a new value when p equals zero and is less than m%r" CR
-			"a = p<1 & p<m%r ? R22 : a;" CR
+			"p<1 & p<m%r ? a = R22;" CR
 			"p = m%r;" CR
 			"[*] = $(t*F(n + a));",
 			// watches

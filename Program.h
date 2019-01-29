@@ -84,6 +84,7 @@ public:
 			VCV, // use the operand to look up the current value of a "voltage" control value, eg 'a = V5'
 			NOT,
 			COM,
+			JMP, // JMP to the address indicated by val
 		};
 
 		// need default constructor or we can't use vector
@@ -91,7 +92,8 @@ public:
 		Op(Code _code, Value _val) : code(_code), val(_val) {}
 
 		const Code code;
-		const Value val;
+		// this is mutable because the compiler needs to be able to change it in some cases
+		Value val;
 	};
 
 	// userMemorySize is used to determine the size of read/write memory used by the program.
@@ -141,6 +143,7 @@ private:
 
 	// the compiled code
 	std::vector<Op> ops;
+	size_t pc; // program counter, stored here because it can be changed by TRN and JMP
 	const size_t userMemSize; // how much of mem is "user" memory
 	const size_t memSize; // the actual size of mem
 	// the memory space - read/write memory for the program (use Peek/Poke from C++)

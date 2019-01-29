@@ -362,6 +362,7 @@ static const char* kLanguageSyntaxTable[] =
 	"x & y",   "bitwise AND of x and y",
 	"x ^ y",   "bitwise XOR of x and y",
 	"x | y",   "bitwise OR of x and y",
+	"x ? y",   "result is y when x is non-zero, otherwise zero",
 	"x ? y : z", "result is y when x is non-zero, otherwise z",
 	"x = y",   "assign the value of y to x",
 	"@x = y",  "assign the value of y to the memory address x",

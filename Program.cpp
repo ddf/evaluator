@@ -132,7 +132,7 @@ struct CompilationState
 
 	// some helpers
 	Program::Char operator*() const { return source[parsePos]; }
-	void Push(Program::Op::Code code, Program::Value value = 0) { ops.push_back(Program::Op(code, value)); }
+	size_t Push(Program::Op::Code code, Program::Value value = 0) { ops.push_back(Program::Op(code, value)); return ops.size()-1; }
 	void SkipWhitespace()
 	{
 		while (isspace(source[parsePos]))
@@ -437,33 +437,79 @@ static int ParseTRN(CompilationState& state)
 			return 0;
 		}
 		state.parsePos++;
-		if (Parse(state)) return 1;
-		state.SkipWhitespace();
-		op = *state;
-		if (op != ':')
-		{
-			state.error = Program::CE_MISSING_COLON_IN_TERNARY;
-			return 1;
-		}
-		state.parsePos++;
-		// when parsing what follows the colon, we decrement parse depth before recursing to Parse.
-		// this is so that if the line terminates with a semi-colon, we won't get an
-		// illegal statement termination error, unless we were already within parens.
+
+		// result of the expression before the ? will be on the top of the stack now,
+		// the TRN instruction needs to check that value and jump over the next expression if it is false.
+		// we won't know where to jump until after generating the instructions for the expression,
+		// so we stash where in the the ops list our TRN op needs to go, which allows to insert it when we have the address.
+		size_t trnOpAddr = state.Push(Program::Op::TRN);
+
+		// parse expression following the ?
+		// we decrement parseDepth before calling Parse because it's OK if the expression ends with a semi-colon.
+		// this will make the statement behave like an if statement.
 		state.parseDepth--;
 		if (Parse(state)) return 1;
 		state.parseDepth++;
-		// if the statement terminated in a semi-colon we will have a POP on the end of the list.
-		// we need that stack value to be able to evaluate the ternary statement,
-		// but we need to retain the POP instruction to account for the semi-colon.
-		if (state.ops.back().code == Program::Op::POP)
+
+		state.SkipWhitespace();
+
+		// this means it ended with a semi-colon, we need to insert some instructions before this, so we remove it and add it back
+		bool hasPop = state.ops.back().code == Program::Op::POP;
+		if (hasPop)
 		{
 			state.ops.pop_back();
-			state.Push(Program::Op::TRN);
-			state.Push(Program::Op::POP);
+		}
+		
+		// add a JMP instruction so we can skip what comes next, which is the "false" part of the expression
+		size_t jmpOpAddr = state.Push(Program::Op::JMP);
+		// TRN needs to jump to the instruction that follows the JMP
+		state.ops[trnOpAddr].val = state.ops.size();
+		
+		// if there is a colon, the user has provided code to execute for "false".
+		// if there isn't, then we need to provide the result of the expression, which will simply be 0.
+		// in other words:
+		//		a = b ? c;
+		// is simply syntactic sugar for:
+		//		a = b ? c : 0;
+		if (*state == ':')
+		{	
+			// if they put a semi-colon before the colon, Parse won't have caught it, so we do so here
+			if (hasPop)
+			{
+				state.error = Program::CE_ILLEGAL_STATEMENT_TERMINATION;
+				return 1;
+			}
+
+			// eat the colon
+			state.parsePos++;
+			// when parsing what follows the colon, we decrement parse depth before recursing to Parse.
+			// this is so that if the line terminates with a semi-colon, we won't get an
+			// illegal statement termination error, unless we were already within parens.
+			state.parseDepth--;
+			if (Parse(state)) return 1;
+			state.parseDepth++;
+		}	
+		else
+		{
+			state.Push(Program::Op::PSH, 0);
+
+			// include the semi-colon that is in the source
+			if (hasPop)
+			{
+				state.Push(Program::Op::POP);
+			}
+		}
+
+		// if the statement terminated in a semi-colon we will have a POP on the end of the list.
+		// we need to jump directly to that POP because it *might* be replaced with a PEK or PUT.
+		if (state.ops.back().code == Program::Op::POP)
+		{
+			state.ops[jmpOpAddr].val = state.ops.size() - 1;
 		}
 		else
 		{
-			state.Push(Program::Op::TRN);
+			// when there's no POP we need to jmp to the instruction that will follow it.
+			state.ops[jmpOpAddr].val = state.ops.size();
 		}
 	}
 }
@@ -700,9 +746,10 @@ Program::RuntimeError Program::Run(Value* results, const size_t size)
 	const uint64_t icount = GetInstructionCount();
 	if (icount > 0)
 	{
-		for (int i = 0; i < icount && error == RE_NONE; ++i)
+		pc = 0;
+		for (; pc < icount && error == RE_NONE; ++pc)
 		{
-			error = Exec(ops[i], results, size);
+			error = Exec(ops[pc], results, size);
 		}
 
 		// under error-free execution we should have either 1 or 0 values in the stack.
@@ -973,13 +1020,6 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 	}
 	break;
 
-	case Op::TRN:
-	{
-		POP3;
-		stack.push(a ? b : c);
-	}
-	break;
-
 	// number of operands is variable
 	case Op::POK:
 	{
@@ -1067,6 +1107,24 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 		{
 			error = RE_PUT_OUT_OF_BOUNDS;
 		}		
+	}
+	break;
+
+	// flow control.
+	// the pc is set to one less than the target address because it will be incremented after this method returns.
+	case Op::TRN:
+	{
+		POP1;
+		if (!a) 
+		{ 
+			pc = op.val-1; 
+		}
+	}
+	break;
+
+	case Op::JMP:
+	{
+		pc = op.val-1;
 	}
 	break;
 
