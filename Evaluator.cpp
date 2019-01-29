@@ -156,13 +156,16 @@ void Evaluator::ProcessDoubleReplacing(double** inputs, double** outputs, int nF
 				// fallthrough to handle velocity of zero
 
 			case IMidiMsg::kNoteOff:
-				for (auto iter = mNotes.crbegin(); iter != mNotes.crend(); ++iter)
+				// remove all notes with the same note number
+				for (auto iter = mNotes.begin(); iter != mNotes.end(); ++iter)
 				{
-					// remove the most recent note on with the same pitch
-					if (pMsg->NoteNumber() == iter->NoteNumber())
+					if (iter->NoteNumber() == pMsg->NoteNumber())
 					{
-						mNotes.erase((iter + 1).base());
-						break;
+						iter = mNotes.erase(iter);
+						if (iter == mNotes.end())
+						{
+							break;
+						}
 					}
 				}
 
