@@ -381,6 +381,9 @@ void Evaluator::OnParamChange(int paramIdx)
 		case kTransportStopped: 
 			mTick = 0; 
 			break;
+        
+    default:
+      break;
 		}
 
 		mTransport = newState;
