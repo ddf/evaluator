@@ -232,7 +232,7 @@ namespace Presets
 			"// s is how many samples to wait before grabbing a new value from the input" CR
 			"s = V0 + 2;" CR
 			"// r holds a 'bool' to indicate whether or not we should sample the input" CR
-			"r = p<1 & p<t%s;" CR
+			"r = p==0 & p<t%s;" CR
 			"p = t%s;" CR
 			"// when r is 'true' we sample the input," CR
 			"// otherwise we keep the value we already have" CR
@@ -359,7 +359,7 @@ namespace Presets
 
 		{
 			"amplitude modulation",
-			50, 16, kRunModeMIDI, true,
+			50, 16, kRunModeAlways, true,
 			12, 0, 0, 0, 0, 0, 0, 0,
 			"// connect a MIDI device or use the computer keyboard to generate notes." CR
 			"// to amplitude modulate we need to scale the range up and down," CR
@@ -368,9 +368,9 @@ namespace Presets
 			"o = (t*Fn) % w;" CR
 			"// we step the phase of our modulator forward every 8 milliseconds," CR
 			"// which lets us smoothly control the frequency with the V0 knob." CR
-			"p = m % 8 ? p : p + V0 * 2;" CR
+			"m % 8 == 0 ? p = p + V0 * 2;" CR
 			"// if there isn't a note on, we reset the phase so that $p will be 0." CR
-			"p = n < 1 ? 3 * w / 4 : p;" CR
+			"n == 0 ? p = 3 * w / 4;" CR
 			"m = $p;" CR
 			"// m is a [0,w) value, so we decrease o by that ratio" CR
 			"o = o * m/w;" CR
@@ -411,7 +411,7 @@ namespace Presets
 			"// R is a unary operator that produces a random value using the operand." CR
 			"// R22 will range between 0 and 21." CR
 			"// we choose a new value when p equals zero and is less than m%r" CR
-			"p<1 & p<m%r ? a = R22;" CR
+			"p==0 & p<m%r ? a = R22;" CR
 			"p = m%r;" CR
 			"[*] = $(t*F(n + a));",
 			// watches

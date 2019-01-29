@@ -353,11 +353,17 @@ static int ParseCmpOrShift(CompilationState& state)
 		// not a bitshift, so do compare
 		if (op2 != op)
 		{
+			// for <= and >= we need to eat the equals character and push a different opcode
+			bool isEqual = op2 == '=';
+			if (isEqual)
+			{
+				state.parsePos++;
+			}
 			if (ParseSummands(state)) return 1;
 			switch (op)
 			{
-			case '<': state.Push(Program::Op::CLT); break;
-			case '>': state.Push(Program::Op::CGT); break;
+			case '<': state.Push(isEqual ? Program::Op::CLE : Program::Op::CLT); break;
+			case '>': state.Push(isEqual ? Program::Op::CGE : Program::Op::CGT); break;
 			}
 		}
 		else
@@ -374,9 +380,38 @@ static int ParseCmpOrShift(CompilationState& state)
 	}
 }
 
-static int ParseAND(CompilationState& state)
+static int ParseCEQ(CompilationState& state)
 {
 	if (ParseCmpOrShift(state)) return 1;
+	for (;;)
+	{
+		state.SkipWhitespace();
+		const Program::Char op = *state;
+		if (op != '=' && op != '!')
+		{
+			return 0;
+		}
+		state.parsePos++;
+		if (*state != '=')
+		{
+			// don't want to eat the first character if it is not followed by an equals, otherwise we will mess up assignments and negation
+			state.parsePos--;
+			return 0;
+		}
+		// eat the equals sign
+		state.parsePos++;
+		if (ParseCmpOrShift(state)) return 1;
+		switch (op)
+		{
+		case '=': state.Push(Program::Op::CEQ); break;
+		case '!': state.Push(Program::Op::CNE); break;
+		}
+	}
+}
+
+static int ParseAND(CompilationState& state)
+{
+	if (ParseCEQ(state)) return 1;
 	for (;;)
 	{
 		state.SkipWhitespace();
@@ -386,7 +421,7 @@ static int ParseAND(CompilationState& state)
 			return 0;
 		}
 		state.parsePos++;
-		if (ParseCmpOrShift(state)) return 1;
+		if (ParseCEQ(state)) return 1;
 		state.Push(Program::Op::AND);
 	}
 }
@@ -1006,6 +1041,20 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 	}
 	break;
 
+	case Op::CEQ:
+	{
+		POP2;
+		stack.push(a == b);
+	}
+	break;
+
+	case Op::CNE:
+	{
+		POP2;
+		stack.push(a != b);
+	}
+	break;
+
 	case Op::CLT:
 	{
 		POP2;
@@ -1013,10 +1062,24 @@ Program::RuntimeError Program::Exec(const Op& op, Value* results, size_t size)
 	}
 	break;
 
+	case Op::CLE:
+	{
+		POP2;
+		stack.push(a <= b);
+	}
+	break;
+
 	case Op::CGT:
 	{
 		POP2;
 		stack.push(a > b);
+	}
+	break;
+
+	case Op::CGE:
+	{
+		POP2;
+		stack.push(a >= b);
 	}
 	break;
 

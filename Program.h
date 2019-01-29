@@ -55,7 +55,7 @@ public:
 		enum Code
 		{
 			NOP, // no operation (doesn't pop from the stack or push to it)
-			PSH, // push a value onto the stack
+			PSH, // push a constant value onto the stack (eg when a numeric value is used)
 			PEK, // get the value at a memory address
 			POK, // set the value at a memory address
 			FRQ,
@@ -73,8 +73,12 @@ public:
 			AND,
 			OR,
 			XOR,
+			CEQ, // compare ==
+			CNE, // compare !=
 			CLT, // compare <
+			CLE, // compare <=
 			CGT, // compare >
+			CGE, // compare >=
 			CND, // conditional - ?: and ?
 			POP, // ; (pop a value from the stack and do nothing with it)
 			GET, // get the the current value of a result. eg [0] or [1].
