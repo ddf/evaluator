@@ -1,6 +1,24 @@
 Evaluator changelog
 https://damikyu.itch.io/evaluator
 
+01/30/19 - v1.1.0
+
+New and Changed:
+
+* increased overall output volume of the Standalone version to match the Plugin versions
+* the Plugin is now an Instrument instead of an Effect, so it can be used in DAWs that will only send MIDI to Instruments (eg Fruity)
+* improved conditional operator so it uses branching and can be used without the colon
+* added ==, !=, <=, and >= relational operators
+* improved VOL and V knobs so that hovering over the knob displays the current value above it
+* macOS builds are now only 64-bit (macOS no longer supports building 32-bit)
+
+Bug Fixes:
+
+* better handling of audio intialization failure
+* fixed handling of line-endings in the Program Window
+* fixed line-spacing on macOS in the Program Window
+* fixed handling of overlapped MIDI notes
+
 02/03/18 - v1.0.1
 
 * fixed implementation of R operator
