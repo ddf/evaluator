@@ -1,6 +1,6 @@
 [Setup]
 AppName=Evaluator
-AppVersion=1.0.1
+AppVersion=1.1.0
 AppPublisher=Damien Quartz
 AppPublisherURL=https://damikyu.itch.io
 DefaultDirName={pf}\Evaluator
