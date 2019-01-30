@@ -244,7 +244,7 @@ static char* LabelFontName = "Helvetica Neue";
 static const int kFontSizeLabel = 12;
 static const int kFontSizeTitle = 14;
 static const int kFontSizeConsole = 15;
-static const int kFontSizeSyntax = 13;
+static const int kFontSizeSyntax = 14;
 #endif
 
 IText  kProgramTextStyle(kFontSizeConsole,
