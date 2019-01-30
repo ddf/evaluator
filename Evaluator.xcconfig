@@ -15,6 +15,7 @@ ADDITIONAL_INCLUDES = // $(SRCROOT)/../../../MyDSP/
 // Flags to pass to compiler for all builds
 GCC_CFLAGS = -Wno-write-strings
 
+MACOSX_DEPLOYMENT_TARGET = 10.8
 DEPLOYMENT_TARGET = 10.8
 
 //------------------------------

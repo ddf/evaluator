@@ -179,7 +179,6 @@
 		4F9828D4140A9EB700F3FCC1 /* conststringtable.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4AD016140996A10068A6D4 /* conststringtable.cpp */; };
 		4F9828D5140A9EB700F3FCC1 /* funknown.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4AD01D140996A10068A6D4 /* funknown.cpp */; };
 		4F9828D6140A9EB700F3FCC1 /* ustring.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4F4AD028140996A10068A6D4 /* ustring.cpp */; };
-		4F9828D8140A9EB700F3FCC1 /* libbase_stdc++.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F4AD1F61409A56A0068A6D4 /* libbase_stdc++.a */; };
 		4F9828DA140A9EB700F3FCC1 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7ADFEA557BF11CA2CBB /* Cocoa.framework */; };
 		4F9828DB140A9EB700F3FCC1 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 52C4DB180D0E51270007A920 /* Carbon.framework */; };
 		4F9828F6140A9EEE00F3FCC1 /* lice.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F8D4BCC13E97664004F7633 /* lice.a */; };
@@ -269,6 +268,7 @@
 		77CB8CCC1FA811E6006734F0 /* radio_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 77CB8CC71FA811DD006734F0 /* radio_button.png */; };
 		77CB8CCD1FA811E6006734F0 /* radio_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 77CB8CC71FA811DD006734F0 /* radio_button.png */; };
 		77CB8CCE1FA811E7006734F0 /* radio_button.png in Resources */ = {isa = PBXBuildFile; fileRef = 77CB8CC71FA811DD006734F0 /* radio_button.png */; };
+		77D885FC22013B7800245347 /* libbase_libc++.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 772929DF1FB0CFFF001F4C63 /* libbase_libc++.a */; };
 		77EB800C1FCE2457005FE948 /* Params.h in Headers */ = {isa = PBXBuildFile; fileRef = 77EB800B1FCE2457005FE948 /* Params.h */; };
 		77EB800D1FCE2457005FE948 /* Params.h in Headers */ = {isa = PBXBuildFile; fileRef = 77EB800B1FCE2457005FE948 /* Params.h */; };
 /* End PBXBuildFile section */
@@ -358,13 +358,6 @@
 			remoteGlobalIDString = D2AAC045055464E500DB518D;
 			remoteInfo = "lice_32&64_intel";
 		};
-		4F9828AE140A9EB700F3FCC1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 4F4AD1F11409A56A0068A6D4 /* base.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = D2AAC045055464E500DB518D;
-			remoteInfo = base;
-		};
 		4F9828F2140A9ED500F3FCC1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 4F8D4BC413E97664004F7633 /* lice.xcodeproj */;
@@ -406,6 +399,13 @@
 			proxyType = 2;
 			remoteGlobalIDString = F41CC3ED180C210300D209D0;
 			remoteInfo = "base_codecoverage_libc++";
+		};
+		77D885F9220111D100245347 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4F4AD1F11409A56A0068A6D4 /* base.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = F4306DA817DDC8800075E8C4;
+			remoteInfo = "base_libc++";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -669,8 +669,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				77D885FC22013B7800245347 /* libbase_libc++.a in Frameworks */,
 				4F9828F6140A9EEE00F3FCC1 /* lice.a in Frameworks */,
-				4F9828D8140A9EB700F3FCC1 /* libbase_stdc++.a in Frameworks */,
 				4F9828DA140A9EB700F3FCC1 /* Cocoa.framework in Frameworks */,
 				4F9828DB140A9EB700F3FCC1 /* Carbon.framework in Frameworks */,
 			);
@@ -714,6 +714,7 @@
 				32C88E010371C26100C91783 /* Other Sources */,
 				089C1671FE841209C02AAC07 /* Frameworks and Libraries */,
 				19C28FB8FE9D52D311CA2CBB /* Products */,
+				77D885FB22013B7800245347 /* Frameworks */,
 			);
 			name = IPlugExample;
 			sourceTree = "<group>";
@@ -1308,6 +1309,13 @@
 			name = WDL;
 			sourceTree = "<group>";
 		};
+		77D885FB22013B7800245347 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -1455,7 +1463,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				4F9828AD140A9EB700F3FCC1 /* PBXTargetDependency */,
+				77D885FA220111D100245347 /* PBXTargetDependency */,
 				4F9828F3140A9ED500F3FCC1 /* PBXTargetDependency */,
 			);
 			name = VST3;
@@ -1877,11 +1885,6 @@
 			name = "lice_32&64_intel";
 			targetProxy = 4F8D4C3913E97859004F7633 /* PBXContainerItemProxy */;
 		};
-		4F9828AD140A9EB700F3FCC1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = base;
-			targetProxy = 4F9828AE140A9EB700F3FCC1 /* PBXContainerItemProxy */;
-		};
 		4F9828F3140A9ED500F3FCC1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			name = "lice_32&64_intel";
@@ -1891,6 +1894,11 @@
 			isa = PBXTargetDependency;
 			target = 4F9828AA140A9EB700F3FCC1 /* VST3 */;
 			targetProxy = 4F9828F7140A9F0200F3FCC1 /* PBXContainerItemProxy */;
+		};
+		77D885FA220111D100245347 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = "base_libc++";
+			targetProxy = 77D885F9220111D100245347 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1945,7 +1953,6 @@
 				INSTALL_OWNER = root;
 				INSTALL_PATH = /;
 				LIBRARY_SEARCH_PATHS = "$(ADDITIONAL_LIBRARY_PATHS)";
-				MACOSX_DEPLOYMENT_TARGET = "$(DEPLOYMENT_TARGET)";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -1995,7 +2002,6 @@
 				INSTALL_OWNER = root;
 				INSTALL_PATH = /;
 				LIBRARY_SEARCH_PATHS = "$(ADDITIONAL_LIBRARY_PATHS)";
-				MACOSX_DEPLOYMENT_TARGET = "$(DEPLOYMENT_TARGET)";
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"$(GCC_CFLAGS)",
@@ -2335,7 +2341,6 @@
 				INSTALL_OWNER = root;
 				INSTALL_PATH = /;
 				LIBRARY_SEARCH_PATHS = "$(ADDITIONAL_LIBRARY_PATHS)";
-				MACOSX_DEPLOYMENT_TARGET = "$(DEPLOYMENT_TARGET)";
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
 					"$(GCC_CFLAGS)",
