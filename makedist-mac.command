@@ -146,12 +146,11 @@ fi
 
 #---------------------------------------------------------------------------------------------------------
 
-#icon stuff - http://maxao.free.fr/telechargements/setfileicon.gz
 #echo "setting icons"
 #echo ""
-./setfileicon.sh resources/$PLUGIN_NAME.icns $AU
-./setfileicon.sh resources/$PLUGIN_NAME.icns $VST2
-./setfileicon.sh resources/$PLUGIN_NAME.icns $VST3
+./setfileicon.py resources/$PLUGIN_NAME.icns $AU
+./setfileicon.py resources/$PLUGIN_NAME.icns $VST2
+./setfileicon.py resources/$PLUGIN_NAME.icns $VST3
 #setfileicon resources/$PLUGIN_NAME.icns "${RTAS}"
 #setfileicon resources/$PLUGIN_NAME.icns "${AAX}"
 
@@ -224,7 +223,7 @@ productsign --sign "Developer ID Installer: ""${CERT_ID}" "${PKG_US}" "${PKG}"
 rm -R -f "${PKG_US}"
 
 #set installer icon
-./setfileicon.sh resources/$PLUGIN_NAME.icns "${PKG}"
+./setfileicon.py resources/$PLUGIN_NAME.icns "${PKG}"
 
 #---------------------------------------------------------------------------------------------------------
 
